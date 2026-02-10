@@ -36,7 +36,7 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
   if (email.trim().toLowerCase() !== adminEmail.toLowerCase() || password !== adminPassword) {
     return reply.status(401).send({ ok: false, error: "Credenciales inválidas." });
   }
-  const token = await new SignJWT({ sub: 1, email: adminEmail, role: "master" })
+  const token = await new SignJWT({ sub: "1", email: adminEmail, role: "master" })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d")
