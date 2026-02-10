@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/* APlat · Futurista · Glass · iOS-style */
+@theme {
+  /* Paleta futurista: cyan, violeta, blanco sobre oscuro */
+  --color-aplat-deep: #05050a;
+  --color-aplat-surface: #0a0a12;
+  --color-aplat-card: #0f0f1a;
+  --color-aplat-border: rgba(255, 255, 255, 0.06);
+  --color-aplat-glint: rgba(255, 255, 255, 0.12);
+  --color-aplat-cyan: #22d3ee;
+  --color-aplat-cyan-dim: rgba(34, 211, 238, 0.4);
+  --color-aplat-violet: #a78bfa;
+  --color-aplat-violet-dim: rgba(167, 139, 250, 0.4);
+  --color-aplat-emerald: #34d399;
+  --color-aplat-text: #f1f5f9;
+  --color-aplat-muted: #94a3b8;
+  --font-sans: "SF Pro Display", "Inter", system-ui, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", monospace;
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: 20px;
+  --mirror-highlight: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply antialiased text-aplat-text bg-aplat-deep;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Utilidades glass y espejo */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mirror-shine {
+  position: relative;
+  overflow: hidden;
+}
+.mirror-shine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--mirror-highlight);
+  pointer-events: none;
+}
+
+/* Gradientes de texto */
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #22d3ee 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-violet {
+  background: linear-gradient(135deg, #a78bfa 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animaciones keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes line-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes type-cursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+.animate-line-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: line-draw 1.5s ease-out forwards;
+}

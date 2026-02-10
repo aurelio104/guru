@@ -1,0 +1,21 @@
+# No subir clones de otros repos
+_repos/
+
+# Dependencies
+node_modules/
+
+# Build / runtime
+.next/
+dist/
+out/
+
+# Env (no subir secretos)
+.env
+.env.local
+.env.*.local
+apps/api/.env
+apps/web/.env.local
+
+# IDE / OS
+.DS_Store
+*.log
