@@ -5,34 +5,59 @@ import { motion } from "framer-motion";
 import { Card3D } from "@/components/ui/Card3D";
 import { ExternalLink } from "lucide-react";
 
-const GITHUB_BASE = "https://github.com/aurelio104";
+/** Dominios de producción: generado/actualizado por scripts/sync-vercel-domains.mjs (Vercel API). Al cambiar dominio en Vercel y volver a ejecutar el script, APlat muestra el nuevo enlace. */
+import productionUrlsData from "@/data/portfolio-production-urls.json";
 
-/** Dominios en producción (Vercel o custom). Enlace al sitio cuando existe. */
-const VERCEL_URLS: Record<string, string> = {
-  APlat: "https://aplat.vercel.app",
-  Omac: "https://omac569.com",
-};
+const PRODUCTION_URLS: Record<string, string> = productionUrlsData as Record<string, string>;
 
 /** Logo desde el sitio en vivo cuando no está en public/portafolio (fallback). */
 const LOGO_EXTERNAL: Record<string, string> = {
   Omac: "https://omac569.com/logo.png",
 };
 
-/** Listos — en producción / entregados */
-const REPOS_LISTOS: { slug: string; name: string }[] = [
-  { slug: "Omac", name: "Omac" },
-  { slug: "JCavalier", name: "JCavalier" },
-  { slug: "control-acceso-albatros", name: "Control de acceso" },
-  { slug: "MundoIAanime", name: "MundoIAanime" },
-  { slug: "maracay-deportiva", name: "Maracay Deportiva" },
-  { slug: "rt-reportes", name: "RT Reportes" },
-  { slug: "RayPremios", name: "RayPremios" },
-  { slug: "Cuadrernos", name: "Cuadrernos" },
-  { slug: "plataforma-albatros", name: "Plataforma Albatros" },
-  { slug: "BAMVino", name: "BAMVino" },
-  { slug: "hack", name: "hack" },
-  { slug: "albatros-presentacion", name: "Albatros Presentación" },
+/** Nombre para mostrar por slug (Listos se construye desde PRODUCTION_URLS). */
+const SLUG_DISPLAY_NAMES: Record<string, string> = {
+  APlat: "APlat",
+  Omac: "Omac",
+  JCavalier: "JCavalier",
+  "control-acceso-albatros": "Control de acceso",
+  MundoIAanime: "MundoIAanime",
+  "maracay-deportiva": "Maracay Deportiva",
+  "rt-reportes": "RT Reportes",
+  "plataforma-albatros": "Plataforma Albatros",
+  "albatros-presentacion": "Albatros Presentación",
+  BAMVino: "BAMVino",
+  "gvx-demo": "gvx-demo",
+  memoria: "Memoria",
+  CuadernosOficial: "Cuadernos Oficial",
+};
+
+/** Orden preferido para la sección Listos (los que tengan URL en PRODUCTION_URLS). */
+const LISTOS_ORDER = [
+  "APlat",
+  "Omac",
+  "JCavalier",
+  "control-acceso-albatros",
+  "MundoIAanime",
+  "maracay-deportiva",
+  "rt-reportes",
+  "plataforma-albatros",
+  "albatros-presentacion",
+  "BAMVino",
+  "gvx-demo",
+  "memoria",
+  "CuadernosOficial",
 ];
+
+/** Listos — proyectos que tienen URL en portfolio-production-urls.json (actualizado con pnpm run sync:vercel). */
+const REPOS_LISTOS: { slug: string; name: string }[] = LISTOS_ORDER.filter((slug) => {
+  if (PRODUCTION_URLS[slug]) return true;
+  const key = Object.keys(PRODUCTION_URLS).find((k) => k.toLowerCase() === slug.toLowerCase());
+  return !!key;
+}).map((slug) => ({
+  slug,
+  name: SLUG_DISPLAY_NAMES[slug] ?? slug,
+}));
 
 /** En desarrollo */
 const REPOS_EN_DESARROLLO: { slug: string; name: string }[] = [
@@ -55,14 +80,15 @@ const REPOS_DEMOS: { slug: string; name: string }[] = [
   { slug: "mi-app-guru", name: "mi-app-guru" },
 ];
 
-function getProjectUrl(slug: string): string {
-  const exact = VERCEL_URLS[slug]?.trim();
+/** URL de producción si existe; si no, cadena vacía (sin link). */
+function getProductionUrl(slug: string): string {
+  const exact = PRODUCTION_URLS[slug]?.trim();
   if (exact) return exact.replace(/\/$/, "");
-  const lower = VERCEL_URLS[slug.toLowerCase()]?.trim();
+  const lower = PRODUCTION_URLS[slug.toLowerCase()]?.trim();
   if (lower) return lower.replace(/\/$/, "");
-  const byKey = Object.entries(VERCEL_URLS).find(([k]) => k.toLowerCase() === slug.toLowerCase())?.[1]?.trim();
+  const byKey = Object.entries(PRODUCTION_URLS).find(([k]) => k.toLowerCase() === slug.toLowerCase())?.[1]?.trim();
   if (byKey) return byKey.replace(/\/$/, "");
-  return `${GITHUB_BASE}/${slug}`;
+  return "";
 }
 
 function ProjectLogo({
@@ -268,6 +294,35 @@ function PortfolioGrid({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {repos.map((repo, i) => {
           const detail = REPO_DETAIL[repo.slug];
+          const url = getProductionUrl(repo.slug);
+          const cardContent = (
+            <>
+              <div className="flex justify-between items-start gap-3 mb-2">
+                <div className="flex items-center gap-3 min-w-0">
+                  <ProjectLogo slug={repo.slug} name={repo.name} size={44} className="rounded-xl" />
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-semibold text-aplat-text group-hover:text-aplat-violet transition-colors truncate">
+                      {repo.name}
+                    </h3>
+                  </div>
+                </div>
+                {url ? (
+                  <ExternalLink className="w-4 h-4 text-aplat-muted group-hover:text-aplat-violet transition-colors shrink-0 mt-1" />
+                ) : (
+                  <span className="w-4 h-4 shrink-0 mt-1 opacity-30" aria-hidden />
+                )}
+              </div>
+              <div className="mt-2">
+                {detail && (
+                  <>
+                    <p className="text-aplat-muted text-sm mb-1">{detail.tagline}</p>
+                    <p className="text-aplat-cyan/80 text-xs font-mono mb-1">{detail.stack}</p>
+                    <p className="text-aplat-emerald/90 text-xs font-medium">{detail.result}</p>
+                  </>
+                )}
+              </div>
+            </>
+          );
           return (
             <motion.div
               key={repo.slug}
@@ -277,36 +332,18 @@ function PortfolioGrid({
               transition={{ duration: 0.5, delay: Math.min(i * 0.03, 0.5), ease: [0.23, 1, 0.32, 1] }}
             >
               <Card3D className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-aplat-violet/30 h-full group">
-                <a
-                  href={getProjectUrl(repo.slug)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block"
-                >
-                  <div className="flex justify-between items-start gap-3 mb-2">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <ProjectLogo slug={repo.slug} name={repo.name} size={44} className="rounded-xl" />
-                      <div className="min-w-0">
-                        <h3 className="text-lg font-semibold text-aplat-text group-hover:text-aplat-violet transition-colors truncate">
-                          {repo.name}
-                        </h3>
-                        <p className="text-aplat-muted/80 text-xs font-mono truncate">
-                          aurelio104/{repo.slug}
-                        </p>
-                      </div>
-                    </div>
-                    <ExternalLink className="w-4 h-4 text-aplat-muted group-hover:text-aplat-violet transition-colors shrink-0 mt-1" />
-                  </div>
-                  <div className="mt-2">
-                    {detail && (
-                      <>
-                        <p className="text-aplat-muted text-sm mb-1">{detail.tagline}</p>
-                        <p className="text-aplat-cyan/80 text-xs font-mono mb-1">{detail.stack}</p>
-                        <p className="text-aplat-emerald/90 text-xs font-medium">{detail.result}</p>
-                      </>
-                    )}
-                  </div>
-                </a>
+                {url ? (
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    {cardContent}
+                  </a>
+                ) : (
+                  <div className="block cursor-default">{cardContent}</div>
+                )}
               </Card3D>
             </motion.div>
           );
@@ -321,20 +358,35 @@ function RepoLogoCarousel({ repos }: { repos: { slug: string; name: string }[] }
   return (
     <div className="relative w-full overflow-hidden py-6">
       <div className="flex gap-4 animate-marquee whitespace-nowrap">
-        {duplicated.map((repo, i) => (
-          <a
-            key={`${repo.slug}-${i}`}
-            href={getProjectUrl(repo.slug)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 glass glass-strong rounded-xl px-5 py-3 border border-white/10 hover:border-aplat-cyan/30 transition-all shrink-0 group"
-          >
-            <ProjectLogo slug={repo.slug} name={repo.name} size={28} />
-            <span className="text-sm font-medium text-aplat-text group-hover:text-aplat-cyan transition-colors">
-              {repo.name}
+        {duplicated.map((repo, i) => {
+          const url = getProductionUrl(repo.slug);
+          const chip = (
+            <>
+              <ProjectLogo slug={repo.slug} name={repo.name} size={28} />
+              <span className="text-sm font-medium text-aplat-text group-hover:text-aplat-cyan transition-colors">
+                {repo.name}
+              </span>
+            </>
+          );
+          return url ? (
+            <a
+              key={`${repo.slug}-${i}`}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 glass glass-strong rounded-xl px-5 py-3 border border-white/10 hover:border-aplat-cyan/30 transition-all shrink-0 group"
+            >
+              {chip}
+            </a>
+          ) : (
+            <span
+              key={`${repo.slug}-${i}`}
+              className="inline-flex items-center gap-2 glass glass-strong rounded-xl px-5 py-3 border border-white/10 opacity-80 shrink-0"
+            >
+              {chip}
             </span>
-          </a>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -366,7 +418,7 @@ export function Portfolio() {
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
-          Proyectos destacados con sus logos. Enlace al sitio en producción o al repositorio.
+          Proyectos por estado. Solo los desplegados enlazan al sitio en producción.
         </motion.p>
 
         {/* Carrusel: proyectos listos */}

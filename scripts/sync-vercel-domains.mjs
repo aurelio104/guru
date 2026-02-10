@@ -1,133 +1,84 @@
 #!/usr/bin/env node
 /**
- * Obtiene proyectos de Vercel y sus dominios de producción vía API,
- * y actualiza VERCEL_URLS en apps/web/components/sections/Portfolio.tsx.
+ * Obtiene proyectos y dominios de producción desde la CLI de Vercel
+ * (usa la sesión actual: vercel login) y actualiza
+ * apps/web/data/portfolio-production-urls.json.
  *
  * Uso:
- *   VERCEL_TOKEN=xxx node scripts/sync-vercel-domains.mjs
- *   # o tras: vercel login
- *   # el token se guarda en ~/.vercel/config.json (o usar env)
+ *   node scripts/sync-vercel-domains.mjs
+ *   # o: pnpm run sync:vercel
  *
- * Requiere: variable de entorno VERCEL_TOKEN (token desde https://vercel.com/account/tokens)
+ * Requiere: vercel CLI instalado y sesión iniciada (vercel login).
+ * Cuando en Vercel cambies un dominio (p. ej. custom), vuelve a ejecutar
+ * y APlat mostrará el nuevo enlace.
  */
 
+import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
+const DATA_PATH = path.join(ROOT, "apps/web/data/portfolio-production-urls.json");
 
-let token = process.env.VERCEL_TOKEN;
-if (!token) {
-  const configPath = path.join(process.env.HOME || "", ".vercel", "config.json");
-  if (fs.existsSync(configPath)) {
+/** Mapeo nombre proyecto Vercel → slug en Portfolio (getProductionUrl usa el slug). */
+const VERCEL_TO_SLUG = {
+  aplat: "APlat",
+  web: "Omac",
+  "j-cavalier": "JCavalier",
+  "control-acceso-albatros": "control-acceso-albatros",
+  frontend: "MundoIAanime",
+  "maracay-deportiva": "maracay-deportiva",
+  "rt-reportes": "rt-reportes",
+  "plataforma-albatros": "plataforma-albatros",
+  "albatros-presentacion": "albatros-presentacion",
+  "bam-vino": "BAMVino",
+  "gvx-demo": "gvx-demo",
+  memoria: "memoria",
+  "cuadernos-oficial": "CuadernosOficial",
+  "ray-premios": "RayPremios",
+  admin: "Admin",
+};
+
+function runVercelProjectLsJson() {
+  try {
+    const out = execSync("vercel project ls --format=json", {
+      encoding: "utf8",
+      maxBuffer: 1024 * 1024,
+    });
+    return JSON.parse(out);
+  } catch (e) {
+    console.error("Error al ejecutar 'vercel project ls --format=json'. ¿Has hecho 'vercel login'?");
+    throw e;
+  }
+}
+
+function main() {
+  console.log("Ejecutando 'vercel project ls --format=json' (usa tu sesión CLI)...");
+  const data = runVercelProjectLsJson();
+  const projects = data.projects || [];
+
+  let existing = {};
+  if (fs.existsSync(DATA_PATH)) {
     try {
-      const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-      token = config.token ?? config.accessToken;
+      existing = JSON.parse(fs.readFileSync(DATA_PATH, "utf8"));
     } catch (_) {}
   }
-}
-if (!token) {
-  console.error("Falta VERCEL_TOKEN. Opciones:");
-  console.error("  1. Ejecuta 'vercel login' y luego: node scripts/sync-vercel-domains.mjs");
-  console.error("  2. Crea un token en https://vercel.com/account/tokens y ejecuta:");
-  console.error("     VERCEL_TOKEN=tu_token node scripts/sync-vercel-domains.mjs");
-  process.exit(1);
-}
 
-const PORTFOLIO_PATH = path.join(ROOT, "apps/web/components/sections/Portfolio.tsx");
-
-async function fetchProjects() {
-  const res = await fetch("https://api.vercel.com/v9/projects?limit=100", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error(`Vercel API ${res.status}: ${t}`);
-  }
-  const data = await res.json();
-  return data.projects ?? data;
-}
-
-function getProductionDomain(project) {
-  const alias = project.alias || [];
-  const production = alias.find((a) => a.target === "PRODUCTION" || a.environment === "production") || alias[0];
-  const domain = production?.domain;
-  if (domain) return domain.startsWith("http") ? domain : `https://${domain}`;
-  if (project.latestDeployments?.length) {
-    const d = project.latestDeployments.find((x) => x.target === "production") || project.latestDeployments[0];
-    const host = d?.alias?.[0] || d?.deploymentHostname;
-    if (host) return host.startsWith("http") ? host : `https://${host}`;
-  }
-  return null;
-}
-
-function slugFromName(name) {
-  if (!name) return null;
-  return name;
-}
-
-async function verifyUrl(url, timeout = 8000) {
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), timeout);
-    const res = await fetch(url, { method: "HEAD", redirect: "follow", signal: ctrl.signal });
-    clearTimeout(t);
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
-
-async function main() {
-  console.log("Obteniendo proyectos de Vercel...");
-  const projects = await fetchProjects();
-  const entries = [];
+  const result = { ...existing };
   for (const p of projects) {
-    const url = getProductionDomain(p);
-    const name = p.name;
-    if (url && name) entries.push({ name, url });
+    const url = (p.latestProductionUrl || "").trim();
+    if (!url || url === "--") continue;
+    const slug = VERCEL_TO_SLUG[p.name?.toLowerCase()] ?? p.name;
+    result[slug] = url.replace(/\/$/, "");
+    console.log(`  ${p.name} → ${slug}: ${url}`);
   }
 
-  console.log(`Encontrados ${entries.length} proyectos con dominio. Verificando que respondan...`);
-  const verified = [];
-  for (const e of entries) {
-    const ok = await verifyUrl(e.url);
-    if (ok) {
-      verified.push(e);
-      console.log(`  ✓ ${e.name} -> ${e.url}`);
-    } else {
-      console.log(`  ✗ (no responde) ${e.name} -> ${e.url}`);
-    }
-  }
-
-  const vercelUrls = {};
-  for (const { name, url } of verified) {
-    vercelUrls[name] = url;
-  }
-  console.log(`\n${verified.length}/${entries.length} dominios verificados. Solo estos se escribirán en Portfolio.`);
-
-  let content = fs.readFileSync(PORTFOLIO_PATH, "utf8");
-  const startMarker = "/** Dominios Vercel por slug. Si no hay URL, el enlace va a GitHub. */\nconst VERCEL_URLS: Record<string, string> = {";
-  const endMarker = "};";
-  const start = content.indexOf(startMarker);
-  const endBlock = content.indexOf(endMarker, start);
-  if (start === -1 || endBlock === -1) {
-    console.error("No se encontró el bloque VERCEL_URLS en Portfolio.tsx");
-    process.exit(1);
-  }
-  const blockStart = start + startMarker.length;
-  const lines = Object.entries(vercelUrls)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([k, v]) => `  ${JSON.stringify(k)}: ${JSON.stringify(v)},`);
-  const newBlock = "\n" + lines.join("\n") + "\n";
-  content = content.slice(0, blockStart) + newBlock + content.slice(endBlock);
-  fs.writeFileSync(PORTFOLIO_PATH, content);
-  console.log("\nPortfolio.tsx actualizado con los dominios de Vercel.");
+  const dir = path.dirname(DATA_PATH);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(DATA_PATH, JSON.stringify(result, null, 2), "utf8");
+  console.log(`\n${DATA_PATH} actualizado con ${Object.keys(result).length} dominios.`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+main();
