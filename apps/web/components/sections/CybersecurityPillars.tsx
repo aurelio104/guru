@@ -66,12 +66,12 @@ export function CybersecurityPillars() {
   return (
     <section
       id="ciberseguridad"
-      className="relative py-24 md:py-32 overflow-hidden"
+      className="relative py-12 sm:py-16 md:py-24 lg:py-32 overflow-hidden min-h-0"
       aria-labelledby="cybersecurity-heading"
     >
       <CybersecurityBackground />
 
-      <div className="relative z-10 container mx-auto px-6 max-w-6xl">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 max-w-6xl w-full">
         {/* Badge + título principal */}
         <motion.div
           className="flex justify-center mb-4"
@@ -87,7 +87,7 @@ export function CybersecurityPillars() {
         </motion.div>
         <motion.h2
           id="cybersecurity-heading"
-          className="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-5 text-gradient-cyan max-w-4xl mx-auto leading-tight"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-4 sm:mb-5 text-gradient-cyan max-w-4xl mx-auto leading-tight"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -114,20 +114,20 @@ export function CybersecurityPillars() {
           Sistemas independientes · No desplegados públicamente
         </motion.p>
 
-        {/* Tres pilares: cards destacadas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Tres pilares: cards destacadas (grid responsive) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {PILLARS.map((pillar, i) => (
             <motion.article
               key={pillar.id}
-              className={`rounded-3xl border p-8 md:p-10 transition-all duration-300 ${colorMap[pillar.color]}`}
+              className={`rounded-2xl sm:rounded-3xl border p-5 sm:p-6 md:p-8 lg:p-10 transition-all duration-300 min-w-0 ${colorMap[pillar.color]}`}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.6, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
             >
               <div className="flex flex-col h-full">
-                <div className="flex items-start gap-6 mb-6">
-                  <div className="relative w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex-shrink-0 overflow-hidden flex items-center justify-center">
+                <div className="flex items-start gap-4 sm:gap-6 mb-4 sm:mb-6">
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex-shrink-0 overflow-hidden flex items-center justify-center">
                     {pillar.logo ? (
                       <Image
                         src={pillar.logo}
@@ -141,7 +141,7 @@ export function CybersecurityPillars() {
                     )}
                   </div>
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-bold text-aplat-text mb-1">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-aplat-text mb-1">
                       {pillar.name}
                     </h3>
                     <p className="text-aplat-cyan/90 text-sm font-medium uppercase tracking-wider">

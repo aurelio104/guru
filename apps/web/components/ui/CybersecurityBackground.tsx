@@ -8,18 +8,18 @@
  * - Grid hexagonal, circuito y vidrios
  */
 
-/* Direcciones en px desde el centro (donde está el escudo) */
+/* Direcciones desde el centro en unidades de viewport (responsive) */
 const INTRUSION_PARTICLES = [
-  { delay: 0, tx: "280px", ty: "-80px" },
-  { delay: 0.8, tx: "220px", ty: "200px" },
-  { delay: 1.6, tx: "-260px", ty: "60px" },
-  { delay: 2.4, tx: "-200px", ty: "-180px" },
-  { delay: 0.4, tx: "260px", ty: "100px" },
-  { delay: 1.2, tx: "-240px", ty: "180px" },
-  { delay: 2, tx: "180px", ty: "-200px" },
-  { delay: 2.8, tx: "-280px", ty: "-50px" },
-  { delay: 0.6, tx: "200px", ty: "-140px" },
-  { delay: 1.4, tx: "-180px", ty: "220px" },
+  { delay: 0, tx: "28vw", ty: "-10vh" },
+  { delay: 0.8, tx: "22vw", ty: "22vh" },
+  { delay: 1.6, tx: "-26vw", ty: "8vh" },
+  { delay: 2.4, tx: "-20vw", ty: "-20vh" },
+  { delay: 0.4, tx: "26vw", ty: "12vh" },
+  { delay: 1.2, tx: "-24vw", ty: "20vh" },
+  { delay: 2, tx: "18vw", ty: "-22vh" },
+  { delay: 2.8, tx: "-28vw", ty: "-6vh" },
+  { delay: 0.6, tx: "20vw", ty: "-16vh" },
+  { delay: 1.4, tx: "-18vw", ty: "24vh" },
 ];
 
 /* Forma clásica de escudo: arco arriba, lados curvos, punta abajo */
@@ -31,12 +31,13 @@ export function CybersecurityBackground() {
       {/* Base más oscura para marcar la sección */}
       <div className="absolute inset-0 bg-aplat-surface/80" />
 
-      {/* Escudo de protección en el fondo: grande, forma clásica, sutil */}
+      {/* Escudo en el fondo: 100% responsive, líneas desde centro, logo seguridad */}
       <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 0 }}>
         <svg
           viewBox="0 0 100 100"
-          className="absolute w-[min(160vw,1100px)] h-auto max-h-[min(120vh,1100px)] opacity-[0.22]"
-          style={{ minWidth: "900px", minHeight: "900px" }}
+          className="absolute w-[min(150vmin,95vw)] h-auto max-h-[min(120vmin,90vh)] opacity-[0.2]"
+          preserveAspectRatio="xMidYMid meet"
+          style={{ maxWidth: "100%", aspectRatio: "1" }}
         >
           <defs>
             <linearGradient id="shield-glass-bg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -56,6 +57,40 @@ export function CybersecurityBackground() {
           </defs>
           <path d={SHIELD_PATH} fill="url(#shield-glass-bg)" />
           <path d={SHIELD_PATH} fill="url(#shield-shine-bg)" />
+          {/* Líneas desde el centro (rayos del escudo) */}
+          {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => {
+            const rad = (deg * Math.PI) / 180;
+            const r = 42;
+            const x = 50 + r * Math.cos(rad);
+            const y = 50 - r * Math.sin(rad);
+            return (
+              <line
+                key={deg}
+                x1="50"
+                y1="50"
+                x2={String(x)}
+                y2={String(y)}
+                stroke="rgba(34,211,238,0.15)"
+                strokeWidth="0.35"
+                strokeLinecap="round"
+              />
+            );
+          })}
+          {/* Logo seguridad en el centro: escudo pequeño */}
+          <path
+            d="M50 38 L58 42 L58 52 Q58 58 50 62 Q42 58 42 52 L42 42 Z"
+            fill="none"
+            stroke="rgba(34,211,238,0.4)"
+            strokeWidth="0.8"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M50 46 L50 54 M47 50 L53 50"
+            fill="none"
+            stroke="rgba(34,211,238,0.35)"
+            strokeWidth="0.5"
+            strokeLinecap="round"
+          />
           <path
             d={SHIELD_PATH}
             fill="none"
@@ -144,10 +179,10 @@ export function CybersecurityBackground() {
         />
       </svg>
 
-      {/* Radar sweep visible */}
+      {/* Radar sweep: 100% responsive */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div
-          className="w-[min(100vw,1100px)] h-[min(75vh,600px)] opacity-[0.12]"
+          className="w-[min(100vw,80vmin)] h-[min(75vh,70vmin)] max-w-full opacity-[0.12]"
           style={{
             background: "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(34,211,238,0.35) 50deg, transparent 100deg)",
             animation: "cyber-sweep 14s linear infinite",
@@ -155,8 +190,8 @@ export function CybersecurityBackground() {
         />
       </div>
 
-      {/* Orbe sutil abajo-derecha (sin óvalo arriba) */}
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-aplat-violet/10 rounded-full blur-[150px]" />
+      {/* Orbe sutil: responsive con vmax */}
+      <div className="absolute bottom-0 right-0 w-[50vmax] h-[50vmax] max-w-[600px] max-h-[600px] bg-aplat-violet/10 rounded-full blur-[20vmin]" />
 
       {/* Scanline tipo monitor seguro */}
       <div
