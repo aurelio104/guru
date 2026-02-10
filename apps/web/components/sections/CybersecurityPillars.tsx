@@ -71,7 +71,7 @@ export function CybersecurityPillars() {
     >
       <CybersecurityBackground />
 
-      <div className="relative container mx-auto px-6 max-w-6xl">
+      <div className="relative z-10 container mx-auto px-6 max-w-6xl">
         {/* Badge + título principal */}
         <motion.div
           className="flex justify-center mb-4"
