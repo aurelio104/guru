@@ -138,6 +138,17 @@
   100% { stroke-dashoffset: 0; }
 }
 
+/* Flujo de datos: un segmento luminoso recorre la línea (red neuronal) */
+@keyframes neural-flow {
+  0% { stroke-dashoffset: 160; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes node-pulse {
+  0%, 100% { r: 4; opacity: 0.7; }
+  50% { r: 5; opacity: 1; }
+}
+
 @keyframes neon-pulse {
   0%, 100% { opacity: 0.6; filter: brightness(1); }
   50% { opacity: 1; filter: brightness(1.2); }
@@ -161,6 +172,11 @@
 
 .animate-neon-pulse {
   animation: neon-pulse 2.5s ease-in-out infinite;
+}
+
+.animate-neural-flow {
+  stroke-dasharray: 6 160;
+  animation: neural-flow 2.5s linear infinite;
 }
 
 .animate-float {

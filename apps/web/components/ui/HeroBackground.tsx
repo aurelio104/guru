@@ -1,7 +1,10 @@
 "use client";
 
+import { NeuralNetworkBackground } from "@/components/ui/NeuralNetworkBackground";
+import { GlassScreensBackground } from "@/components/ui/GlassScreensBackground";
+
 /**
- * Fondo futurista para el Hero: mesh animado + grid + orbes.
+ * Fondo futurista para el Hero: mesh + grid + red neuronal animada + pantallas de proceso.
  * Opcional: añade public/videos/hero-bg.mp4 y un <video> aquí para fondo en video.
  */
 
@@ -29,7 +32,13 @@ export function HeroBackground() {
         style={{ transform: "perspective(500px) rotateX(60deg) scale(1.5)", transformOrigin: "50% 0%" }}
       />
 
-      {/* Orbes de luz animados (Framer en el Hero los puede añadir por encima) */}
+      {/* Red neuronal: nodos y conexiones con “datos” fluyendo (inteligencia artificial) */}
+      <NeuralNetworkBackground />
+
+      {/* Pantallas transparentes mostrando proceso / métricas */}
+      <GlassScreensBackground />
+
+      {/* Orbes de luz */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-aplat-cyan/12 rounded-full blur-[180px] animate-neon-pulse" />
       <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-aplat-violet/10 rounded-full blur-[140px]" />
       <div className="absolute top-1/3 left-0 w-[400px] h-[300px] bg-aplat-cyan/8 rounded-full blur-[120px]" />
