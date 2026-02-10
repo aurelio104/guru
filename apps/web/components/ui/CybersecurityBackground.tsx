@@ -22,8 +22,8 @@ const INTRUSION_PARTICLES = [
   { delay: 1.4, tx: "-180px", ty: "220px" },
 ];
 
-/* Forma clásica de escudo de protección: parte superior redondeada, lados que se estrechan, punta abajo */
-const SHIELD_PATH = "M50 4 L92 18 L92 48 Q92 72 50 96 Q8 72 8 48 L8 18 Z";
+/* Forma clásica de escudo: arco arriba, lados curvos, punta abajo */
+const SHIELD_PATH = "M50 2 C88 2 98 18 98 42 C98 68 72 92 50 98 C28 92 2 68 2 42 C2 18 12 2 50 2 Z";
 
 export function CybersecurityBackground() {
   return (
@@ -31,21 +31,22 @@ export function CybersecurityBackground() {
       {/* Base más oscura para marcar la sección */}
       <div className="absolute inset-0 bg-aplat-surface/80" />
 
-      {/* Escudo de fondo (tamaño contenido) */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      {/* Escudo de protección en el fondo: grande, forma clásica, sutil */}
+      <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 0 }}>
         <svg
           viewBox="0 0 100 100"
-          className="absolute w-[min(77vw,476px)] h-auto max-h-[min(60vh,476px)] opacity-40"
+          className="absolute w-[min(160vw,1100px)] h-auto max-h-[min(120vh,1100px)] opacity-[0.22]"
+          style={{ minWidth: "900px", minHeight: "900px" }}
         >
           <defs>
             <linearGradient id="shield-glass-bg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(34,211,238,0.25)" />
-              <stop offset="50%" stopColor="rgba(167,139,250,0.12)" />
-              <stop offset="100%" stopColor="rgba(34,211,238,0.15)" />
+              <stop offset="0%" stopColor="rgba(34,211,238,0.2)" />
+              <stop offset="50%" stopColor="rgba(167,139,250,0.08)" />
+              <stop offset="100%" stopColor="rgba(34,211,238,0.12)" />
             </linearGradient>
             <linearGradient id="shield-shine-bg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.2)" />
-              <stop offset="50%" stopColor="rgba(255,255,255,0.04)" />
+              <stop offset="0%" stopColor="rgba(255,255,255,0.12)" />
+              <stop offset="50%" stopColor="rgba(255,255,255,0.02)" />
               <stop offset="100%" stopColor="transparent" />
             </linearGradient>
             <linearGradient id="shield-border-bg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -59,11 +60,11 @@ export function CybersecurityBackground() {
             d={SHIELD_PATH}
             fill="none"
             stroke="url(#shield-border-bg)"
-            strokeWidth="1.2"
+            strokeWidth="1"
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeDasharray="300"
-            strokeDashoffset="300"
+            strokeDasharray="340"
+            strokeDashoffset="340"
             style={{
               animation: "shield-draw 2.5s ease-out forwards, shield-border-pulse 2.5s ease-in-out 2.5s infinite",
             }}
@@ -71,8 +72,8 @@ export function CybersecurityBackground() {
           <path
             d={SHIELD_PATH}
             fill="none"
-            stroke="rgba(34,211,238,0.4)"
-            strokeWidth="0.5"
+            stroke="rgba(34,211,238,0.3)"
+            strokeWidth="0.4"
             style={{ animation: "shield-glow-inner 3s ease-in-out infinite" }}
           />
         </svg>
