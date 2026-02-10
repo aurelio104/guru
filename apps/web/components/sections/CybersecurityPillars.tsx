@@ -2,9 +2,22 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Shield, FileCheck, MonitorCheck } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Shield, FileCheck, MonitorCheck, Lock } from "lucide-react";
+import { CybersecurityBackground } from "@/components/ui/CybersecurityBackground";
 
-const PILLARS = [
+type Pillar = {
+  id: string;
+  name: string;
+  logo: string | null;
+  tagline: string;
+  description: string;
+  stack: string;
+  icon: LucideIcon;
+  color: string;
+};
+
+const PILLARS: Pillar[] = [
   {
     id: "auditoria-ciberseguridad",
     name: "Auditoría Ciberseguridad",
@@ -27,13 +40,26 @@ const PILLARS = [
     icon: MonitorCheck,
     color: "violet",
   },
-] as const;
+  {
+    id: "hack",
+    name: "Hack",
+    logo: null,
+    tagline: "Framework de seguridad y confidencialidad",
+    description:
+      "Framework de seguridad (Alianzas Gancelot & Albatros): políticas, secretos, monitoreo, respuesta a incidentes y compliance. Módulos de red, Fortinet, honeypot, DDoS, forense y cyber-defense.",
+    stack: "Node, TypeScript, Fortinet, policies, incident-response",
+    icon: Lock,
+    color: "emerald",
+  },
+];
 
-const colorMap = {
+const colorMap: Record<string, string> = {
   cyan:
     "border-aplat-cyan/30 bg-aplat-cyan/5 hover:border-aplat-cyan/40 hover:shadow-[0_0_50px_-5px_rgba(34,211,238,0.2)]",
   violet:
     "border-aplat-violet/30 bg-aplat-violet/5 hover:border-aplat-violet/40 hover:shadow-[0_0_50px_-5px_rgba(167,139,250,0.2)]",
+  emerald:
+    "border-aplat-emerald/30 bg-aplat-emerald/5 hover:border-aplat-emerald/40 hover:shadow-[0_0_50px_-5px_rgba(52,211,153,0.2)]",
 };
 
 export function CybersecurityPillars() {
@@ -43,13 +69,7 @@ export function CybersecurityPillars() {
       className="relative py-24 md:py-32 overflow-hidden"
       aria-labelledby="cybersecurity-heading"
     >
-      {/* Fondo: más oscuro para dar peso visual */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute inset-0 bg-aplat-surface/50" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-aplat-cyan/6 rounded-full blur-[180px] animate-neon-pulse" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-aplat-violet/5 rounded-full blur-[150px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.03)_1px,transparent_1px)] bg-[size:64px_64px] opacity-60" />
-      </div>
+      <CybersecurityBackground />
 
       <div className="relative container mx-auto px-6 max-w-6xl">
         {/* Badge + título principal */}
@@ -82,7 +102,7 @@ export function CybersecurityPillars() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
-          Dos pilares que definen nuestro compromiso con la protección, el cumplimiento normativo y la respuesta ante amenazas.
+          Tres pilares que definen nuestro compromiso con la protección, el cumplimiento normativo y la respuesta ante amenazas.
         </motion.p>
         <motion.p
           className="text-aplat-muted/80 text-center text-sm max-w-xl mx-auto mb-16"
@@ -94,8 +114,8 @@ export function CybersecurityPillars() {
           Sistemas independientes · No desplegados públicamente
         </motion.p>
 
-        {/* Dos pilares: cards destacadas */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Tres pilares: cards destacadas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {PILLARS.map((pillar, i) => (
             <motion.article
               key={pillar.id}
@@ -108,13 +128,17 @@ export function CybersecurityPillars() {
               <div className="flex flex-col h-full">
                 <div className="flex items-start gap-6 mb-6">
                   <div className="relative w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex-shrink-0 overflow-hidden flex items-center justify-center">
-                    <Image
-                      src={pillar.logo}
-                      alt={`Logo ${pillar.name}`}
-                      width={80}
-                      height={80}
-                      className="object-contain p-2"
-                    />
+                    {pillar.logo ? (
+                      <Image
+                        src={pillar.logo}
+                        alt={`Logo ${pillar.name}`}
+                        width={80}
+                        height={80}
+                        className="object-contain p-2"
+                      />
+                    ) : (
+                      <pillar.icon className="w-10 h-10 text-aplat-emerald/80" />
+                    )}
                   </div>
                   <div>
                     <h3 className="text-2xl md:text-3xl font-bold text-aplat-text mb-1">

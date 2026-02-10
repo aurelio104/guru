@@ -154,6 +154,18 @@
   50% { opacity: 1; filter: brightness(1.2); }
 }
 
+/* Ciberseguridad: flujo en líneas tipo circuito */
+@keyframes cyber-flow {
+  0% { stroke-dashoffset: 32; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* Ciberseguridad: barrido tipo radar */
+@keyframes cyber-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .animate-marquee {
   animation: marquee 40s linear infinite;
 }
