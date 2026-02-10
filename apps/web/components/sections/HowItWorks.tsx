@@ -46,42 +46,50 @@ export function HowItWorks() {
   return (
     <section
       id="como-funciona"
-      className="relative py-24 overflow-hidden"
+      className="relative py-12 sm:py-16 md:py-24 lg:py-32 overflow-hidden min-h-0"
       aria-labelledby="how-it-works-heading"
     >
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-aplat-cyan/8 blur-[120px] animate-neon-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-aplat-violet/6 blur-[100px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.02)_1px,transparent_1px)] bg-[size:48px_48px] opacity-40" />
+      {/* Fondo: mismo esquema (responsive, z-0) */}
+      <div className="absolute inset-0 pointer-events-none z-0" aria-hidden>
+        <div className="absolute inset-0 bg-aplat-surface/40" />
+        <div className="absolute top-1/4 left-1/4 w-[40vmax] h-[40vmax] max-w-[550px] max-h-[550px] rounded-full bg-aplat-cyan/8 blur-[18vmin] animate-neon-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-[35vmax] h-[35vmax] max-w-[450px] max-h-[450px] rounded-full bg-aplat-violet/6 blur-[16vmin]" />
+        <div
+          className="absolute inset-0 opacity-40"
+          style={{
+            backgroundImage: "linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px), linear-gradient(90deg,rgba(34,211,238,0.03)_1px,transparent_1px)",
+            backgroundSize: "clamp(24px, 4vw, 48px) clamp(24px, 4vw, 48px)",
+          }}
+        />
       </div>
 
-      <div className="relative container mx-auto px-6 max-w-6xl">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 max-w-6xl w-full">
         <motion.div
           className="flex justify-center mb-4"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
         >
-          <span className="inline-flex items-center rounded-full border border-aplat-violet/20 bg-aplat-violet/5 px-4 py-1.5 text-xs font-medium text-aplat-violet uppercase tracking-wider">
+          <span className="inline-flex items-center rounded-full border border-aplat-violet/25 bg-aplat-violet/5 px-4 py-1.5 text-xs font-semibold text-aplat-violet uppercase tracking-widest">
             Cómo funciona
           </span>
         </motion.div>
         <motion.h2
           id="how-it-works-heading"
-          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan transition-reveal"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-4 sm:mb-5 text-gradient-cyan max-w-4xl mx-auto leading-tight"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
         >
           Proceso inteligente
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg max-w-2xl mx-auto mb-16 transition-reveal"
+          className="text-aplat-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-12 sm:mb-16 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
           Cuatro pilares conectados: desde el dato hasta la acción.
@@ -89,7 +97,7 @@ export function HowItWorks() {
 
         {/* Flujo: líneas que se dibujan + nodos */}
         <motion.div
-          className="flex justify-center mb-16"
+          className="flex justify-center mb-10 sm:mb-16"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -165,7 +173,7 @@ export function HowItWorks() {
           </svg>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {STEPS.map((step, i) => (
             <motion.div
               key={step.id}
@@ -174,7 +182,7 @@ export function HowItWorks() {
               viewport={{ once: true, margin: "-30px" }}
               transition={{ duration: 0.5, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
             >
-              <Card3D className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-aplat-cyan/30 h-full">
+              <Card3D className="glass glass-strong rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 mirror-shine border border-white/10 hover:border-aplat-cyan/30 h-full min-w-0">
                 <div className="flex items-center gap-3 mb-3">
                   <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-aplat-cyan/10 border border-aplat-cyan/20 text-aplat-cyan">
                     <step.Icon className="w-5 h-5" />
