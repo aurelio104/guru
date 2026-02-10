@@ -196,6 +196,28 @@
   100% { r: 80; opacity: 0; }
 }
 
+/* Servicios: nube, nodos, barras */
+@keyframes services-cloud-drift {
+  0%, 100% { transform: translateX(0) translateY(0); opacity: 0.2; }
+  50% { transform: translateX(2%) translateY(-1%); opacity: 0.28; }
+}
+
+@keyframes services-node-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.08); }
+}
+
+@keyframes services-bar-pulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.28; }
+}
+
+@keyframes services-float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  33% { transform: translateY(-4px) translateX(2px); }
+  66% { transform: translateY(2px) translateX(-2px); }
+}
+
 .animate-marquee {
   animation: marquee 40s linear infinite;
 }
