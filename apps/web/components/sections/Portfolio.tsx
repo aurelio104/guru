@@ -7,12 +7,15 @@ import { ExternalLink } from "lucide-react";
 
 const GITHUB_BASE = "https://github.com/aurelio104";
 
-/** Dominios Vercel por slug. Si no hay URL, el enlace va a GitHub. */
+/** Dominios en producción (Vercel o custom). Solo estos proyectos se muestran en el portafolio. */
 const VERCEL_URLS: Record<string, string> = {
   APlat: "https://aplat.vercel.app",
-  // Añade aquí más: slug -> "https://tu-proyecto.vercel.app"
-  // Omac: "https://omac.vercel.app",
-  // "rt-reportes": "https://rt-reportes.vercel.app",
+  Omac: "https://omac569.com",
+};
+
+/** Logo desde el sitio en vivo cuando no está en public/portafolio (ej. copiado del repo del proyecto). */
+const LOGO_EXTERNAL: Record<string, string> = {
+  Omac: "https://omac569.com/logo.png",
 };
 
 function getProjectUrl(slug: string): string {
@@ -47,10 +50,11 @@ function ProjectLogo({
   size?: number;
   className?: string;
 }) {
-  const [attempt, setAttempt] = useState<"png" | "svg" | "failed">("png");
+  const [attempt, setAttempt] = useState<"png" | "svg" | "external" | "failed">("png");
   const initial = name.charAt(0).toUpperCase();
+  const externalUrl = LOGO_EXTERNAL[slug] ?? LOGO_EXTERNAL[slug.toLowerCase()];
 
-  if (attempt === "failed") {
+  if (attempt === "failed" || (attempt === "external" && !externalUrl)) {
     return (
       <span
         className={`inline-flex items-center justify-center rounded-lg bg-white/10 text-aplat-cyan font-semibold shrink-0 ${className}`}
@@ -61,7 +65,12 @@ function ProjectLogo({
     );
   }
 
-  const src = attempt === "png" ? `/portafolio/${slug}.png` : `/portafolio/${slug}.svg`;
+  const src =
+    attempt === "png"
+      ? `/portafolio/${slug}.png`
+      : attempt === "svg"
+        ? `/portafolio/${slug}.svg`
+        : externalUrl ?? "";
   return (
     <img
       src={src}
@@ -69,7 +78,11 @@ function ProjectLogo({
       width={size}
       height={size}
       className={`object-contain shrink-0 ${className}`}
-      onError={() => setAttempt(attempt === "png" ? "svg" : "failed")}
+      onError={() => {
+        if (attempt === "png") setAttempt("svg");
+        else if (attempt === "svg" && externalUrl) setAttempt("external");
+        else setAttempt("failed");
+      }}
     />
   );
 }
