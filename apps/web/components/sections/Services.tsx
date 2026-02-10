@@ -70,9 +70,25 @@ export function Services() {
       className="relative py-24 overflow-hidden"
       aria-labelledby="services-heading"
     >
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-aplat-violet/8 rounded-full blur-[150px] pointer-events-none animate-neon-pulse" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-aplat-cyan/5 rounded-full blur-[120px] pointer-events-none" />
+      {/* Fondo sutil: orbes + grid muy suave */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-aplat-violet/8 rounded-full blur-[150px] animate-neon-pulse" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-aplat-cyan/5 rounded-full blur-[120px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.02)_1px,transparent_1px)] bg-[size:48px_48px] opacity-50" />
+      </div>
+
       <div className="relative container mx-auto px-6 max-w-6xl">
+        <motion.div
+          className="flex justify-center mb-4"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+        >
+          <span className="inline-flex items-center rounded-full border border-aplat-cyan/20 bg-aplat-cyan/5 px-4 py-1.5 text-xs font-medium text-aplat-cyan uppercase tracking-wider">
+            Servicios
+          </span>
+        </motion.div>
         <motion.h2
           id="services-heading"
           className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan transition-reveal"
@@ -81,7 +97,7 @@ export function Services() {
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
         >
-          Servicios
+          Soluciones a medida
         </motion.h2>
         <motion.p
           className="text-aplat-muted text-center text-lg max-w-2xl mx-auto mb-16 transition-reveal"
@@ -90,7 +106,7 @@ export function Services() {
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
-          Soluciones digitales de última generación, desplegadas en la nube.
+          Plataformas web, integraciones y automatización desplegadas en la nube.
         </motion.p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -103,9 +119,11 @@ export function Services() {
               transition={{ duration: 0.5, delay: i * 0.07, ease: [0.23, 1, 0.32, 1] }}
             >
               <Card3D
-                className={`glass glass-strong rounded-2xl p-6 mirror-shine border ${colorMap[service.color as keyof typeof colorMap]}`}
+                className={`glass glass-strong rounded-2xl p-6 mirror-shine border transition-all duration-300 hover:border-white/20 ${colorMap[service.color as keyof typeof colorMap]}`}
               >
-                <service.icon className="w-10 h-10 mb-4" />
+                <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/5 border border-white/10 mb-4">
+                  <service.icon className="w-5 h-5" />
+                </span>
                 <h3 className="text-lg font-semibold text-aplat-text mb-2">
                   {service.title}
                 </h3>

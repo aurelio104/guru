@@ -2,85 +2,159 @@
 
 import { motion } from "framer-motion";
 import { Card3D } from "@/components/ui/Card3D";
-import { Brain, BarChart3, BookOpen, Cpu } from "lucide-react";
+import { Globe, Shield, Zap, Activity } from "lucide-react";
 
 const PILLARS = [
   {
-    icon: Brain,
-    title: "Inteligencia",
-    text: "Procesamos datos y contexto para decisiones precisas en tiempo real.",
+    icon: Globe,
+    title: "Escala global",
+    text: "Despliegue multi-región, baja latencia y resiliencia para usuarios en cualquier lugar.",
+    color: "cyan",
   },
   {
-    icon: BarChart3,
-    title: "Análisis",
-    text: "Extraemos patrones, métricas y tendencias de tus operaciones.",
+    icon: Shield,
+    title: "Seguridad de primer nivel",
+    text: "Arquitectura segura por diseño, buenas prácticas y auditoría cuando lo necesites.",
+    color: "violet",
   },
   {
-    icon: BookOpen,
-    title: "Contexto",
-    text: "Cada dato se entiende dentro de tu ecosistema y reglas de negocio.",
-  },
-  {
-    icon: Cpu,
-    title: "Aprendizaje",
-    text: "El sistema mejora con cada interacción y feedback.",
+    icon: Zap,
+    title: "Tiempo real",
+    text: "Datos vivos, APIs rápidas y decisiones respaldadas por contexto actualizado.",
+    color: "emerald",
   },
 ];
+
+const TECH_STRIP = [
+  "TypeScript",
+  "Node 24",
+  "React",
+  "Vercel",
+  "APIs REST",
+  "Multi-región",
+];
+
+const colorMap = {
+  cyan: "border-aplat-cyan/25 text-aplat-cyan [--glow:rgba(34,211,238,0.15)]",
+  violet: "border-aplat-violet/25 text-aplat-violet [--glow:rgba(167,139,250,0.15)]",
+  emerald: "border-aplat-emerald/25 text-aplat-emerald [--glow:rgba(52,211,153,0.15)]",
+};
 
 export function Intelligence() {
   return (
     <section
       id="inteligencia"
-      className="relative py-24 overflow-hidden"
+      className="relative py-28 overflow-hidden"
       aria-labelledby="intelligence-heading"
     >
+      {/* Fondo */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-aplat-cyan/8 rounded-full blur-[180px] animate-neon-pulse" />
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-aplat-violet/6 rounded-full blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-aplat-cyan/6 rounded-full blur-[200px] animate-neon-pulse" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-aplat-violet/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-aplat-cyan/4 rounded-full blur-[100px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.02)_1px,transparent_1px)] bg-[size:56px_56px] opacity-40" />
       </div>
 
       <div className="relative container mx-auto px-6 max-w-6xl">
+        {/* Badge + título */}
+        <motion.div
+          className="flex justify-center mb-4"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+        >
+          <span className="inline-flex items-center rounded-full border border-aplat-cyan/25 bg-aplat-cyan/5 px-4 py-1.5 text-xs font-medium text-aplat-cyan uppercase tracking-widest">
+            A nivel global
+          </span>
+        </motion.div>
         <motion.h2
           id="intelligence-heading"
-          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan transition-reveal"
+          className="text-4xl md:text-6xl font-bold text-center mb-5 text-gradient-cyan max-w-4xl mx-auto leading-tight transition-reveal"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
         >
-          Inteligencia integrada
+          Construido para competir en cualquier escala.
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg max-w-2xl mx-auto mb-16 transition-reveal"
+          className="text-aplat-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-20 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
-          Cuatro pilares que hacen que cada solución sea adaptable y escalable.
+          Infraestructura de primer nivel, datos en tiempo real y decisiones que importan.
         </motion.p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {PILLARS.map((pillar, i) => (
-            <motion.div
-              key={pillar.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.5, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
-            >
-              <Card3D className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-aplat-cyan/20 h-full">
-                <pillar.icon className="w-10 h-10 text-aplat-cyan mb-4" />
-                <h3 className="text-lg font-semibold text-aplat-text mb-2">
-                  {pillar.title}
-                </h3>
-                <p className="text-aplat-muted text-sm leading-relaxed">
-                  {pillar.text}
-                </p>
-              </Card3D>
-            </motion.div>
-          ))}
+        {/* Bento: bloque principal + 3 pilares */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-20">
+          {/* Bloque hero: mensaje principal */}
+          <motion.div
+            className="lg:col-span-5"
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+          >
+            <Card3D className="glass glass-strong rounded-3xl p-8 md:p-10 mirror-shine border border-white/10 h-full min-h-[280px] flex flex-col justify-center relative overflow-hidden group hover:border-aplat-cyan/20 transition-colors duration-300">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-aplat-cyan/5 rounded-full blur-[80px] group-hover:bg-aplat-cyan/8 transition-colors duration-500" />
+              <Activity className="w-12 h-12 text-aplat-cyan/80 mb-6" />
+              <h3 className="text-2xl md:text-3xl font-bold text-aplat-text mb-3 leading-tight">
+                Inteligencia que trasciende fronteras.
+              </h3>
+              <p className="text-aplat-muted text-base leading-relaxed max-w-md">
+                Cada solución se despliega con los mismos estándares que exigen las operaciones globales: rendimiento, observabilidad y evolución continua.
+              </p>
+            </Card3D>
+          </motion.div>
+
+          {/* Tres pilares */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {PILLARS.map((pillar, i) => (
+              <motion.div
+                key={pillar.title}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: 0.1 + i * 0.08, ease: [0.23, 1, 0.32, 1] }}
+              >
+                <Card3D
+                  className={`glass glass-strong rounded-2xl p-6 mirror-shine border h-full transition-all duration-300 hover:shadow-[0_0_40px_var(--glow)] ${colorMap[pillar.color as keyof typeof colorMap]}`}
+                >
+                  <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/5 border border-inherit mb-4">
+                    <pillar.icon className="w-5 h-5" />
+                  </span>
+                  <h4 className="text-lg font-semibold text-aplat-text mb-2">
+                    {pillar.title}
+                  </h4>
+                  <p className="text-aplat-muted text-sm leading-relaxed">
+                    {pillar.text}
+                  </p>
+                </Card3D>
+              </motion.div>
+            ))}
+          </div>
         </div>
+
+        {/* Strip tecnológico */}
+        <motion.div
+          className="flex flex-wrap justify-center gap-3"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
+        >
+          {TECH_STRIP.map((tech, i) => (
+            <span
+              key={tech}
+              className="px-4 py-2 rounded-full glass border border-white/10 text-aplat-muted text-sm font-medium hover:text-aplat-text hover:border-aplat-cyan/20 transition-colors duration-200"
+            >
+              {tech}
+            </span>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
