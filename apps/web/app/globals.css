@@ -234,15 +234,15 @@
   100% { transform: rotate(360deg); }
 }
 
-/* A nivel global: globo, multi-región */
-@keyframes global-globe-rotate {
-  0% { transform: translate(50%, 50%) rotate(0deg) translate(-50%, -50%); }
-  100% { transform: translate(50%, 50%) rotate(360deg) translate(-50%, -50%); }
+/* A nivel global: globo, regiones, flujo multi-región */
+@keyframes global-globe-drift {
+  0%, 100% { opacity: 0.25; transform: translateX(0) scale(1); }
+  50% { opacity: 0.4; transform: translateX(2%) scale(1.02); }
 }
 
-@keyframes global-node-pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
+@keyframes global-region-pulse {
+  0%, 100% { opacity: 0.9; transform: scale(1); filter: drop-shadow(0 0 8px rgba(34,211,238,0.5)); }
+  50% { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 0 20px rgba(34,211,238,0.8)); }
 }
 
 .animate-marquee {

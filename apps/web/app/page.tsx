@@ -3,6 +3,7 @@ import { Hero } from "@/components/sections/Hero";
 import { CybersecurityPillars } from "@/components/sections/CybersecurityPillars";
 import { Services } from "@/components/sections/Services";
 import { HowItWorks } from "@/components/sections/HowItWorks";
+import { GlobalScale } from "@/components/sections/GlobalScale";
 import { Intelligence } from "@/components/sections/Intelligence";
 import { Portfolio } from "@/components/sections/Portfolio";
 import { Contact } from "@/components/sections/Contact";
@@ -17,6 +18,7 @@ export default function Home() {
         <CybersecurityPillars />
         <Services />
         <HowItWorks />
+        <GlobalScale />
         <Intelligence />
         <Portfolio />
         <Contact />
