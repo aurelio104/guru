@@ -54,12 +54,11 @@ export function CybersecurityBackground() {
         <rect width="100%" height="100%" fill="url(#hex-grid-cyber)" />
       </svg>
 
-      {/* Escudo GIGANTE de fondo (cubre toda la sección, bien visible) */}
+      {/* Escudo de fondo (tamaño contenido) */}
       <div className="absolute inset-0 flex items-center justify-center">
         <svg
           viewBox="0 0 100 100"
-          className="absolute w-[180%] max-w-none h-[180%] opacity-40"
-          style={{ minWidth: "1200px", minHeight: "1200px" }}
+          className="absolute w-[min(77vw,476px)] h-auto max-h-[min(60vh,476px)] opacity-40"
         >
           <defs>
             <linearGradient id="shield-glass-bg" x1="0%" y1="0%" x2="100%" y2="100%">
