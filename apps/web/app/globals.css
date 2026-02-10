@@ -234,6 +234,17 @@
   100% { transform: rotate(360deg); }
 }
 
+/* A nivel global: globo, multi-región */
+@keyframes global-globe-rotate {
+  0% { transform: translate(50%, 50%) rotate(0deg) translate(-50%, -50%); }
+  100% { transform: translate(50%, 50%) rotate(360deg) translate(-50%, -50%); }
+}
+
+@keyframes global-node-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
 .animate-marquee {
   animation: marquee 40s linear infinite;
 }

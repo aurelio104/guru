@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Card3D } from "@/components/ui/Card3D";
+import { GlobalScaleBackground } from "@/components/ui/GlobalScaleBackground";
 import { Globe, Shield, Zap, Activity } from "lucide-react";
 
 const PILLARS = [
@@ -44,18 +45,12 @@ export function Intelligence() {
   return (
     <section
       id="inteligencia"
-      className="relative py-28 overflow-hidden"
+      className="relative py-12 sm:py-16 md:py-24 lg:py-32 overflow-hidden min-h-0"
       aria-labelledby="intelligence-heading"
     >
-      {/* Fondo */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-aplat-cyan/6 rounded-full blur-[200px] animate-neon-pulse" />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-aplat-violet/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-aplat-cyan/4 rounded-full blur-[100px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.02)_1px,transparent_1px)] bg-[size:56px_56px] opacity-40" />
-      </div>
+      <GlobalScaleBackground />
 
-      <div className="relative container mx-auto px-6 max-w-6xl">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 max-w-6xl w-full">
         {/* Badge + título */}
         <motion.div
           className="flex justify-center mb-4"
