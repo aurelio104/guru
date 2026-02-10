@@ -1,12 +1,23 @@
 # Logos del portafolio
 
-Coloca aquí un logo por proyecto. Nombre del archivo = **slug** del repo + extensión.
+Logos recopilados desde las carpetas `public` de cada proyecto (Work/Albatros y Work/Aurelio) para mostrarlos en la sección Portafolio del sitio APlat.
 
-- Ejemplos: `APlat.png`, `Omac.png`, `Omac.svg`
-- Formatos recomendados: PNG o SVG
-- **Omac:** copia el logo desde la carpeta `public` del repo del proyecto Omac (omac569.com) y guárdalo aquí como `Omac.png` o `Omac.svg`. Si no está, se intenta cargar desde el sitio.
-- Si no hay logo, se muestra la inicial del nombre del proyecto
+## Mapeo archivo → proyecto
 
-Slugs usados: APlat, Omac, JCavalier, control-acceso-albatros, MundoIAanime, maracay-deportiva, rt-reportes, RayPremios, Cuadrernos, plataforma-albatros, BAMVino, gvx-demo, mi-app-guru, memoria, BotArbi, Admin, hack, albatros-presentacion, CuadernosOficial, WebArJC, bantx, WebArEpacio, WebArGeo, WebArEspacio, repropaper, insurance-app.
+| Archivo | Proyecto | Origen |
+|---------|----------|--------|
+| `plataforma-albatros.png` | Plataforma Albatros | Albatros/Plataforma/public/logo.png |
+| `control-acceso-albatros.png` | Control de acceso | Albatros/Control de Acceso/frontend/public/logoCA.png |
+| `Omac.png`, `Omac.svg` | Omac | Albatros/Omac/apps/web/public/ |
+| `albatros-presentacion.png` | Albatros Presentación | Albatros/Presentacion albatros /public/images/logoB.png |
+| `cia.png` | CIA (sitio institucional) | Albatros/CIA/public/assets/logo.png |
+| `ciber.png` | Ciber (monitoreo P-CS) | Albatros/Ciber/client/public/logotB.png |
+| `rt-reportes.png` | RT Reportes | Aurelio/RT/frontend/public/logo.png |
+| `JCavalier.png` | JCavalier | Aurelio/Jcavalier/frontend/public/LogoB.png |
+| `maracay-deportiva.png` | Maracay Deportiva | Aurelio/maracay-deportiva/frontend/public/LogoB.png |
+| `MundoIAanime.png` | MundoIAanime | Aurelio/Mundoiaanime/.../frontend/public/logo.png |
+| `BotArbi.png`, `BotArbi.svg` | BotArbi | Aurelio/BotArbi/public/icon.png, icon.svg |
 
-**Dominios Vercel:** Para que los enlaces del portafolio apunten a los sitios en Vercel (en vez de GitHub), ejecuta desde la raíz del repo: `pnpm run sync:vercel`. Antes haz login con la CLI (`vercel login`) o define `VERCEL_TOKEN` (crea uno en https://vercel.com/account/tokens).
+El componente `Portfolio.tsx` busca `/portafolio/{slug}.png` (y opcionalmente `.svg`). Los slugs coinciden con los de la lista de repos (ej. `rt-reportes`, `JCavalier`, `Omac`).
+
+Proyectos sin logo en esta carpeta muestran la inicial del nombre como fallback.
