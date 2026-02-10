@@ -48,12 +48,17 @@ export function Nav() {
           ))}
         </ul>
 
-        <a
-          href="#contacto"
-          className="hidden md:inline-flex items-center rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan px-4 py-2 text-sm font-medium transition-all border border-aplat-cyan/30"
-        >
-          Contactar
-        </a>
+        <div className="hidden md:flex items-center gap-3">
+          <a href="/login" className="text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors">
+            Iniciar sesión
+          </a>
+          <a
+            href="#contacto"
+            className="inline-flex items-center rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan px-4 py-2 text-sm font-medium transition-all border border-aplat-cyan/30"
+          >
+            Contactar
+          </a>
+        </div>
 
         <button
           type="button"
@@ -87,6 +92,11 @@ export function Nav() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a href="/login" className="block text-aplat-muted hover:text-aplat-text py-2" onClick={() => setOpen(false)}>
+                  Iniciar sesión
+                </a>
+              </li>
               <li>
                 <a
                   href="#contacto"
