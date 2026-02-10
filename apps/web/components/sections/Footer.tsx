@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 
 const FOOTER_LINKS = [
+  { href: "#ciberseguridad", label: "Ciberseguridad" },
   { href: "#servicios", label: "Servicios" },
   { href: "#como-funciona", label: "Cómo funciona" },
   { href: "#portafolio", label: "Portafolio" },

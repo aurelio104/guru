@@ -1,5 +1,6 @@
 import { Nav } from "@/components/sections/Nav";
 import { Hero } from "@/components/sections/Hero";
+import { CybersecurityPillars } from "@/components/sections/CybersecurityPillars";
 import { Services } from "@/components/sections/Services";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Intelligence } from "@/components/sections/Intelligence";
@@ -13,6 +14,7 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <CybersecurityPillars />
         <Services />
         <HowItWorks />
         <Intelligence />
