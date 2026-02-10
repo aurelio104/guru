@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card3D } from "@/components/ui/Card3D";
-import { ExternalLink } from "lucide-react";
+import { PortfolioBackground } from "@/components/ui/PortfolioBackground";
+import { ExternalLink, Sparkles } from "lucide-react";
 
 /** Dominios de producción: generado/actualizado por scripts/sync-vercel-domains.mjs (Vercel API). Al cambiar dominio en Vercel y volver a ejecutar el script, APlat muestra el nuevo enlace. */
 import productionUrlsData from "@/data/portfolio-production-urls.json";
@@ -58,6 +59,9 @@ const REPOS_LISTOS: { slug: string; name: string }[] = LISTOS_ORDER.filter((slug
   slug,
   name: SLUG_DISPLAY_NAMES[slug] ?? slug,
 }));
+
+/** Proyectos destacados (cards grandes): slugs a mostrar en la parte superior. */
+const FEATURED_SLUGS = ["plataforma-albatros", "Omac", "JCavalier"];
 
 /** En desarrollo */
 const REPOS_EN_DESARROLLO: { slug: string; name: string }[] = [
@@ -304,11 +308,18 @@ function PortfolioGrid({
                     </h3>
                   </div>
                 </div>
-                {url ? (
-                  <ExternalLink className="w-4 h-4 text-aplat-muted group-hover:text-aplat-violet transition-colors shrink-0 mt-1" />
-                ) : (
-                  <span className="w-4 h-4 shrink-0 mt-1 opacity-30" aria-hidden />
-                )}
+                <div className="flex items-center gap-2 shrink-0">
+                  {url && (
+                    <span className="inline-flex rounded-full bg-aplat-emerald/15 border border-aplat-emerald/25 px-2 py-0.5 text-[10px] font-semibold text-aplat-emerald uppercase tracking-wider">
+                      En producción
+                    </span>
+                  )}
+                  {url ? (
+                    <ExternalLink className="w-4 h-4 text-aplat-muted group-hover:text-aplat-violet transition-colors mt-0.5" />
+                  ) : (
+                    <span className="w-4 h-4 mt-0.5 opacity-30" aria-hidden />
+                  )}
+                </div>
               </div>
               <div className="mt-2">
                 {detail && (
@@ -391,37 +402,118 @@ function RepoLogoCarousel({ repos }: { repos: { slug: string; name: string }[] }
 }
 
 export function Portfolio() {
+  const featuredRepos = FEATURED_SLUGS.map((slug) => ({
+    slug,
+    name: SLUG_DISPLAY_NAMES[slug] ?? slug,
+  })).filter((r) => REPOS_LISTOS.some((l) => l.slug === r.slug));
+
   return (
     <section
       id="portafolio"
-      className="relative py-24 overflow-hidden"
+      className="relative py-12 sm:py-16 md:py-24 lg:py-32 overflow-hidden min-h-0"
       aria-labelledby="portfolio-heading"
     >
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-aplat-cyan/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="relative container mx-auto px-6 max-w-6xl">
+      <PortfolioBackground />
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 max-w-6xl">
+        {/* Hero: lo más importante para el cliente = prueba real */}
+        <motion.div
+          className="flex justify-center mb-4"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+        >
+          <span className="inline-flex items-center gap-2 rounded-full border border-aplat-violet/25 bg-aplat-violet/5 px-4 py-1.5 text-xs font-semibold text-aplat-violet uppercase tracking-widest">
+            <Sparkles className="w-3.5 h-3.5" />
+            Portafolio
+          </span>
+        </motion.div>
         <motion.h2
           id="portfolio-heading"
-          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-violet transition-reveal"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-4 sm:mb-5 text-gradient-violet max-w-4xl mx-auto leading-tight"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
         >
-          Portafolio
+          Lo que construimos
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg max-w-2xl mx-auto mb-10 transition-reveal"
+          className="text-aplat-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-14 sm:mb-16 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
-          Proyectos por estado. Solo los desplegados enlazan al sitio en producción.
+          Proyectos reales en producción. Infraestructura, integraciones y experiencia de usuario que usan nuestros clientes cada día.
         </motion.p>
 
-        {/* Carrusel: proyectos listos */}
+        {/* Destacados: 3 proyectos con card grande */}
+        {featuredRepos.length > 0 && (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-14 sm:mb-16"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+          >
+            {featuredRepos.map((repo, i) => {
+              const detail = REPO_DETAIL[repo.slug];
+              const url = getProductionUrl(repo.slug);
+              const content = (
+                <>
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <ProjectLogo slug={repo.slug} name={repo.name} size={52} className="rounded-2xl" />
+                    {url && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-aplat-emerald/15 border border-aplat-emerald/30 px-2.5 py-1 text-[10px] font-semibold text-aplat-emerald uppercase tracking-wider">
+                        En producción
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-xl font-semibold text-aplat-text mb-2 group-hover:text-aplat-violet transition-colors">
+                    {repo.name}
+                  </h3>
+                  {detail && (
+                    <>
+                      <p className="text-aplat-muted text-sm mb-2">{detail.tagline}</p>
+                      <p className="text-aplat-violet/80 text-xs font-mono mb-2">{detail.stack}</p>
+                      <p className="text-aplat-emerald/90 text-sm font-medium">{detail.result}</p>
+                    </>
+                  )}
+                  {url && (
+                    <span className="inline-flex items-center gap-2 mt-4 text-sm font-medium text-aplat-violet group-hover:underline">
+                      Ver sitio
+                      <ExternalLink className="w-4 h-4" />
+                    </span>
+                  )}
+                </>
+              );
+              return (
+                <motion.div
+                  key={repo.slug}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  <Card3D className="glass glass-strong rounded-2xl sm:rounded-3xl p-6 sm:p-8 mirror-shine border border-white/10 hover:border-aplat-violet/30 h-full min-h-[260px] group">
+                    {url ? (
+                      <a href={url} target="_blank" rel="noopener noreferrer" className="block h-full">
+                        {content}
+                      </a>
+                    ) : (
+                      <div className="block h-full">{content}</div>
+                    )}
+                  </Card3D>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        )}
+
+        {/* Carrusel: todos los listos */}
         <motion.div
-          className="mb-14"
+          className="mb-12 sm:mb-14"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -430,13 +522,32 @@ export function Portfolio() {
         </motion.div>
 
         {/* Listos */}
-        <PortfolioGrid title="Listos" repos={REPOS_LISTOS} className="mb-14" />
+        <PortfolioGrid title="Todos en producción" repos={REPOS_LISTOS} className="mb-12 sm:mb-14" />
 
         {/* En desarrollo */}
-        <PortfolioGrid title="En desarrollo" repos={REPOS_EN_DESARROLLO} className="mb-14" />
+        <PortfolioGrid title="En desarrollo" repos={REPOS_EN_DESARROLLO} className="mb-12 sm:mb-14" />
 
         {/* Demos */}
-        <PortfolioGrid title="Demos" repos={REPOS_DEMOS} />
+        <PortfolioGrid title="Demos" repos={REPOS_DEMOS} className="mb-14" />
+
+        {/* CTA: contacto para proyecto similar */}
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+        >
+          <p className="text-aplat-muted text-lg mb-4">
+            ¿Un proyecto así para tu negocio?
+          </p>
+          <a
+            href="#contacto"
+            className="inline-flex items-center rounded-xl bg-aplat-violet/20 hover:bg-aplat-violet/30 text-aplat-violet px-6 py-3 text-sm font-semibold border border-aplat-violet/30 transition-all"
+          >
+            Hablemos
+          </a>
+        </motion.div>
       </div>
     </section>
   );
