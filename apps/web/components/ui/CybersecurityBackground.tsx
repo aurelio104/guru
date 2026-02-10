@@ -22,37 +22,14 @@ const INTRUSION_PARTICLES = [
   { delay: 1.4, tx: "-180px", ty: "220px" },
 ];
 
-const SHIELD_PATH = "M50 8 C78 8 92 22 92 42 C92 58 78 75 50 92 C22 75 8 58 8 42 C8 22 22 8 50 8 Z";
+/* Forma clásica de escudo de protección: parte superior redondeada, lados que se estrechan, punta abajo */
+const SHIELD_PATH = "M50 4 L92 18 L92 48 Q92 72 50 96 Q8 72 8 48 L8 18 Z";
 
 export function CybersecurityBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
       {/* Base más oscura para marcar la sección */}
       <div className="absolute inset-0 bg-aplat-surface/80" />
-
-      {/* Grid hexagonal bien visible */}
-      <svg
-        className="absolute inset-0 w-full h-full opacity-[0.18] text-aplat-cyan"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <pattern
-            id="hex-grid-cyber"
-            width="56"
-            height="48.5"
-            patternUnits="userSpaceOnUse"
-            patternTransform="scale(1.2)"
-          >
-            <path
-              d="M28 0L56 14v29L28 48.5L0 43V14L28 0z"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="0.5"
-            />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#hex-grid-cyber)" />
-      </svg>
 
       {/* Escudo de fondo (tamaño contenido) */}
       <div className="absolute inset-0 flex items-center justify-center">
@@ -85,8 +62,8 @@ export function CybersecurityBackground() {
             strokeWidth="1.2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeDasharray="320"
-            strokeDashoffset="320"
+            strokeDasharray="300"
+            strokeDashoffset="300"
             style={{
               animation: "shield-draw 2.5s ease-out forwards, shield-border-pulse 2.5s ease-in-out 2.5s infinite",
             }}
