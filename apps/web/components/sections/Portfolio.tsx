@@ -7,16 +7,53 @@ import { ExternalLink } from "lucide-react";
 
 const GITHUB_BASE = "https://github.com/aurelio104";
 
-/** Dominios en producción (Vercel o custom). Solo estos proyectos se muestran en el portafolio. */
+/** Dominios en producción (Vercel o custom). Enlace al sitio cuando existe. */
 const VERCEL_URLS: Record<string, string> = {
   APlat: "https://aplat.vercel.app",
   Omac: "https://omac569.com",
 };
 
-/** Logo desde el sitio en vivo cuando no está en public/portafolio (ej. copiado del repo del proyecto). */
+/** Logo desde el sitio en vivo cuando no está en public/portafolio (fallback). */
 const LOGO_EXTERNAL: Record<string, string> = {
   Omac: "https://omac569.com/logo.png",
 };
+
+/** Listos — en producción / entregados */
+const REPOS_LISTOS: { slug: string; name: string }[] = [
+  { slug: "Omac", name: "Omac" },
+  { slug: "JCavalier", name: "JCavalier" },
+  { slug: "control-acceso-albatros", name: "Control de acceso" },
+  { slug: "MundoIAanime", name: "MundoIAanime" },
+  { slug: "maracay-deportiva", name: "Maracay Deportiva" },
+  { slug: "rt-reportes", name: "RT Reportes" },
+  { slug: "RayPremios", name: "RayPremios" },
+  { slug: "Cuadrernos", name: "Cuadrernos" },
+  { slug: "plataforma-albatros", name: "Plataforma Albatros" },
+  { slug: "BAMVino", name: "BAMVino" },
+  { slug: "hack", name: "hack" },
+  { slug: "albatros-presentacion", name: "Albatros Presentación" },
+];
+
+/** En desarrollo */
+const REPOS_EN_DESARROLLO: { slug: string; name: string }[] = [
+  { slug: "CuadernosOficial", name: "Cuadernos Oficial" },
+  { slug: "memoria", name: "Memoria" },
+  { slug: "BotArbi", name: "BotArbi" },
+  { slug: "Admin", name: "Admin" },
+  { slug: "WebArJC", name: "WebArJC" },
+  { slug: "bantx", name: "bantx" },
+  { slug: "WebArEpacio", name: "WebArEpacio" },
+  { slug: "WebArGeo", name: "WebArGeo" },
+  { slug: "WebArEspacio", name: "WebArEspacio" },
+  { slug: "repropaper", name: "repropaper" },
+  { slug: "insurance-app", name: "insurance-app" },
+];
+
+/** Demos */
+const REPOS_DEMOS: { slug: string; name: string }[] = [
+  { slug: "gvx-demo", name: "gvx-demo" },
+  { slug: "mi-app-guru", name: "mi-app-guru" },
+];
 
 function getProjectUrl(slug: string): string {
   const exact = VERCEL_URLS[slug]?.trim();
@@ -26,17 +63,6 @@ function getProjectUrl(slug: string): string {
   const byKey = Object.entries(VERCEL_URLS).find(([k]) => k.toLowerCase() === slug.toLowerCase())?.[1]?.trim();
   if (byKey) return byKey.replace(/\/$/, "");
   return `${GITHUB_BASE}/${slug}`;
-}
-
-/** True si el proyecto tiene dominio en Vercel (solo mostramos esos en el portafolio). */
-function hasVercelDomain(slug: string): boolean {
-  const url = getProjectUrl(slug);
-  return url.startsWith("https://") && !url.startsWith(GITHUB_BASE);
-}
-
-/** Repos que tienen dominio en VERCEL_URLS; solo estos se muestran. */
-function getReposWithDomain(): typeof ALL_REPOS {
-  return ALL_REPOS.filter((repo) => hasVercelDomain(repo.slug));
 }
 
 function ProjectLogo({
@@ -86,35 +112,6 @@ function ProjectLogo({
     />
   );
 }
-
-const ALL_REPOS = [
-  { slug: "Omac", name: "Omac" },
-  { slug: "JCavalier", name: "JCavalier" },
-  { slug: "control-acceso-albatros", name: "Control de acceso" },
-  { slug: "MundoIAanime", name: "MundoIAanime" },
-  { slug: "maracay-deportiva", name: "Maracay Deportiva" },
-  { slug: "rt-reportes", name: "RT Reportes" },
-  { slug: "RayPremios", name: "RayPremios" },
-  { slug: "Cuadrernos", name: "Cuadrernos" },
-  { slug: "plataforma-albatros", name: "Plataforma Albatros" },
-  { slug: "BAMVino", name: "BAMVino" },
-  { slug: "gvx-demo", name: "gvx-demo" },
-  { slug: "mi-app-guru", name: "mi-app-guru" },
-  { slug: "memoria", name: "Memoria" },
-  { slug: "BotArbi", name: "BotArbi" },
-  { slug: "Admin", name: "Admin" },
-  { slug: "APlat", name: "APlat" },
-  { slug: "hack", name: "hack" },
-  { slug: "albatros-presentacion", name: "Albatros Presentación" },
-  { slug: "CuadernosOficial", name: "Cuadernos Oficial" },
-  { slug: "WebArJC", name: "WebArJC" },
-  { slug: "bantx", name: "bantx" },
-  { slug: "WebArEpacio", name: "WebArEpacio" },
-  { slug: "WebArGeo", name: "WebArGeo" },
-  { slug: "WebArEspacio", name: "WebArEspacio" },
-  { slug: "repropaper", name: "repropaper" },
-  { slug: "insurance-app", name: "insurance-app" },
-];
 
 const REPO_DETAIL: Record<string, { tagline: string; stack: string; result: string }> = {
   "plataforma-albatros": {
@@ -249,9 +246,78 @@ const REPO_DETAIL: Record<string, { tagline: string; stack: string; result: stri
   },
 };
 
-function RepoLogoCarousel() {
-  const withDomain = getReposWithDomain();
-  const duplicated = [...withDomain, ...withDomain];
+function PortfolioGrid({
+  title,
+  repos,
+  className = "",
+}: {
+  title: string;
+  repos: { slug: string; name: string }[];
+  className?: string;
+}) {
+  return (
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+    >
+      <h3 className="text-xl font-semibold text-aplat-text mb-4 pl-1 border-l-2 border-aplat-cyan/50">
+        {title}
+      </h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {repos.map((repo, i) => {
+          const detail = REPO_DETAIL[repo.slug];
+          return (
+            <motion.div
+              key={repo.slug}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.5, delay: Math.min(i * 0.03, 0.5), ease: [0.23, 1, 0.32, 1] }}
+            >
+              <Card3D className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-aplat-violet/30 h-full group">
+                <a
+                  href={getProjectUrl(repo.slug)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <div className="flex justify-between items-start gap-3 mb-2">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <ProjectLogo slug={repo.slug} name={repo.name} size={44} className="rounded-xl" />
+                      <div className="min-w-0">
+                        <h3 className="text-lg font-semibold text-aplat-text group-hover:text-aplat-violet transition-colors truncate">
+                          {repo.name}
+                        </h3>
+                        <p className="text-aplat-muted/80 text-xs font-mono truncate">
+                          aurelio104/{repo.slug}
+                        </p>
+                      </div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-aplat-muted group-hover:text-aplat-violet transition-colors shrink-0 mt-1" />
+                  </div>
+                  <div className="mt-2">
+                    {detail && (
+                      <>
+                        <p className="text-aplat-muted text-sm mb-1">{detail.tagline}</p>
+                        <p className="text-aplat-cyan/80 text-xs font-mono mb-1">{detail.stack}</p>
+                        <p className="text-aplat-emerald/90 text-xs font-medium">{detail.result}</p>
+                      </>
+                    )}
+                  </div>
+                </a>
+              </Card3D>
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
+function RepoLogoCarousel({ repos }: { repos: { slug: string; name: string }[] }) {
+  const duplicated = [...repos, ...repos];
   return (
     <div className="relative w-full overflow-hidden py-6">
       <div className="flex gap-4 animate-marquee whitespace-nowrap">
@@ -300,71 +366,27 @@ export function Portfolio() {
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
-          Proyectos en producción que demuestran nuestra capacidad.
+          Proyectos destacados con sus logos. Enlace al sitio en producción o al repositorio.
         </motion.p>
 
-        {/* Carrusel de logos / nombres */}
+        {/* Carrusel: proyectos listos */}
         <motion.div
-          className="mb-16"
+          className="mb-14"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <RepoLogoCarousel />
+          <RepoLogoCarousel repos={REPOS_LISTOS} />
         </motion.div>
 
-        {/* Grid: solo proyectos con dominio en Vercel (verificados por sync:vercel) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {getReposWithDomain().length === 0 ? (
-            <p className="col-span-full text-center text-aplat-muted py-8">
-              No hay proyectos con dominio en producción. Ejecuta <code className="text-aplat-cyan/80">pnpm run sync:vercel</code> para cargar y verificar los dominios.
-            </p>
-          ) : getReposWithDomain().map((repo, i) => {
-            const detail = REPO_DETAIL[repo.slug];
-            return (
-              <motion.div
-                key={repo.slug}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-30px" }}
-                transition={{ duration: 0.5, delay: Math.min(i * 0.03, 0.5), ease: [0.23, 1, 0.32, 1] }}
-              >
-                <Card3D className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-aplat-violet/30 h-full group">
-                  <a
-                    href={getProjectUrl(repo.slug)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block"
-                  >
-                    <div className="flex justify-between items-start gap-3 mb-2">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <ProjectLogo slug={repo.slug} name={repo.name} size={44} className="rounded-xl" />
-                        <div className="min-w-0">
-                          <h3 className="text-lg font-semibold text-aplat-text group-hover:text-aplat-violet transition-colors truncate">
-                            {repo.name}
-                          </h3>
-                          <p className="text-aplat-muted/80 text-xs font-mono truncate">
-                            aurelio104/{repo.slug}
-                          </p>
-                        </div>
-                      </div>
-                      <ExternalLink className="w-4 h-4 text-aplat-muted group-hover:text-aplat-violet transition-colors shrink-0 mt-1" />
-                    </div>
-                    <div className="mt-2">
-                      {detail && (
-                        <>
-                          <p className="text-aplat-muted text-sm mb-1">{detail.tagline}</p>
-                          <p className="text-aplat-cyan/80 text-xs font-mono mb-1">{detail.stack}</p>
-                          <p className="text-aplat-emerald/90 text-xs font-medium">{detail.result}</p>
-                        </>
-                      )}
-                    </div>
-                  </a>
-                </Card3D>
-              </motion.div>
-            );
-          })}
-        </div>
+        {/* Listos */}
+        <PortfolioGrid title="Listos" repos={REPOS_LISTOS} className="mb-14" />
+
+        {/* En desarrollo */}
+        <PortfolioGrid title="En desarrollo" repos={REPOS_EN_DESARROLLO} className="mb-14" />
+
+        {/* Demos */}
+        <PortfolioGrid title="Demos" repos={REPOS_DEMOS} />
       </div>
     </section>
   );
