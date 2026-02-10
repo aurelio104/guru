@@ -22,8 +22,8 @@ const INTRUSION_PARTICLES = [
   { delay: 1.4, tx: "-18vw", ty: "24vh" },
 ];
 
-/* Forma clásica de escudo: arco arriba, lados curvos, punta abajo */
-const SHIELD_PATH = "M50 2 C88 2 98 18 98 42 C98 68 72 92 50 98 C28 92 2 68 2 42 C2 18 12 2 50 2 Z";
+/* Misma figura que el escudo pequeño del centro, escalada al viewBox 100x100 */
+const SHIELD_PATH = "M50 2 L82 18 L82 58 Q82 82 50 98 Q18 82 18 58 L18 18 Z";
 
 export function CybersecurityBackground() {
   return (
@@ -179,15 +179,38 @@ export function CybersecurityBackground() {
         />
       </svg>
 
-      {/* Radar sweep: 100% responsive */}
+      {/* Radar tipo PPI: anillos de distancia + haz que barre */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div
-          className="w-[min(100vw,80vmin)] h-[min(75vh,70vmin)] max-w-full opacity-[0.12]"
-          style={{
-            background: "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(34,211,238,0.35) 50deg, transparent 100deg)",
-            animation: "cyber-sweep 14s linear infinite",
-          }}
-        />
+        <svg
+          viewBox="0 0 100 100"
+          className="w-[min(85vmin,75vw)] h-[min(85vmin,75vw)] max-w-full opacity-[0.18]"
+          style={{ aspectRatio: "1" }}
+        >
+          <defs>
+            <radialGradient id="radar-beam" cx="50" cy="50" r="45" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="rgba(34,211,238,0)" />
+              <stop offset="75%" stopColor="rgba(34,211,238,0)" />
+              <stop offset="100%" stopColor="rgba(34,211,238,0.45)" />
+            </radialGradient>
+          </defs>
+          {/* Anillos de distancia (concentric circles) */}
+          <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(34,211,238,0.12)" strokeWidth="0.4" />
+          <circle cx="50" cy="50" r="34" fill="none" stroke="rgba(34,211,238,0.12)" strokeWidth="0.35" />
+          <circle cx="50" cy="50" r="22" fill="none" stroke="rgba(34,211,238,0.12)" strokeWidth="0.35" />
+          <circle cx="50" cy="50" r="11" fill="none" stroke="rgba(34,211,238,0.1)" strokeWidth="0.3" />
+          {/* Cruz de ejes (N/S/E/W) */}
+          <line x1="50" y1="5" x2="50" y2="95" stroke="rgba(34,211,238,0.08)" strokeWidth="0.25" />
+          <line x1="5" y1="50" x2="95" y2="50" stroke="rgba(34,211,238,0.08)" strokeWidth="0.25" />
+          {/* Haz que barre (sector fino, centro en 50,50) */}
+          <g transform="translate(50, 50)">
+            <g style={{ transformOrigin: "0 0", animation: "cyber-sweep 8s linear infinite" }}>
+              <path
+                d="M0 0 L0 -42 L3.7 -41.8 L0 0 Z"
+                fill="url(#radar-beam)"
+              />
+            </g>
+          </g>
+        </svg>
       </div>
 
       {/* Orbe sutil: responsive con vmax */}
