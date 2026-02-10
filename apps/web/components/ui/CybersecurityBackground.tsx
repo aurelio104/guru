@@ -155,8 +155,7 @@ export function CybersecurityBackground() {
         />
       </div>
 
-      {/* Orbes de ambiente */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-aplat-cyan/12 rounded-full blur-[180px] animate-neon-pulse" />
+      {/* Orbe sutil abajo-derecha (sin óvalo arriba) */}
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-aplat-violet/10 rounded-full blur-[150px]" />
 
       {/* Scanline tipo monitor seguro */}
