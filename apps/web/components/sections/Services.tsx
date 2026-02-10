@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Card3D } from "@/components/ui/Card3D";
+import { FuturistBackground } from "@/components/ui/FuturistBackground";
 import {
   Globe,
   Plane,
@@ -70,9 +71,10 @@ export function Services() {
       className="relative py-12 sm:py-16 md:py-24 lg:py-32 overflow-hidden min-h-0"
       aria-labelledby="services-heading"
     >
-      {/* Fondo: mismo esquema (responsive, z-0) */}
+      {/* Fondo: imagen sutil opcional + textura futurista + orbes (responsive, z-0) */}
       <div className="absolute inset-0 pointer-events-none z-0" aria-hidden>
         <div className="absolute inset-0 bg-aplat-surface/40" />
+        <FuturistBackground imageSrc="/backgrounds/section-bg.jpg" imageOpacity={0.045} variant="section" />
         <div className="absolute top-0 right-0 w-[45vmax] h-[45vmax] max-w-[600px] max-h-[600px] bg-aplat-violet/8 rounded-full blur-[20vmin] animate-neon-pulse" />
         <div className="absolute bottom-0 left-0 w-[35vmax] h-[35vmax] max-w-[500px] max-h-[500px] bg-aplat-cyan/5 rounded-full blur-[18vmin]" />
         <div

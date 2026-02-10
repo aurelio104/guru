@@ -2,16 +2,24 @@
 
 import { NeuralNetworkBackground } from "@/components/ui/NeuralNetworkBackground";
 import { GlassScreensBackground } from "@/components/ui/GlassScreensBackground";
+import { FuturistBackground } from "@/components/ui/FuturistBackground";
 
 /**
- * Fondo futurista para el Hero: mesh + grid + red neuronal animada + pantallas de proceso.
- * Opcional: añade public/videos/hero-bg.mp4 y un <video> aquí para fondo en video.
+ * Fondo futurista para el Hero: imagen sutil opcional + textura + mesh + red neuronal + pantallas.
+ * Opcional: añade public/backgrounds/hero-bg.jpg para imagen de fondo.
  */
 
 export function HeroBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
       <div className="absolute inset-0 bg-aplat-deep" />
+
+      {/* Imagen de fondo sutil + textura futurista (última generación) */}
+      <FuturistBackground
+        imageSrc="/backgrounds/hero-bg.jpg"
+        imageOpacity={0.05}
+        variant="hero"
+      />
 
       {/* Mesh animado (gradientes que se mueven) */}
       <div className="absolute inset-0 bg-mesh animate-mesh" />
