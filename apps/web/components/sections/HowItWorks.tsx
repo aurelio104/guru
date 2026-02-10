@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Card3D } from "@/components/ui/Card3D";
-import { FuturistBackground } from "@/components/ui/FuturistBackground";
+import { HowItWorksBackground } from "@/components/ui/HowItWorksBackground";
 import { Cpu, BarChart3, Layers, Sparkles } from "lucide-react";
 
 const STEPS = [
@@ -50,20 +50,8 @@ export function HowItWorks() {
       className="relative py-12 sm:py-16 md:py-24 lg:py-32 overflow-hidden min-h-0"
       aria-labelledby="how-it-works-heading"
     >
-      {/* Fondo: imagen sutil opcional + textura futurista + orbes (responsive, z-0) */}
-      <div className="absolute inset-0 pointer-events-none z-0" aria-hidden>
-        <div className="absolute inset-0 bg-aplat-surface/40" />
-        <FuturistBackground imageSrc="/backgrounds/section-bg.jpg" imageOpacity={0.045} variant="section" />
-        <div className="absolute top-1/4 left-1/4 w-[40vmax] h-[40vmax] max-w-[550px] max-h-[550px] rounded-full bg-aplat-cyan/8 blur-[18vmin] animate-neon-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-[35vmax] h-[35vmax] max-w-[450px] max-h-[450px] rounded-full bg-aplat-violet/6 blur-[16vmin]" />
-        <div
-          className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage: "linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px), linear-gradient(90deg,rgba(34,211,238,0.03)_1px,transparent_1px)",
-            backgroundSize: "clamp(24px, 4vw, 48px) clamp(24px, 4vw, 48px)",
-          }}
-        />
-      </div>
+      {/* Fondo inteligencia: red neuronal, núcleo, pilares 01–04, animaciones */}
+      <HowItWorksBackground />
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 max-w-6xl w-full">
         <motion.div
