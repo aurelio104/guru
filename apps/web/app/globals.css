@@ -234,15 +234,27 @@
   100% { transform: rotate(360deg); }
 }
 
-/* A nivel global: globo, regiones, flujo multi-región */
-@keyframes global-globe-drift {
-  0%, 100% { opacity: 0.25; transform: translateX(0) scale(1); }
-  50% { opacity: 0.4; transform: translateX(2%) scale(1.02); }
+/* A nivel global: identidad distinta a Cómo funciona (globo, flujo horizontal, emerald) */
+@keyframes global-globe-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-@keyframes global-region-pulse {
-  0%, 100% { opacity: 0.9; transform: scale(1); filter: drop-shadow(0 0 8px rgba(34,211,238,0.5)); }
-  50% { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 0 20px rgba(34,211,238,0.8)); }
+@keyframes global-stream {
+  0% { transform: translateX(-100%); opacity: 0.35; }
+  20% { opacity: 0.65; }
+  80% { opacity: 0.65; }
+  100% { transform: translateX(400%); opacity: 0.35; }
+}
+
+@keyframes global-meridian-pass {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.35; }
+}
+
+@keyframes global-glow-soft {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.85; }
 }
 
 .animate-marquee {
