@@ -2,43 +2,20 @@
 
 import { motion } from "framer-motion";
 import { TypingAnimation } from "@/components/ui/TypingAnimation";
+import { HeroBackground } from "@/components/ui/HeroBackground";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 export function Hero() {
   return (
     <section
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden perspective-3d"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden perspective-3d scanlines"
       aria-label="Presentación APlat"
     >
-      {/* Fondos: gradientes y orbes con profundidad */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <motion.div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-aplat-cyan/10 rounded-full blur-[150px]"
-          animate={{ scale: [1, 1.1, 1], opacity: [0.6, 1, 0.6] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-0 right-0 w-[600px] h-[500px] bg-aplat-violet/10 rounded-full blur-[120px]"
-          animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-aplat-emerald/5 rounded-full blur-[100px]"
-          animate={{ x: [0, -20, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </div>
-
-      {/* Grid sutil con perspectiva */}
-      <div
-        className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]"
-        style={{ transform: "translateZ(-1px)" }}
-        aria-hidden
-      />
+      <HeroBackground />
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto preserve-3d">
         <motion.div
-          className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-8 text-sm text-aplat-muted smooth-transition"
+          className="inline-flex items-center gap-2 glass glass-strong rounded-full px-4 py-2 mb-8 text-sm text-aplat-muted smooth-transition border-aplat-cyan/20"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
@@ -86,7 +63,7 @@ export function Hero() {
         >
           <motion.a
             href="#servicios"
-            className="inline-flex items-center gap-2 rounded-xl bg-white/10 border border-white/20 px-6 py-3 text-aplat-text font-medium smooth-transition shadow-depth hover:border-aplat-cyan/50 hover:shadow-[0_0_40px_rgba(34,211,238,0.25)] hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 rounded-xl glass-neon px-6 py-3 text-aplat-text font-medium smooth-transition shadow-depth hover:-translate-y-0.5"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -95,7 +72,7 @@ export function Hero() {
           </motion.a>
           <motion.a
             href="#como-funciona"
-            className="inline-flex items-center gap-2 rounded-xl glass px-6 py-3 text-aplat-muted font-medium smooth-transition hover:text-aplat-text hover:border-white/20"
+            className="inline-flex items-center gap-2 rounded-xl glass glass-strong px-6 py-3 text-aplat-muted font-medium smooth-transition hover:text-aplat-text hover:border-white/20"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >

@@ -24,7 +24,7 @@ export function Nav() {
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass border-b border-white/5" : ""
+        scrolled ? "glass-strong border-b border-white/10 shadow-[0_0_40px_-10px_rgba(34,211,238,0.08)]" : ""
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}

@@ -14,8 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="dark">
-      <body className="min-h-screen bg-aplat-deep text-aplat-text font-sans">
-        {children}
+      <body className="min-h-screen bg-aplat-deep text-aplat-text font-sans bg-grid-perspective">
+        <div className="relative min-h-screen">
+          {children}
+        </div>
       </body>
     </html>
   );

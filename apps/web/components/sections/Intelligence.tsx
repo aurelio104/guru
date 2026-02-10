@@ -34,11 +34,9 @@ export function Intelligence() {
       className="relative py-24 overflow-hidden"
       aria-labelledby="intelligence-heading"
     >
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden
-      >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-aplat-cyan/5 rounded-full blur-[180px]" />
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-aplat-cyan/8 rounded-full blur-[180px] animate-neon-pulse" />
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-aplat-violet/6 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative container mx-auto px-6 max-w-6xl">

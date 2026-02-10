@@ -70,7 +70,8 @@ export function Services() {
       className="relative py-24 overflow-hidden"
       aria-labelledby="services-heading"
     >
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-aplat-violet/5 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-aplat-violet/8 rounded-full blur-[150px] pointer-events-none animate-neon-pulse" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-aplat-cyan/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="relative container mx-auto px-6 max-w-6xl">
         <motion.h2
           id="services-heading"

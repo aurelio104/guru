@@ -61,8 +61,6 @@ const REPOS_LISTOS: { slug: string; name: string }[] = LISTOS_ORDER.filter((slug
 
 /** En desarrollo */
 const REPOS_EN_DESARROLLO: { slug: string; name: string }[] = [
-  { slug: "CuadernosOficial", name: "Cuadernos Oficial" },
-  { slug: "memoria", name: "Memoria" },
   { slug: "BotArbi", name: "BotArbi" },
   { slug: "Admin", name: "Admin" },
   { slug: "WebArJC", name: "WebArJC" },

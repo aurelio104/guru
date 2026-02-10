@@ -86,7 +86,7 @@ export function Contact() {
         </motion.p>
 
         <motion.form
-          className="glass glass-strong rounded-2xl p-8 mirror-shine border border-white/10 smooth-transition shadow-depth hover:border-aplat-cyan/20"
+          className="glass glass-strong rounded-2xl p-8 mirror-shine border border-white/10 smooth-transition shadow-depth glow-border hover:border-aplat-cyan/20"
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}

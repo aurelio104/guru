@@ -44,13 +44,9 @@ export function HowItWorks() {
       className="relative py-24 overflow-hidden"
       aria-labelledby="how-it-works-heading"
     >
-      {/* Fondo con gradiente sutil */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden
-      >
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-aplat-cyan/5 blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-aplat-violet/5 blur-[100px]" />
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-aplat-cyan/8 blur-[120px] animate-neon-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-aplat-violet/6 blur-[100px]" />
       </div>
 
       <div className="relative container mx-auto px-6 max-w-6xl">
