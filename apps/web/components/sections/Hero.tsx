@@ -7,28 +7,41 @@ import { ArrowRight, Sparkles } from "lucide-react";
 export function Hero() {
   return (
     <section
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden perspective-3d"
       aria-label="Presentación APlat"
     >
-      {/* Fondos: gradientes y orbes */}
+      {/* Fondos: gradientes y orbes con profundidad */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-aplat-cyan/10 rounded-full blur-[150px] animate-pulse-glow" />
-        <div className="absolute bottom-0 right-0 w-[600px] h-[500px] bg-aplat-violet/10 rounded-full blur-[120px] animate-float" />
-        <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-aplat-emerald/5 rounded-full blur-[100px]" />
+        <motion.div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-aplat-cyan/10 rounded-full blur-[150px]"
+          animate={{ scale: [1, 1.1, 1], opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-0 right-0 w-[600px] h-[500px] bg-aplat-violet/10 rounded-full blur-[120px]"
+          animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-aplat-emerald/5 rounded-full blur-[100px]"
+          animate={{ x: [0, -20, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
       </div>
 
-      {/* Grid sutil */}
+      {/* Grid sutil con perspectiva */}
       <div
         className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]"
+        style={{ transform: "translateZ(-1px)" }}
         aria-hidden
       />
 
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto preserve-3d">
         <motion.div
-          className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-8 text-sm text-aplat-muted"
+          className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-8 text-sm text-aplat-muted smooth-transition"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
         >
           <Sparkles className="w-4 h-4 text-aplat-cyan" />
           <span>Servicios digitales de última generación</span>
@@ -38,7 +51,7 @@ export function Hero() {
           className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
           <span className="text-aplat-text">APlat.</span>
           <br />
@@ -59,7 +72,7 @@ export function Hero() {
           className="text-lg md:text-xl text-aplat-muted max-w-2xl mx-auto mb-10 leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
         >
           Plataforma inteligente que combina análisis, contexto y aprendizaje
           continuo para entregar soluciones que escalan.
@@ -69,21 +82,25 @@ export function Hero() {
           className="flex flex-wrap justify-center gap-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.5, ease: [0.23, 1, 0.32, 1] }}
         >
-          <a
+          <motion.a
             href="#servicios"
-            className="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 px-6 py-3 text-aplat-text font-medium transition-all hover:border-aplat-cyan/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]"
+            className="inline-flex items-center gap-2 rounded-xl bg-white/10 border border-white/20 px-6 py-3 text-aplat-text font-medium smooth-transition shadow-depth hover:border-aplat-cyan/50 hover:shadow-[0_0_40px_rgba(34,211,238,0.25)] hover:-translate-y-0.5"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
           >
             Ver servicios
             <ArrowRight className="w-4 h-4" />
-          </a>
-          <a
+          </motion.a>
+          <motion.a
             href="#como-funciona"
-            className="inline-flex items-center gap-2 rounded-xl glass px-6 py-3 text-aplat-muted hover:text-aplat-text font-medium transition-all"
+            className="inline-flex items-center gap-2 rounded-xl glass px-6 py-3 text-aplat-muted font-medium smooth-transition hover:text-aplat-text hover:border-white/20"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
           >
             Cómo funciona
-          </a>
+          </motion.a>
         </motion.div>
       </div>
 

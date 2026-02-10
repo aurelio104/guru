@@ -67,28 +67,30 @@ export function Contact() {
       <div className="relative container mx-auto px-6 max-w-2xl">
         <motion.h2
           id="contact-heading"
-          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan transition-reveal"
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
         >
           Contacto
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg mb-12"
+          className="text-aplat-muted text-center text-lg mb-12 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
           Cuéntanos tu proyecto y te respondemos con una propuesta a medida.
         </motion.p>
 
         <motion.form
-          className="glass glass-strong rounded-2xl p-8 mirror-shine border border-white/10"
-          initial={{ opacity: 0, y: 24 }}
+          className="glass glass-strong rounded-2xl p-8 mirror-shine border border-white/10 smooth-transition shadow-depth hover:border-aplat-cyan/20"
+          initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.6, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
           onSubmit={handleSubmit}
         >
           {(status === "success" || status === "error") && (

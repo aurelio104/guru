@@ -19,3 +19,4 @@ apps/web/.env.local
 # IDE / OS
 .DS_Store
 *.log
+.vercel

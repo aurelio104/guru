@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Card3D } from "@/components/ui/Card3D";
 import {
   Globe,
   Plane,
@@ -73,19 +74,20 @@ export function Services() {
       <div className="relative container mx-auto px-6 max-w-6xl">
         <motion.h2
           id="services-heading"
-          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan transition-reveal"
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
         >
           Servicios
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg max-w-2xl mx-auto mb-16"
+          className="text-aplat-muted text-center text-lg max-w-2xl mx-auto mb-16 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
           Soluciones digitales de última generación, desplegadas en la nube.
         </motion.p>
@@ -94,20 +96,22 @@ export function Services() {
           {SERVICES.map((service, i) => (
             <motion.div
               key={service.title}
-              className={`glass glass-strong rounded-2xl p-6 mirror-shine border transition-all duration-300 ${colorMap[service.color as keyof typeof colorMap]}`}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 32 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.06 }}
-              whileHover={{ scale: 1.02, y: -4 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.5, delay: i * 0.07, ease: [0.23, 1, 0.32, 1] }}
             >
-              <service.icon className="w-10 h-10 mb-4" />
-              <h3 className="text-lg font-semibold text-aplat-text mb-2">
-                {service.title}
-              </h3>
-              <p className="text-aplat-muted text-sm leading-relaxed">
-                {service.desc}
-              </p>
+              <Card3D
+                className={`glass glass-strong rounded-2xl p-6 mirror-shine border ${colorMap[service.color as keyof typeof colorMap]}`}
+              >
+                <service.icon className="w-10 h-10 mb-4" />
+                <h3 className="text-lg font-semibold text-aplat-text mb-2">
+                  {service.title}
+                </h3>
+                <p className="text-aplat-muted text-sm leading-relaxed">
+                  {service.desc}
+                </p>
+              </Card3D>
             </motion.div>
           ))}
         </div>

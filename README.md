@@ -7,8 +7,8 @@
 - **apps/web/** — Sitio público APlat (Next.js 15, Tailwind 4, TypeScript). Listo para Vercel.
 - **apps/api/** — API Node 24 + Fastify (formulario de contacto). Listo para Koyeb.
 - **APLAT-PLAN-MAESTRO.md** — Plan maestro: análisis del portafolio, catálogo de servicios, plan de acción.
-- **docs/** — Portafolio, servicios, estudio de 5 plataformas.
-- **_repos/** — Clones de referencia de repositorios de GitHub (aurelio104).
+- **docs/** — Portafolio, servicios, estudio de 5 plataformas, despliegue (Vercel + Koyeb).
+- La carpeta **_repos** no se sube a Git (está en `.gitignore`).
 
 ## Cómo ejecutar el sitio APlat
 
@@ -25,8 +25,10 @@ Abre [http://localhost:3000](http://localhost:3000).
 
 **Formulario de contacto:** para que envíe a la API, en `apps/web` crea `.env.local` con `NEXT_PUBLIC_APLAT_API_URL=http://localhost:3001` y en otra terminal ejecuta `pnpm dev:api` (o `cd apps/api && pnpm dev`).
 
-**Producción:** frontend `pnpm build` + `pnpm start` o Vercel; API ver `docs/DEPLOY-KOYEB.md`.
+**Producción:** frontend en Vercel (`vercel --cwd apps/web --prod` tras `vercel login`); API en Koyeb (ya desplegada). Ver `docs/DEPLOY-PRODUCCION.md`.
 
-## Conexión GitHub
+## Repositorio y producción
 
-La conexión SSH a GitHub (aurelio104) está configurada en esta máquina. Los repos se clonaron desde `git@github.com:aurelio104/<repo>.git` para el análisis del plan maestro.
+- **GitHub:** [github.com/aurelio104/APlat](https://github.com/aurelio104/APlat)
+- **Frontend (Vercel):** [aplat.vercel.app](https://aplat.vercel.app)
+- **API (Koyeb):** https://aplat-aurelio104-5edd4229.koyeb.app

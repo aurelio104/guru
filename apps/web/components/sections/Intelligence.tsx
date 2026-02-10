@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Card3D } from "@/components/ui/Card3D";
 import { Brain, BarChart3, BookOpen, Cpu } from "lucide-react";
 
 const PILLARS = [
@@ -43,19 +44,20 @@ export function Intelligence() {
       <div className="relative container mx-auto px-6 max-w-6xl">
         <motion.h2
           id="intelligence-heading"
-          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan transition-reveal"
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
         >
           Inteligencia integrada
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg max-w-2xl mx-auto mb-16"
+          className="text-aplat-muted text-center text-lg max-w-2xl mx-auto mb-16 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
           Cuatro pilares que hacen que cada solución sea adaptable y escalable.
         </motion.p>
@@ -64,23 +66,20 @@ export function Intelligence() {
           {PILLARS.map((pillar, i) => (
             <motion.div
               key={pillar.title}
-              className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-aplat-cyan/20 transition-all"
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              whileHover={{
-                y: -4,
-                boxShadow: "0 20px 40px -20px rgba(34, 211, 238, 0.2)",
-              }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.5, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
             >
-              <pillar.icon className="w-10 h-10 text-aplat-cyan mb-4" />
-              <h3 className="text-lg font-semibold text-aplat-text mb-2">
-                {pillar.title}
-              </h3>
-              <p className="text-aplat-muted text-sm leading-relaxed">
-                {pillar.text}
-              </p>
+              <Card3D className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-aplat-cyan/20 h-full">
+                <pillar.icon className="w-10 h-10 text-aplat-cyan mb-4" />
+                <h3 className="text-lg font-semibold text-aplat-text mb-2">
+                  {pillar.title}
+                </h3>
+                <p className="text-aplat-muted text-sm leading-relaxed">
+                  {pillar.text}
+                </p>
+              </Card3D>
             </motion.div>
           ))}
         </div>

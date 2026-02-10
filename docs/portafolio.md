@@ -10,12 +10,13 @@ Proyectos del ecosistema GitHub (aurelio104) clasificados para presentación y v
 | **Omac** | Centro de mando inteligente: dashboards, auth (JWT + WebAuthn), WhatsApp, operaciones de campus | Next.js 15, TypeScript, SQLite, Argon2, Baileys, Recharts | Producción / base reutilizable | Centros de mando y operaciones |
 | **rt-reportes** | PWA multiempresa: subida Excel, extracción inteligente, dashboard (totales, góndolas, gráficas), roles Master/Uploader/Boss | Fastify, React 19, Vite, SQLite, Tailwind 4 | Completado | Automatización de reportes y control contable |
 | **control-acceso-albatros** | Control de acceso con OCR (cédulas), QR, carnets, historial; optimizado móvil/iPad | Node 24, React 19, Express, Vite, Tesseract, Tailwind 4 | Completado | Recepción y control de visitas |
+| **JCavalier** | Panel y producto con marca; gestión y experiencia de marca | Next.js · React · Admin | Producción / cliente | Web / admin |
 
 ## Resto del portafolio
 
 | Proyecto | Descripción (inferida) | Uso en APlat |
 |----------|------------------------|--------------|
-| JCavalier | Panel/admin o producto con marca | Web / admin |
+| JCavalier | *(en portafolio estrella)* | — |
 | control-acceso-albatros | *(ya en estrella)* | — |
 | MundoIAanime | IA / anime | Productos IA |
 | maracay-deportiva | Contenido deportivo | Medios / web |

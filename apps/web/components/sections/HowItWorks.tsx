@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Card3D } from "@/components/ui/Card3D";
 
 const STEPS = [
   {
@@ -55,20 +56,20 @@ export function HowItWorks() {
       <div className="relative container mx-auto px-6 max-w-6xl">
         <motion.h2
           id="how-it-works-heading"
-          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient-cyan transition-reveal"
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
         >
           Cómo funciona
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg max-w-2xl mx-auto mb-16"
+          className="text-aplat-muted text-center text-lg max-w-2xl mx-auto mb-16 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
           Cuatro pilares que se conectan para entregar resultados de última generación.
         </motion.p>
@@ -142,29 +143,25 @@ export function HowItWorks() {
           </svg>
         </motion.div>
 
-        {/* Grid de pasos con glass */}
+        {/* Grid de pasos con glass y 3D */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {STEPS.map((step, i) => (
             <motion.div
               key={step.id}
-              className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              whileHover={{
-                scale: 1.02,
-                borderColor: "rgba(34, 211, 238, 0.3)",
-                boxShadow: "0 0 40px rgba(34, 211, 238, 0.1)",
-              }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.5, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
             >
-              <div className="text-3xl mb-3 text-aplat-cyan">{step.icon}</div>
-              <h3 className="text-xl font-semibold text-aplat-text mb-2">
-                {step.title}
-              </h3>
-              <p className="text-aplat-muted text-sm leading-relaxed">
-                {step.desc}
-              </p>
+              <Card3D className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-aplat-cyan/30 h-full">
+                <div className="text-3xl mb-3 text-aplat-cyan">{step.icon}</div>
+                <h3 className="text-xl font-semibold text-aplat-text mb-2">
+                  {step.title}
+                </h3>
+                <p className="text-aplat-muted text-sm leading-relaxed">
+                  {step.desc}
+                </p>
+              </Card3D>
             </motion.div>
           ))}
         </div>

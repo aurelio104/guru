@@ -1,5 +1,8 @@
 # Despliegue en producción: Vercel (front) + Koyeb (back)
 
+**API en Koyeb (desplegada por CLI):** `https://aplat-aurelio104-5edd4229.koyeb.app`  
+Añade en el servicio la variable `CORS_ORIGIN` = URL de tu front en Vercel cuando la tengas.
+
 ## Resumen
 
 - **Frontend (apps/web):** Vercel — Next.js, formulario contacto, home, (login en integración).
@@ -39,18 +42,29 @@ git push -u origin main
 
 ## 2. Frontend en Vercel (CLI)
 
-### Instalar y vincular
+### Instalar, login y vincular
 
 ```bash
-# Instalar Vercel CLI (una vez)
+# Asegurar PATH (Node/npx)
+export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+
+# Instalar Vercel CLI (una vez, si no está)
 npm i -g vercel
-# o: pnpm add -g vercel
+# o: npx vercel (usa la versión descargada)
 
 cd /ruta/a/APlat
-vercel login   # si no estás logueado
 
-# Desplegar desde la carpeta del frontend
-vercel --cwd apps/web
+# 1) Login (obligatorio una vez)
+npx vercel login
+# La CLI mostrará una URL tipo: https://vercel.com/oauth/device?user_code=XXXX-XXXX
+# Ábrela en el navegador, inicia sesión en Vercel y autoriza el dispositivo.
+# Cuando termines, vuelve a la terminal y pulsa ENTER si lo pide.
+
+# 2) Desplegar (primera vez: preguntará proyecto y org)
+npx vercel --cwd apps/web
+
+# 3) Producción
+npx vercel --cwd apps/web --prod
 ```
 
 La primera vez te pedirá vincular a un proyecto (crear nuevo o enlazar existente). El **Root Directory** debe ser `apps/web` (o en el dashboard: Project Settings → Root Directory = `apps/web`).
@@ -111,7 +125,7 @@ koyeb apps init aplat \
   --region fra
 ```
 
-Sustituye `aurelio104/APlat` por tu usuario/repo y `https://tu-dominio.vercel.app` por la URL del front en Vercel. Tras el deploy, la API quedará en `https://aplat-xxx.koyeb.app` (o el subdominio que asignes).
+Sustituye `aurelio104/APlat` por tu usuario/repo y `https://tu-dominio.vercel.app` por la URL del front en Vercel. Tras el deploy, la API quedará en un subdominio tipo `https://aplat-aurelio104-xxx.koyeb.app`. Para añadir CORS una vez creado el servicio: en Koyeb Console → tu servicio → Variables → `CORS_ORIGIN` = URL de tu front en Vercel.
 
 ### Alternativa: despliegue con Dockerfile
 
