@@ -1,10 +1,78 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card3D } from "@/components/ui/Card3D";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 const GITHUB_BASE = "https://github.com/aurelio104";
+
+/** Dominios Vercel por slug. Si no hay URL, el enlace va a GitHub. */
+const VERCEL_URLS: Record<string, string> = {
+  APlat: "https://aplat.vercel.app",
+  // Añade aquí más: slug -> "https://tu-proyecto.vercel.app"
+  // Omac: "https://omac.vercel.app",
+  // "rt-reportes": "https://rt-reportes.vercel.app",
+};
+
+function getProjectUrl(slug: string): string {
+  const exact = VERCEL_URLS[slug]?.trim();
+  if (exact) return exact.replace(/\/$/, "");
+  const lower = VERCEL_URLS[slug.toLowerCase()]?.trim();
+  if (lower) return lower.replace(/\/$/, "");
+  const byKey = Object.entries(VERCEL_URLS).find(([k]) => k.toLowerCase() === slug.toLowerCase())?.[1]?.trim();
+  if (byKey) return byKey.replace(/\/$/, "");
+  return `${GITHUB_BASE}/${slug}`;
+}
+
+/** True si el proyecto tiene dominio en Vercel (solo mostramos esos en el portafolio). */
+function hasVercelDomain(slug: string): boolean {
+  const url = getProjectUrl(slug);
+  return url.startsWith("https://") && !url.startsWith(GITHUB_BASE);
+}
+
+/** Repos que tienen dominio en VERCEL_URLS; solo estos se muestran. */
+function getReposWithDomain(): typeof ALL_REPOS {
+  return ALL_REPOS.filter((repo) => hasVercelDomain(repo.slug));
+}
+
+function ProjectLogo({
+  slug,
+  name,
+  size = 40,
+  className = "",
+}: {
+  slug: string;
+  name: string;
+  size?: number;
+  className?: string;
+}) {
+  const [attempt, setAttempt] = useState<"png" | "svg" | "failed">("png");
+  const initial = name.charAt(0).toUpperCase();
+
+  if (attempt === "failed") {
+    return (
+      <span
+        className={`inline-flex items-center justify-center rounded-lg bg-white/10 text-aplat-cyan font-semibold shrink-0 ${className}`}
+        style={{ width: size, height: size }}
+      >
+        {initial}
+      </span>
+    );
+  }
+
+  const src = attempt === "png" ? `/portafolio/${slug}.png` : `/portafolio/${slug}.svg`;
+  return (
+    <img
+      src={src}
+      alt={`Logo ${name}`}
+      width={size}
+      height={size}
+      className={`object-contain shrink-0 ${className}`}
+      onError={() => setAttempt(attempt === "png" ? "svg" : "failed")}
+    />
+  );
+}
 
 const ALL_REPOS = [
   { slug: "Omac", name: "Omac" },
@@ -169,19 +237,20 @@ const REPO_DETAIL: Record<string, { tagline: string; stack: string; result: stri
 };
 
 function RepoLogoCarousel() {
-  const duplicated = [...ALL_REPOS, ...ALL_REPOS];
+  const withDomain = getReposWithDomain();
+  const duplicated = [...withDomain, ...withDomain];
   return (
     <div className="relative w-full overflow-hidden py-6">
       <div className="flex gap-4 animate-marquee whitespace-nowrap">
         {duplicated.map((repo, i) => (
           <a
             key={`${repo.slug}-${i}`}
-            href={`${GITHUB_BASE}/${repo.slug}`}
+            href={getProjectUrl(repo.slug)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 glass glass-strong rounded-xl px-5 py-3 border border-white/10 hover:border-aplat-cyan/30 transition-all shrink-0 group"
           >
-            <Github className="w-5 h-5 text-aplat-muted group-hover:text-aplat-cyan transition-colors" />
+            <ProjectLogo slug={repo.slug} name={repo.name} size={28} />
             <span className="text-sm font-medium text-aplat-text group-hover:text-aplat-cyan transition-colors">
               {repo.name}
             </span>
@@ -231,9 +300,13 @@ export function Portfolio() {
           <RepoLogoCarousel />
         </motion.div>
 
-        {/* Grid de proyectos con detalle y 3D */}
+        {/* Grid: solo proyectos con dominio en Vercel (verificados por sync:vercel) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ALL_REPOS.map((repo, i) => {
+          {getReposWithDomain().length === 0 ? (
+            <p className="col-span-full text-center text-aplat-muted py-8">
+              No hay proyectos con dominio en producción. Ejecuta <code className="text-aplat-cyan/80">pnpm run sync:vercel</code> para cargar y verificar los dominios.
+            </p>
+          ) : getReposWithDomain().map((repo, i) => {
             const detail = REPO_DETAIL[repo.slug];
             return (
               <motion.div
@@ -245,27 +318,34 @@ export function Portfolio() {
               >
                 <Card3D className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-aplat-violet/30 h-full group">
                   <a
-                    href={`${GITHUB_BASE}/${repo.slug}`}
+                    href={getProjectUrl(repo.slug)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block"
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-lg font-semibold text-aplat-text group-hover:text-aplat-violet transition-colors">
-                        {repo.name}
-                      </h3>
-                      <ExternalLink className="w-4 h-4 text-aplat-muted group-hover:text-aplat-violet transition-colors shrink-0" />
+                    <div className="flex justify-between items-start gap-3 mb-2">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <ProjectLogo slug={repo.slug} name={repo.name} size={44} className="rounded-xl" />
+                        <div className="min-w-0">
+                          <h3 className="text-lg font-semibold text-aplat-text group-hover:text-aplat-violet transition-colors truncate">
+                            {repo.name}
+                          </h3>
+                          <p className="text-aplat-muted/80 text-xs font-mono truncate">
+                            aurelio104/{repo.slug}
+                          </p>
+                        </div>
+                      </div>
+                      <ExternalLink className="w-4 h-4 text-aplat-muted group-hover:text-aplat-violet transition-colors shrink-0 mt-1" />
                     </div>
-                    <p className="text-aplat-muted/80 text-xs font-mono mb-2">
-                      aurelio104/{repo.slug}
-                    </p>
-                    {detail && (
-                      <>
-                        <p className="text-aplat-muted text-sm mb-1">{detail.tagline}</p>
-                        <p className="text-aplat-cyan/80 text-xs font-mono mb-1">{detail.stack}</p>
-                        <p className="text-aplat-emerald/90 text-xs font-medium">{detail.result}</p>
-                      </>
-                    )}
+                    <div className="mt-2">
+                      {detail && (
+                        <>
+                          <p className="text-aplat-muted text-sm mb-1">{detail.tagline}</p>
+                          <p className="text-aplat-cyan/80 text-xs font-mono mb-1">{detail.stack}</p>
+                          <p className="text-aplat-emerald/90 text-xs font-medium">{detail.result}</p>
+                        </>
+                      )}
+                    </div>
                   </a>
                 </Card3D>
               </motion.div>
@@ -276,3 +356,4 @@ export function Portfolio() {
     </section>
   );
 }
+

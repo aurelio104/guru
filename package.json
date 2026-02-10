@@ -5,6 +5,7 @@
   "description": "APlat · Servicios digitales de última generación",
   "scripts": {
     "dev": "pnpm --filter aplat-web dev",
+    "sync:vercel": "node scripts/sync-vercel-domains.mjs",
     "dev:api": "pnpm --filter aplat-api dev",
     "build": "pnpm --filter aplat-web build",
     "build:api": "pnpm --filter aplat-api build",
