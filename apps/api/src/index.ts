@@ -26,7 +26,10 @@ export type ConnectionRecord = {
 const connectionLog: ConnectionRecord[] = [];
 const MAX_CONNECTIONS = 200;
 
-function getClientIp(request: { ip?: string; headers: Record<string, string | undefined> }): string {
+function getClientIp(request: {
+  ip?: string;
+  headers: Record<string, string | string[] | undefined>;
+}): string {
   const forwarded = request.headers["x-forwarded-for"];
   if (forwarded) return String(forwarded).split(",")[0].trim();
   return request.ip ?? "unknown";
