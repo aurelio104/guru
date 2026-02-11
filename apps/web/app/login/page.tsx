@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -17,7 +18,9 @@ const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 
 type AuthMethod = "passkey" | "biometric" | "traditional";
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect")?.replace(/[^a-zA-Z0-9/_-]/g, "") || "/dashboard";
   const [authMethod, setAuthMethod] = useState<AuthMethod>("traditional");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,8 +51,9 @@ export default function LoginPage() {
         typeof window !== "undefined" && localStorage.setItem("aplat_token", data.token);
       }
       setMessage({ type: "success", text: "Sesión iniciada. Redirigiendo..." });
+      const target = redirectTo && redirectTo.startsWith("/") ? redirectTo : "/dashboard";
       setTimeout(() => {
-        window.location.href = "/";
+        window.location.href = target;
       }, 800);
     } catch {
       setMessage({ type: "error", text: "Error de conexión." });
@@ -189,5 +193,17 @@ export default function LoginPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-aplat-deep">
+        <div className="w-10 h-10 border-2 border-aplat-cyan/40 border-t-aplat-cyan rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

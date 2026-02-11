@@ -111,7 +111,7 @@ export function CybersecurityPillars() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          Sistemas independientes · No desplegados públicamente
+          Sistemas operativos en uso personal e interno · No desplegados públicamente
         </motion.p>
 
         {/* Tres pilares: cards destacadas (grid responsive) */}
@@ -158,7 +158,7 @@ export function CybersecurityPillars() {
                     {pillar.stack}
                   </span>
                   <span className="rounded-full border border-amber-500/20 bg-amber-500/5 px-3 py-1.5 text-xs text-amber-400/90">
-                    Sistema independiente
+                    Operativo · Uso personal/interno
                   </span>
                 </div>
               </div>

@@ -15,11 +15,16 @@ const LINKS = [
 export function Nav() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    setHasToken(!!(typeof window !== "undefined" && localStorage.getItem("aplat_token")));
   }, []);
 
   return (
@@ -94,8 +99,12 @@ export function Nav() {
                 </li>
               ))}
               <li>
-                <a href="/login" className="block text-aplat-muted hover:text-aplat-text py-2" onClick={() => setOpen(false)}>
-                  Iniciar sesión
+                <a
+                  href={hasToken ? "/dashboard" : "/login"}
+                  className="block text-aplat-muted hover:text-aplat-text py-2"
+                  onClick={() => setOpen(false)}
+                >
+                  {hasToken ? "Dashboard" : "Iniciar sesión"}
                 </a>
               </li>
               <li>
