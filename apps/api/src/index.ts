@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import { SignJWT, jwtVerify } from "jose";
 import {
+  initStoreDb,
   getClientByEmail,
   createClient,
   getClientById,
@@ -1095,6 +1096,8 @@ app.setNotFoundHandler((request, reply) => {
 
 const port = Number(process.env.PORT) || 3001;
 const host = process.env.HOST ?? "0.0.0.0";
+
+await initStoreDb();
 
 try {
   await app.listen({ port, host });

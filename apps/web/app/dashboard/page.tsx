@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
 import { DashboardWidgetWhatsApp } from "@/components/dashboard/DashboardWidgetWhatsApp";
 import { DashboardWidgetSubscriptions } from "@/components/dashboard/DashboardWidgetSubscriptions";
@@ -13,20 +13,26 @@ import type { ProjectEntry } from "@/components/dashboard/DashboardWidgetSubscri
 import portfolioUrls from "@/data/portfolio-production-urls.json";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const BASE = API_URL.replace(/\/$/, "");
 
 const projects: ProjectEntry[] = Object.entries(portfolioUrls as Record<string, string>).map(
   ([name, url]) => ({ name, url })
 );
 
+function getAuthHeaders(): Record<string, string> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  if (!token) return {};
+  return { Authorization: `Bearer ${token}` };
+}
+
 export default function DashboardPage() {
   const { user } = useDashboardUser();
   const [metrics, setMetrics] = useState<Partial<MetricsData>>({});
-  const [connectionsCount, setConnectionsCount] = useState(0);
 
-  useEffect(() => {
+  const fetchMetrics = useCallback(async () => {
     if (user?.role !== "master") return;
-    const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
-    if (!token || !API_URL) {
+    const headers = getAuthHeaders();
+    if (!Object.keys(headers).length || !API_URL) {
       setMetrics({
         proyectosActivos: projects.length,
         suscripcionesActivas: 0,
@@ -36,31 +42,46 @@ export default function DashboardPage() {
       });
       return;
     }
-    fetch(`${API_URL.replace(/\/$/, "")}/api/dashboard/connections?limit=100`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        const count = Array.isArray(data.connections) ? data.connections.length : 0;
-        setConnectionsCount(count);
-        setMetrics({
-          proyectosActivos: projects.length,
-          suscripcionesActivas: 0,
-          mrrUsd: 0,
-          conexionesRecientes: count,
-          whatsappEstado: "pendiente",
-        });
-      })
-      .catch(() => {
-        setMetrics({
-          proyectosActivos: projects.length,
-          suscripcionesActivas: 0,
-          mrrUsd: 0,
-          conexionesRecientes: 0,
-          whatsappEstado: "pendiente",
-        });
+    try {
+      const [connRes, subsRes, waRes] = await Promise.all([
+        fetch(`${BASE}/api/dashboard/connections?limit=100`, { headers }),
+        fetch(`${BASE}/api/admin/subscriptions`, { headers }),
+        fetch(`${BASE}/api/whatsapp/status`, { headers }),
+      ]);
+      const connData = await connRes.json().catch(() => ({}));
+      const subsData = await subsRes.json().catch(() => ({}));
+      const waData = await waRes.json().catch(() => ({}));
+
+      const conexionesRecientes = Array.isArray(connData.connections) ? connData.connections.length : 0;
+      const subscriptions = Array.isArray(subsData.subscriptions) ? subsData.subscriptions : [];
+      const suscripcionesActivas = subscriptions.filter((s: { status?: string }) => s.status === "active").length;
+      const mrrUsd = subscriptions
+        .filter((s: { status?: string; amount?: number }) => s.status === "active" && s.amount != null)
+        .reduce((sum: number, s: { amount?: number }) => sum + (Number(s.amount) || 0), 0);
+      const whatsappEstado =
+        waData.connected === true ? "conectado" : waData.connected === false ? "desconectado" : "pendiente";
+
+      setMetrics({
+        proyectosActivos: projects.length,
+        suscripcionesActivas,
+        mrrUsd: Math.round(mrrUsd * 100) / 100,
+        conexionesRecientes,
+        whatsappEstado,
       });
+    } catch {
+      setMetrics({
+        proyectosActivos: projects.length,
+        suscripcionesActivas: 0,
+        mrrUsd: 0,
+        conexionesRecientes: 0,
+        whatsappEstado: "pendiente",
+      });
+    }
   }, [user?.role]);
+
+  useEffect(() => {
+    fetchMetrics();
+  }, [fetchMetrics]);
 
   if (user?.role === "client") {
     return <ClientDashboard />;

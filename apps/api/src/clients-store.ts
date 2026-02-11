@@ -1,39 +1,76 @@
 /**
  * Almacén de clientes, perfiles, códigos de verificación y suscripciones.
- * Persistencia en SQLite (un solo archivo, mínimo recurso; en Koyeb usar volumen en APLAT_DATA_PATH).
+ * Persistencia con sql.js (SQLite en WebAssembly, sin binarios nativos; funciona en Koyeb y cualquier entorno).
  */
 import fs from "fs";
 import path from "path";
-import Database from "better-sqlite3";
+import initSqlJs, { type Database } from "sql.js";
 
 const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
 const DB_PATH = path.join(DATA_DIR, "aplat.db");
 
-let dbInstance: Database.Database | null = null;
+let dbInstance: Database | null = null;
 
-function getDb(): Database.Database {
-  if (dbInstance) return dbInstance;
+/** Debe llamarse una vez al arrancar la API (await initStoreDb()). */
+export async function initStoreDb(): Promise<void> {
+  if (dbInstance) return;
   const dir = path.dirname(DB_PATH);
-  try {
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  } catch (err) {
-    console.error("[clients-store] No se pudo crear directorio de datos:", dir, err);
-    throw err;
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  const SQL = await initSqlJs();
+  let data: Uint8Array | undefined;
+  if (fs.existsSync(DB_PATH)) {
+    data = new Uint8Array(fs.readFileSync(DB_PATH));
   }
+  dbInstance = new SQL.Database(data);
+  initSchema(dbInstance);
+  migrateFromJsonIfNeeded(dbInstance);
+  persistDb();
+}
+
+function getDb(): Database {
+  if (!dbInstance) throw new Error("[clients-store] DB no inicializada. Debe llamar a initStoreDb() al arrancar.");
+  return dbInstance;
+}
+
+function persistDb(): void {
+  if (!dbInstance) return;
   try {
-    dbInstance = new Database(DB_PATH);
-    dbInstance.pragma("journal_mode = WAL");
-    initSchema(dbInstance);
-    migrateFromJsonIfNeeded(dbInstance);
-    return dbInstance;
+    const buf = dbInstance.export();
+    fs.writeFileSync(DB_PATH, Buffer.from(buf));
   } catch (err) {
-    console.error("[clients-store] Error al abrir SQLite:", DB_PATH, err);
-    throw err;
+    console.warn("[clients-store] No se pudo guardar DB:", err);
   }
 }
 
-function initSchema(d: Database.Database): void {
-  d.exec(`
+type SqlValue = string | number | null;
+
+function dbRun(sql: string, params: SqlValue[] = []): void {
+  getDb().run(sql, params);
+  persistDb();
+}
+
+function dbGet<T extends Record<string, unknown>>(sql: string, params: SqlValue[] = []): T | undefined {
+  const db = getDb();
+  const stmt = db.prepare(sql);
+  stmt.bind(params);
+  const hasRow = stmt.step();
+  const row = hasRow ? (stmt.getAsObject() as T) : undefined;
+  stmt.free();
+  return row;
+}
+
+function dbAll<T extends Record<string, unknown>>(sql: string, params: SqlValue[] = []): T[] {
+  const db = getDb();
+  const stmt = db.prepare(sql);
+  stmt.bind(params);
+  const rows: T[] = [];
+  while (stmt.step()) rows.push(stmt.getAsObject() as T);
+  stmt.free();
+  return rows;
+}
+
+function initSchema(db: Database): void {
+  db.exec(`
     CREATE TABLE IF NOT EXISTS clients (
       id TEXT PRIMARY KEY,
       email TEXT UNIQUE NOT NULL,
@@ -73,12 +110,13 @@ function initSchema(d: Database.Database): void {
     );
     CREATE INDEX IF NOT EXISTS idx_subs_phone ON service_subscriptions(phone);
   `);
+  persistDb();
 }
 
 /** Si la DB está vacía y existen los JSON antiguos, importa una sola vez. */
-function migrateFromJsonIfNeeded(d: Database.Database): void {
-  const clientsCount = (d.prepare("SELECT COUNT(*) AS n FROM clients").get() as { n: number }).n;
-  if (clientsCount > 0) return;
+function migrateFromJsonIfNeeded(db: Database): void {
+  const row = dbGet<{ n: number }>("SELECT COUNT(*) AS n FROM clients");
+  if (!row || row.n > 0) return;
   const clientsFile = path.join(DATA_DIR, "clients.json");
   const phoneCodesFile = path.join(DATA_DIR, "phone-codes.json");
   const subsFile = path.join(DATA_DIR, "service-subscriptions.json");
@@ -93,51 +131,59 @@ function migrateFromJsonIfNeeded(d: Database.Database): void {
       mustChangePassword?: boolean;
       profile?: ClientProfile;
     }>;
-    const insClient = d.prepare(
-      "INSERT INTO clients (id, email, password_hash, role, created_at, must_change_password) VALUES (?, ?, ?, ?, ?, ?)"
-    );
-    const insProfile = d.prepare(
-      "INSERT INTO profiles (client_id, nombres, apellidos, identidad, telefono, telefono_verificado, direccion, email, tipo_servicio, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    );
     for (const c of clientsJson) {
-      insClient.run(c.id, c.email, c.passwordHash, c.role ?? "client", c.createdAt, c.mustChangePassword ? 1 : 0);
+      db.run(
+        "INSERT INTO clients (id, email, password_hash, role, created_at, must_change_password) VALUES (?, ?, ?, ?, ?, ?)",
+        [c.id, c.email, c.passwordHash, c.role ?? "client", c.createdAt, c.mustChangePassword ? 1 : 0]
+      );
       if (c.profile) {
-        insProfile.run(
-          c.id,
-          c.profile.nombres ?? "",
-          c.profile.apellidos ?? "",
-          c.profile.identidad ?? "",
-          c.profile.telefono ?? "",
-          c.profile.telefonoVerificado ? 1 : 0,
-          c.profile.direccion ?? "",
-          c.profile.email ?? c.email,
-          c.profile.tipoServicio ?? "",
-          c.profile.updatedAt
+        db.run(
+          "INSERT INTO profiles (client_id, nombres, apellidos, identidad, telefono, telefono_verificado, direccion, email, tipo_servicio, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          [
+            c.id,
+            c.profile.nombres ?? "",
+            c.profile.apellidos ?? "",
+            c.profile.identidad ?? "",
+            c.profile.telefono ?? "",
+            c.profile.telefonoVerificado ? 1 : 0,
+            c.profile.direccion ?? "",
+            c.profile.email ?? c.email,
+            c.profile.tipoServicio ?? "",
+            c.profile.updatedAt,
+          ]
         );
       }
     }
     if (fs.existsSync(phoneCodesFile)) {
       const codes = JSON.parse(fs.readFileSync(phoneCodesFile, "utf-8")) as PhoneCode[];
-      const insCode = d.prepare("INSERT INTO phone_codes (phone, code, expires_at, client_id) VALUES (?, ?, ?, ?)");
       for (const p of codes) {
-        if (p.expiresAt > Date.now()) insCode.run(p.phone, p.code, p.expiresAt, p.clientId);
+        if (p.expiresAt > Date.now()) {
+          db.run("INSERT INTO phone_codes (phone, code, expires_at, client_id) VALUES (?, ?, ?, ?)", [
+            p.phone,
+            p.code,
+            p.expiresAt,
+            p.clientId,
+          ]);
+        }
       }
     }
     if (fs.existsSync(subsFile)) {
-      const subs = JSON.parse(fs.readFileSync(subsFile, "utf-8")) as Array<ServiceSubscription & { status?: string; paidUntil?: string | null }>;
-      const insSub = d.prepare(
-        "INSERT INTO service_subscriptions (id, phone, service_name, day_of_month, amount, created_at, status, paid_until) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-      );
+      const subs = JSON.parse(fs.readFileSync(subsFile, "utf-8")) as Array<
+        ServiceSubscription & { status?: string; paidUntil?: string | null }
+      >;
       for (const s of subs) {
-        insSub.run(
-          s.id,
-          s.phone,
-          s.serviceName,
-          s.dayOfMonth,
-          s.amount ?? null,
-          s.createdAt,
-          s.status ?? "active",
-          s.paidUntil ?? null
+        db.run(
+          "INSERT INTO service_subscriptions (id, phone, service_name, day_of_month, amount, created_at, status, paid_until) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          [
+            s.id,
+            s.phone,
+            s.serviceName,
+            s.dayOfMonth,
+            s.amount ?? null,
+            s.createdAt,
+            s.status ?? "active",
+            s.paidUntil ?? null,
+          ]
         );
       }
     }
@@ -145,6 +191,7 @@ function migrateFromJsonIfNeeded(d: Database.Database): void {
   } catch (err) {
     console.warn("[clients-store] Migración desde JSON fallida:", err);
   }
+  persistDb();
 }
 
 // --- Tipos (igual que antes) ---
@@ -239,22 +286,20 @@ function rowToClient(r: ClientRow): Client {
 }
 
 export function getClientById(id: string): Client | undefined {
-  const row = getDb()
-    .prepare(
-      `SELECT c.*, p.nombres, p.apellidos, p.identidad, p.telefono, p.telefono_verificado, p.direccion, p.email AS profile_email, p.tipo_servicio, p.updated_at
-       FROM clients c LEFT JOIN profiles p ON p.client_id = c.id WHERE c.id = ?`
-    )
-    .get(id) as ClientRow | undefined;
+  const row = dbGet<ClientRow>(
+    `SELECT c.*, p.nombres, p.apellidos, p.identidad, p.telefono, p.telefono_verificado, p.direccion, p.email AS profile_email, p.tipo_servicio, p.updated_at
+     FROM clients c LEFT JOIN profiles p ON p.client_id = c.id WHERE c.id = ?`,
+    [id]
+  );
   return row ? rowToClient(row) : undefined;
 }
 
 export function getClientByEmail(email: string): Client | undefined {
-  const row = getDb()
-    .prepare(
-      `SELECT c.*, p.nombres, p.apellidos, p.identidad, p.telefono, p.telefono_verificado, p.direccion, p.email AS profile_email, p.tipo_servicio, p.updated_at
-       FROM clients c LEFT JOIN profiles p ON p.client_id = c.id WHERE LOWER(c.email) = LOWER(?)`
-    )
-    .get(email.trim()) as ClientRow | undefined;
+  const row = dbGet<ClientRow>(
+    `SELECT c.*, p.nombres, p.apellidos, p.identidad, p.telefono, p.telefono_verificado, p.direccion, p.email AS profile_email, p.tipo_servicio, p.updated_at
+     FROM clients c LEFT JOIN profiles p ON p.client_id = c.id WHERE LOWER(c.email) = LOWER(?)`,
+    [email.trim()]
+  );
   return row ? rowToClient(row) : undefined;
 }
 
@@ -265,28 +310,29 @@ export function createClient(
 ): Client {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
-  getDb()
-    .prepare(
-      "INSERT INTO clients (id, email, password_hash, role, created_at, must_change_password) VALUES (?, ?, ?, 'client', ?, ?)"
-    )
-    .run(id, email.trim().toLowerCase(), passwordHash, now, opts?.mustChangePassword ? 1 : 0);
+  dbRun("INSERT INTO clients (id, email, password_hash, role, created_at, must_change_password) VALUES (?, ?, ?, 'client', ?, ?)", [
+    id,
+    email.trim().toLowerCase(),
+    passwordHash,
+    now,
+    opts?.mustChangePassword ? 1 : 0,
+  ]);
   if (opts?.initialPhone) {
     const ph = normalizePhone(opts.initialPhone);
-    getDb()
-      .prepare(
-        "INSERT INTO profiles (client_id, nombres, apellidos, identidad, telefono, telefono_verificado, direccion, email, tipo_servicio, updated_at) VALUES (?, '', '', '', ?, 1, '', ?, '', ?)"
-      )
-      .run(id, ph, email.trim().toLowerCase(), now);
+    dbRun(
+      "INSERT INTO profiles (client_id, nombres, apellidos, identidad, telefono, telefono_verificado, direccion, email, tipo_servicio, updated_at) VALUES (?, '', '', '', ?, 1, '', ?, '', ?)",
+      [id, ph, email.trim().toLowerCase(), now]
+    );
   }
   return getClientById(id)!;
 }
 
 export function setMustChangePassword(clientId: string, value: boolean): void {
-  getDb().prepare("UPDATE clients SET must_change_password = ? WHERE id = ?").run(value ? 1 : 0, clientId);
+  dbRun("UPDATE clients SET must_change_password = ? WHERE id = ?", [value ? 1 : 0, clientId]);
 }
 
 export function updateClientPassword(clientId: string, passwordHash: string): void {
-  getDb().prepare("UPDATE clients SET password_hash = ?, must_change_password = 0 WHERE id = ?").run(passwordHash, clientId);
+  dbRun("UPDATE clients SET password_hash = ?, must_change_password = 0 WHERE id = ?", [passwordHash, clientId]);
 }
 
 export function updateClientProfile(clientId: string, profile: Partial<ClientProfile>): Client | undefined {
@@ -313,16 +359,15 @@ export function updateClientProfile(clientId: string, profile: Partial<ClientPro
   const email = profile.email ?? p.email;
   const tipoServicio = profile.tipoServicio ?? p.tipoServicio;
 
-  getDb()
-    .prepare(
-      `INSERT INTO profiles (client_id, nombres, apellidos, identidad, telefono, telefono_verificado, direccion, email, tipo_servicio, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-       ON CONFLICT(client_id) DO UPDATE SET
-         nombres=excluded.nombres, apellidos=excluded.apellidos, identidad=excluded.identidad,
-         telefono=excluded.telefono, telefono_verificado=excluded.telefono_verificado,
-         direccion=excluded.direccion, email=excluded.email, tipo_servicio=excluded.tipo_servicio, updated_at=excluded.updated_at`
-    )
-    .run(clientId, nombres, apellidos, identidad, telefono, telefonoVerificado ? 1 : 0, direccion, email, tipoServicio, updatedAt);
+  dbRun(
+    `INSERT INTO profiles (client_id, nombres, apellidos, identidad, telefono, telefono_verificado, direccion, email, tipo_servicio, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(client_id) DO UPDATE SET
+       nombres=excluded.nombres, apellidos=excluded.apellidos, identidad=excluded.identidad,
+       telefono=excluded.telefono, telefono_verificado=excluded.telefono_verificado,
+       direccion=excluded.direccion, email=excluded.email, tipo_servicio=excluded.tipo_servicio, updated_at=excluded.updated_at`,
+    [clientId, nombres, apellidos, identidad, telefono, telefonoVerificado ? 1 : 0, direccion, email, tipoServicio, updatedAt]
+  );
   return getClientById(clientId);
 }
 
@@ -330,35 +375,41 @@ export function setPhoneVerified(clientId: string, verified: boolean): void {
   const c = getClientById(clientId);
   if (!c?.profile) return;
   const updatedAt = new Date().toISOString();
-  getDb()
-    .prepare("UPDATE profiles SET telefono_verificado = ?, updated_at = ? WHERE client_id = ?")
-    .run(verified ? 1 : 0, updatedAt, clientId);
+  dbRun("UPDATE profiles SET telefono_verificado = ?, updated_at = ? WHERE client_id = ?", [
+    verified ? 1 : 0,
+    updatedAt,
+    clientId,
+  ]);
 }
 
 // --- Códigos de verificación (teléfono) ---
 const CODE_EXPIRY_MS = 10 * 60 * 1000;
 
 function purgeExpiredPhoneCodes(): void {
-  getDb().prepare("DELETE FROM phone_codes WHERE expires_at <= ?").run(Date.now());
+  dbRun("DELETE FROM phone_codes WHERE expires_at <= ?", [Date.now()]);
 }
 
 export function setPhoneCode(phone: string, code: string, clientId: string): void {
   purgeExpiredPhoneCodes();
   const ph = normalizePhone(phone);
-  getDb().prepare("DELETE FROM phone_codes WHERE client_id = ? AND phone = ?").run(clientId, ph);
-  getDb()
-    .prepare("INSERT INTO phone_codes (phone, code, expires_at, client_id) VALUES (?, ?, ?, ?)")
-    .run(ph, code, Date.now() + CODE_EXPIRY_MS, clientId);
+  dbRun("DELETE FROM phone_codes WHERE client_id = ? AND phone = ?", [clientId, ph]);
+  dbRun("INSERT INTO phone_codes (phone, code, expires_at, client_id) VALUES (?, ?, ?, ?)", [
+    ph,
+    code,
+    Date.now() + CODE_EXPIRY_MS,
+    clientId,
+  ]);
 }
 
 export function consumePhoneCode(phone: string, code: string, clientId: string): boolean {
   purgeExpiredPhoneCodes();
   const ph = normalizePhone(phone);
-  const row = getDb()
-    .prepare("SELECT 1 FROM phone_codes WHERE client_id = ? AND phone = ? AND code = ? AND expires_at > ?")
-    .get(clientId, ph, code, Date.now());
+  const row = dbGet<Record<string, unknown>>(
+    "SELECT 1 FROM phone_codes WHERE client_id = ? AND phone = ? AND code = ? AND expires_at > ?",
+    [clientId, ph, code, Date.now()]
+  );
   if (!row) return false;
-  getDb().prepare("DELETE FROM phone_codes WHERE client_id = ? AND phone = ? AND code = ?").run(clientId, ph, code);
+  dbRun("DELETE FROM phone_codes WHERE client_id = ? AND phone = ? AND code = ?", [clientId, ph, code]);
   return true;
 }
 
@@ -395,28 +446,27 @@ export function addServiceSubscription(
 ): ServiceSubscription {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
-  getDb()
-    .prepare(
-      "INSERT INTO service_subscriptions (id, phone, service_name, day_of_month, amount, created_at, status, paid_until) VALUES (?, ?, ?, ?, ?, ?, 'active', NULL)"
-    )
-    .run(id, normalizePhone(phone), serviceName, dayOfMonth, amount ?? null, now);
+  dbRun(
+    "INSERT INTO service_subscriptions (id, phone, service_name, day_of_month, amount, created_at, status, paid_until) VALUES (?, ?, ?, ?, ?, ?, 'active', NULL)",
+    [id, normalizePhone(phone), serviceName, dayOfMonth, amount ?? null, now]
+  );
   return getSubscriptionById(id)!;
 }
 
 export function getSubscriptionsByPhone(phone: string): ServiceSubscription[] {
-  const rows = getDb()
-    .prepare("SELECT * FROM service_subscriptions WHERE phone = ? ORDER BY created_at")
-    .all(normalizePhone(phone)) as SubRow[];
+  const rows = dbAll<SubRow>("SELECT * FROM service_subscriptions WHERE phone = ? ORDER BY created_at", [
+    normalizePhone(phone),
+  ]);
   return rows.map(rowToSubscription);
 }
 
 export function getAllSubscriptions(): ServiceSubscription[] {
-  const rows = getDb().prepare("SELECT * FROM service_subscriptions ORDER BY created_at").all() as SubRow[];
+  const rows = dbAll<SubRow>("SELECT * FROM service_subscriptions ORDER BY created_at");
   return rows.map(rowToSubscription);
 }
 
 export function getSubscriptionById(id: string): ServiceSubscription | undefined {
-  const row = getDb().prepare("SELECT * FROM service_subscriptions WHERE id = ?").get(id) as SubRow | undefined;
+  const row = dbGet<SubRow>("SELECT * FROM service_subscriptions WHERE id = ?", [id]);
   return row ? rowToSubscription(row) : undefined;
 }
 
@@ -461,7 +511,7 @@ export function processCutoffs(): number {
     const next = getNextCutoffDate(sub);
     next.setHours(0, 0, 0, 0);
     if (next < today) {
-      getDb().prepare("UPDATE service_subscriptions SET status = 'suspended' WHERE id = ?").run(sub.id);
+      dbRun("UPDATE service_subscriptions SET status = 'suspended' WHERE id = ?", [sub.id]);
       suspended++;
     }
   }
@@ -472,9 +522,10 @@ export function processCutoffs(): number {
 export function markSubscriptionPaid(subscriptionId: string, cutoffDate: string): boolean {
   const sub = getSubscriptionById(subscriptionId);
   if (!sub) return false;
-  getDb()
-    .prepare("UPDATE service_subscriptions SET paid_until = ?, status = 'active' WHERE id = ?")
-    .run(cutoffDate, subscriptionId);
+  dbRun("UPDATE service_subscriptions SET paid_until = ?, status = 'active' WHERE id = ?", [
+    cutoffDate,
+    subscriptionId,
+  ]);
   return true;
 }
 
@@ -490,28 +541,27 @@ export function updateSubscription(
   const dayOfMonth = patch.dayOfMonth ?? sub.dayOfMonth;
   const amount = patch.amount !== undefined ? patch.amount : sub.amount;
   const status = patch.status ?? sub.status;
-  getDb()
-    .prepare(
-      "UPDATE service_subscriptions SET phone = ?, service_name = ?, day_of_month = ?, amount = ?, status = ? WHERE id = ?"
-    )
-    .run(phone, serviceName, Math.min(28, Math.max(1, dayOfMonth)), amount ?? null, status, id);
+  dbRun(
+    "UPDATE service_subscriptions SET phone = ?, service_name = ?, day_of_month = ?, amount = ?, status = ? WHERE id = ?",
+    [phone, serviceName, Math.min(28, Math.max(1, dayOfMonth)), amount ?? null, status, id]
+  );
   return true;
 }
 
 /** Eliminar suscripción (queda el servicio; el usuario queda sin esta suscripción). */
 export function deleteSubscription(id: string): boolean {
-  const r = getDb().prepare("DELETE FROM service_subscriptions WHERE id = ?").run(id);
-  return r.changes > 0;
+  getDb().run("DELETE FROM service_subscriptions WHERE id = ?", [id]);
+  const n = getDb().getRowsModified();
+  persistDb();
+  return n > 0;
 }
 
 /** Cliente cuyo perfil tiene este teléfono (para mostrar correo en admin). */
 export function getClientByPhone(phone: string): Client | undefined {
   const ph = normalizePhone(phone);
-  const rows = getDb()
-    .prepare(
-      "SELECT c.id FROM clients c JOIN profiles p ON p.client_id = c.id WHERE p.telefono = ? LIMIT 1"
-    )
-    .all(ph) as { id: string }[];
+  const rows = dbAll<{ id: string }>("SELECT c.id FROM clients c JOIN profiles p ON p.client_id = c.id WHERE p.telefono = ? LIMIT 1", [
+    ph,
+  ]);
   if (rows.length === 0) return undefined;
   return getClientById(rows[0]!.id);
 }
