@@ -100,6 +100,16 @@ curl https://aplat-aurelio104-5edd4229.koyeb.app/api/health
 
 Respuesta esperada: `{"ok":true,"service":"aplat-api"}`.
 
+## Pruebas de producción
+
+Desde la raíz del repo:
+
+```bash
+./scripts/test-production-api.sh
+```
+
+Comprueba health, visit, login, auth/me, connections, visitors, whatsapp/status, webauthn challenge/register/begin y contact. Si varias rutas dan 404, en Koyeb el despliegue activo puede ser una imagen antigua; un despliegue nuevo (con todas las rutas) puede estar en estado STARTING/PENDING hasta que pase a activo.
+
 ## Desarrollo local
 
 **API:**
