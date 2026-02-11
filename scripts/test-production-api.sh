@@ -4,7 +4,7 @@
 #      o: API_URL=https://tu-api.koyeb.app ./scripts/test-production-api.sh
 # Si visit/visitors/whatsapp/webauthn dan 404, el despliegue activo en Koyeb puede ser antiguo.
 set -e
-API="${API_URL:-https://aplat-aurelio104-5edd4229.koyeb.app}"
+API="${API_URL:-https://aplat-api-aurelio104-5877962a.koyeb.app}"
 FAIL=0
 
 check() {

@@ -31,4 +31,4 @@ Abre [http://localhost:3000](http://localhost:3000).
 
 - **GitHub:** [github.com/aurelio104/APlat](https://github.com/aurelio104/APlat)
 - **Frontend (Vercel):** [aplat.vercel.app](https://aplat.vercel.app)
-- **API (Koyeb):** https://aplat-aurelio104-5edd4229.koyeb.app
+- **API (Koyeb):** https://aplat-api-aurelio104-5877962a.koyeb.app

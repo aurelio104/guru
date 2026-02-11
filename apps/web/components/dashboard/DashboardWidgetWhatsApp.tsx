@@ -106,6 +106,7 @@ export function DashboardWidgetWhatsApp() {
       const res = await fetch(`${API_URL.replace(/\/$/, "")}/api/whatsapp/clean`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: "{}",
       });
       const data = await res.json().catch(() => ({}));
       setWhatsappMessage(data.message ?? (data.ok ? "Credenciales limpiadas." : "Error al limpiar."));
@@ -128,6 +129,7 @@ export function DashboardWidgetWhatsApp() {
       await fetch(`${API_URL.replace(/\/$/, "")}/api/whatsapp/clean`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: "{}",
       });
       setWhatsappQR(null);
       setWhatsappConnected(false);

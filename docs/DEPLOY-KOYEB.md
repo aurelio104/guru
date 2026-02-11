@@ -29,7 +29,7 @@ Configuradas en el servicio (Settings → Environment variables):
 | `APLAT_ADMIN_EMAIL` | `admin@aplat.local` | Email de login |
 | `APLAT_ADMIN_PASSWORD` | (secreto) | Contraseña de login |
 | `APLAT_WEBAUTHN_STORE_PATH` | `/data/webauthn-store.json` | Persistencia Passkey (volumen `aplat-api-data`) |
-| `APLAT_WEBAUTHN_RP_ID` | (opcional) | Dominio del sitio en producción (ej. `aplat.vercel.app`) |
+| `APLAT_WEBAUTHN_RP_ID` | `aplat.vercel.app` | **Requerido para Passkey:** debe ser el hostname del front (donde el usuario registra la llave). Si no, verás "The requested RPID did not match the origin". |
 | `APLAT_WHATSAPP_AUTH_PATH` | `/whatsapp-auth` | Directorio auth de WhatsApp (volumen **auth-bot1-aplat**) |
 
 ### CORS y error "Preflight 404"
@@ -47,7 +47,7 @@ Para que visitas, login, Passkey, WhatsApp y dashboard funcionen, el frontend de
 1. En Vercel → proyecto APlat → **Settings** → **Environment Variables**
 2. Añade:
    - **Name**: `NEXT_PUBLIC_APLAT_API_URL`
-   - **Value**: `https://aplat-aurelio104-5edd4229.koyeb.app` (o la URL actual del servicio en Koyeb, **sin** barra final)
+   - **Value**: `https://aplat-api-aurelio104-5877962a.koyeb.app` (o la URL actual del servicio en Koyeb, **sin** barra final)
 3. Redespliega el frontend.
 
 Si esta variable no está definida o apunta a otra URL, verás **404** en `/api/analytics/visit`, `/api/auth/login`, etc.
@@ -58,8 +58,10 @@ Se usan **dos volúmenes** para guardar toda la información y la sesión de Wha
 
 | Volumen Koyeb | Montaje en el contenedor | Uso |
 |---------------|--------------------------|-----|
-| **aplat-api-data** | `/data` | WebAuthn (Passkey), y cualquier otro dato persistente de la API |
+| **aplat-api-data-v2** (o nuevo) | `/data` | WebAuthn (Passkey), y cualquier otro dato persistente de la API |
 | **auth-bot1-aplat** | `/whatsapp-auth` | Sesión de inicio de sesión de WhatsApp (Baileys); evita tener que escanear QR cada vez |
+
+**Nota:** En Koyeb, un volumen que ya fue adjuntado a un servicio no puede reasignarse a otro. Si `aplat-api-data` dio error "was previously attached to another service", crea uno nuevo (ej. `aplat-api-data-v2`) y úsalo para `/data`.
 
 ### Crear y adjuntar volúmenes en la UI de Koyeb
 
@@ -90,25 +92,25 @@ Se usan **dos volúmenes** para guardar toda la información y la sesión de Wha
    koyeb login
    ```
 
-3. **Crear volúmenes** (solo regiones `was` o `fra`):
+3. **Crear volúmenes** (solo regiones `was` o `fra`). Si `aplat-api-data` ya existía y no se puede reasignar, usa otro nombre (ej. `aplat-api-data-v2`):
 
    ```bash
-   koyeb volumes create aplat-api-data --region was --size 1
-   koyeb volumes create auth-bot1-aplat --region was --size 1
+   koyeb volume create aplat-api-data-v2 --region was --size 1
+   koyeb volume create auth-bot1-aplat --region was --size 1
    ```
 
-4. **Actualizar el servicio** (dos volúmenes + variables):
+4. **Actualizar el servicio** (dos volúmenes + variables). Servicio actual: `aplat-api/api`:
 
    ```bash
-   koyeb services update aplat/aplat \
+   koyeb service update aplat-api/api \
      --region was \
-     --volumes aplat-api-data:/data \
+     --volumes aplat-api-data-v2:/data \
      --volumes auth-bot1-aplat:/whatsapp-auth \
      --env "APLAT_WEBAUTHN_STORE_PATH=/data/webauthn-store.json" \
      --env "APLAT_WHATSAPP_AUTH_PATH=/whatsapp-auth"
    ```
 
-   (Ajusta el nombre del servicio/app si no es `aplat/aplat`.)
+   (Si un volumen ya fue usado por otro servicio, créalo nuevo, ej. `koyeb volume create aplat-api-data-v2 --region was --size 1`.)
 
 5. **Redeploy** (usa el último commit de `main`):
 
@@ -130,7 +132,7 @@ Así el Dockerfile puede hacer `COPY apps/api/...` correctamente.
 ## Health check
 
 ```bash
-curl https://aplat-aurelio104-5edd4229.koyeb.app/api/health
+curl https://aplat-api-aurelio104-5877962a.koyeb.app/api/health
 ```
 
 Respuesta esperada: `{"ok":true,"service":"aplat-api"}`.

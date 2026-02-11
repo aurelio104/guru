@@ -1,6 +1,6 @@
 # Despliegue en producción: Vercel (front) + Koyeb (back)
 
-**API en Koyeb (desplegada por CLI):** `https://aplat-aurelio104-5edd4229.koyeb.app`  
+**API en Koyeb (desplegada por CLI):** `https://aplat-api-aurelio104-5877962a.koyeb.app`  
 Añade en el servicio la variable `CORS_ORIGIN` = URL de tu front en Vercel cuando la tengas.
 
 ## Resumen

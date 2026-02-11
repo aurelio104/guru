@@ -4,6 +4,7 @@ import { randomBytes } from "crypto";
 import { SignJWT, jwtVerify } from "jose";
 import {
   getCredentialByCredentialId,
+  getCredentialsByUserId,
   addCredential,
   setChallenge,
   getAndConsumeChallenge,
@@ -399,6 +400,14 @@ app.post<{
     email: APLAT_ADMIN_EMAIL,
     token,
   });
+});
+
+// GET /api/auth/webauthn/has-passkey — requiere JWT; indica si el usuario tiene al menos una Passkey (para ofrecer registro tras login)
+app.get("/api/auth/webauthn/has-passkey", async (request, reply) => {
+  const user = await requireAuth(request, reply);
+  if (!user) return;
+  const credentials = getCredentialsByUserId(USER_ID);
+  return reply.status(200).send({ ok: true, hasPasskey: credentials.length > 0 });
 });
 
 // POST /api/auth/webauthn/register/begin — requiere JWT
