@@ -32,6 +32,20 @@ Configuradas en el servicio (Settings → Environment variables):
 | `APLAT_WEBAUTHN_STORE_PATH` | `/data/webauthn-store.json` | Persistencia Passkey (volumen `aplat-api-data`) |
 | `APLAT_WEBAUTHN_RP_ID` | `aplat.vercel.app` | **Requerido para Passkey:** debe ser el hostname del front (donde el usuario registra la llave). Si no, verás "The requested RPID did not match the origin". |
 | `APLAT_WHATSAPP_AUTH_PATH` | `/whatsapp-auth` | Directorio auth de WhatsApp (volumen **auth-bot1-aplat**) |
+| `APLAT_CRON_SECRET` | (secreto) | Para ejecutar cortes automáticos cada día a las 23:59. Ver más abajo. |
+
+### Cortes automáticos (cada día a las 23:59)
+
+Las suscripciones con fecha de pago vencida se suspenden al llamar a **POST /api/cron/process-cutoffs**. Para que se ejecute solo cada día a las 23:59:
+
+1. En Koyeb → tu servicio API → **Settings** → **Environment variables**: añade `APLAT_CRON_SECRET` con un valor secreto (ej. `openssl rand -hex 24`).
+2. En Koyeb → **Cron Jobs** (o usa un servicio externo): crea un cron que cada día a las **23:59** (hora del servidor/UTC según tu región) haga:
+   ```bash
+   curl -X POST "https://TU-API-KOYEB.app/api/cron/process-cutoffs" -H "X-Cron-Secret: TU_APLAT_CRON_SECRET"
+   ```
+   O con query: `.../api/cron/process-cutoffs?secret=TU_APLAT_CRON_SECRET`
+
+Si no configuras cron, puedes ejecutar cortes manualmente desde el dashboard (botón «Ejecutar cortes» en Suscripciones).
 
 ### CORS y error "Preflight 404"
 

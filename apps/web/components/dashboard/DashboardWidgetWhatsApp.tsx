@@ -2,9 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { MessageCircle, Wrench, Loader2, Send } from "lucide-react";
+import { MessageCircle, Wrench, Loader2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { CountryCodePhoneInput } from "@/components/ui/CountryCodePhoneInput";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 
@@ -23,10 +22,6 @@ export function DashboardWidgetWhatsApp() {
   const [whatsappCooldown, setWhatsappCooldown] = useState(false);
   const [whatsappServiceError, setWhatsappServiceError] = useState<string | null>(null);
   const [whatsappMessage, setWhatsappMessage] = useState<string | null>(null);
-  const [sendPhone, setSendPhone] = useState("");
-  const [sendText, setSendText] = useState("");
-  const [sending, setSending] = useState(false);
-  const [sendResult, setSendResult] = useState<{ ok: boolean; text: string } | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const checkWhatsAppStatus = useCallback(async () => {
@@ -140,29 +135,6 @@ export function DashboardWidgetWhatsApp() {
     }
   }, [cleaningWhatsApp, gettingQR, checkWhatsAppStatus]);
 
-  const handleSendMessage = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!sendPhone.trim() || !sendText.trim() || sending || !API_URL) return;
-    setSending(true);
-    setSendResult(null);
-    try {
-      const res = await fetch(`${API_URL.replace(/\/$/, "")}/api/whatsapp/send`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-        body: JSON.stringify({ phoneNumber: sendPhone.trim(), message: sendText.trim() }),
-      });
-      const data = await res.json().catch(() => ({}));
-      setSendResult({
-        ok: !!data.ok && !!data.success,
-        text: data.error || data.message || (data.ok ? "Enviado." : "Error al enviar."),
-      });
-    } catch (err) {
-      setSendResult({ ok: false, text: err instanceof Error ? err.message : "Error de conexión." });
-    } finally {
-      setSending(false);
-    }
-  }, [sendPhone, sendText, sending]);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -253,38 +225,6 @@ export function DashboardWidgetWhatsApp() {
             {cleaningWhatsApp ? "Desconectando..." : "Desconectar WhatsApp"}
           </button>
         </div>
-      )}
-
-      {/* Enviar mensaje (cuando está conectado) */}
-      {whatsappConnected === true && (
-        <form onSubmit={handleSendMessage} className="space-y-2">
-          <p className="text-aplat-muted text-xs font-medium">Enviar mensaje</p>
-          <CountryCodePhoneInput
-            value={sendPhone}
-            onChange={setSendPhone}
-            placeholder="Número"
-          />
-          <textarea
-            value={sendText}
-            onChange={(e) => setSendText(e.target.value)}
-            placeholder="Mensaje"
-            rows={2}
-            className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-sm text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none resize-none"
-          />
-          <button
-            type="submit"
-            disabled={sending}
-            className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-3 py-2 text-sm font-medium disabled:opacity-60"
-          >
-            {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-            {sending ? "Enviando..." : "Enviar"}
-          </button>
-          {sendResult && (
-            <p className={`text-xs ${sendResult.ok ? "text-aplat-emerald" : "text-red-400"}`}>
-              {sendResult.text}
-            </p>
-          )}
-        </form>
       )}
 
       {whatsappConnected === null && !whatsappServiceError && (

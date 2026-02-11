@@ -14,12 +14,22 @@ let dbInstance: Database.Database | null = null;
 function getDb(): Database.Database {
   if (dbInstance) return dbInstance;
   const dir = path.dirname(DB_PATH);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  dbInstance = new Database(DB_PATH);
-  dbInstance.pragma("journal_mode = WAL");
-  initSchema(dbInstance);
-  migrateFromJsonIfNeeded(dbInstance);
-  return dbInstance;
+  try {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  } catch (err) {
+    console.error("[clients-store] No se pudo crear directorio de datos:", dir, err);
+    throw err;
+  }
+  try {
+    dbInstance = new Database(DB_PATH);
+    dbInstance.pragma("journal_mode = WAL");
+    initSchema(dbInstance);
+    migrateFromJsonIfNeeded(dbInstance);
+    return dbInstance;
+  } catch (err) {
+    console.error("[clients-store] Error al abrir SQLite:", DB_PATH, err);
+    throw err;
+  }
 }
 
 function initSchema(d: Database.Database): void {

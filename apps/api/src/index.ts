@@ -729,12 +729,36 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
   }
 });
 
+// Cron: ejecutar cortes automáticamente (ej. cada día a las 23:59). Requiere APLAT_CRON_SECRET.
+app.post("/api/cron/process-cutoffs", async (request, reply) => {
+  const secret = process.env.APLAT_CRON_SECRET;
+  const headerSecret = (request.headers["x-cron-secret"] as string) ?? "";
+  const querySecret = (request.query as { secret?: string }).secret ?? "";
+  const provided = headerSecret || querySecret;
+  if (!secret || provided !== secret) {
+    return reply.status(401).send({ ok: false, error: "No autorizado." });
+  }
+  try {
+    const suspended = processCutoffs();
+    request.log.info({ suspended }, "Cron process-cutoffs ejecutado");
+    return reply.status(200).send({ ok: true, suspended, message: `Cortes procesados. ${suspended} suscripción(es) suspendida(s).` });
+  } catch (err) {
+    request.log.error(err);
+    return reply.status(500).send({ ok: false, error: err instanceof Error ? err.message : "Error al ejecutar cortes." });
+  }
+});
+
 // Admin: ejecutar lógica de cortes (suspender suscripciones con fecha de pago vencida). Llamar por cron diario o manual.
 app.post("/api/admin/process-cutoffs", async (request, reply) => {
   const user = await requireRole(request, reply, "master");
   if (!user) return;
-  const suspended = processCutoffs();
-  return reply.status(200).send({ ok: true, suspended, message: `Cortes procesados. ${suspended} suscripción(es) suspendida(s).` });
+  try {
+    const suspended = processCutoffs();
+    return reply.status(200).send({ ok: true, suspended, message: `Cortes procesados. ${suspended} suscripción(es) suspendida(s).` });
+  } catch (err) {
+    request.log.error(err);
+    return reply.status(500).send({ ok: false, error: err instanceof Error ? err.message : "Error al ejecutar cortes." });
+  }
 });
 
 // Admin: marcar suscripción como pagada (reactiva si estaba suspendida y actualiza próximo corte)
@@ -757,32 +781,47 @@ app.post<{ Body: MarkPaidBody }>("/api/admin/mark-subscription-paid", async (req
 app.get("/api/admin/subscriptions", async (request, reply) => {
   const user = await requireRole(request, reply, "master");
   if (!user) return;
-  processCutoffs();
-  const subs = getAllSubscriptions();
-  const result = subs.map((s) => {
-    const next = getNextCutoffDate(s);
-    const lastMissed = getLastMissedCutoffDate(s);
-    const reminder = new Date(next);
-    reminder.setDate(reminder.getDate() - 5);
+  try {
+    processCutoffs();
+    const subs = getAllSubscriptions();
     const months = "ene feb mar abr may jun jul ago sep oct nov dic".split(" ");
-    const client = getClientByPhone(s.phone);
-    return {
-      id: s.id,
-      phone: s.phone,
-      serviceName: s.serviceName,
-      dayOfMonth: s.dayOfMonth,
-      amount: s.amount,
-      status: s.status,
-      paidUntil: s.paidUntil,
-      nextCutoff: next.toISOString().slice(0, 10),
-      lastMissedCutoff: lastMissed,
-      nextReminder: `${reminder.getDate()} ${months[reminder.getMonth()]}`,
-      createdAt: s.createdAt,
-      clientEmail: client?.email ?? null,
-      clientId: client?.id ?? null,
-    };
-  });
-  return reply.status(200).send({ ok: true, subscriptions: result });
+    const result = subs.map((s) => {
+      let clientEmail: string | null = null;
+      let clientId: string | null = null;
+      try {
+        const client = getClientByPhone(s.phone);
+        if (client) {
+          clientEmail = client.email;
+          clientId = client.id;
+        }
+      } catch {
+        // ignorar fallo de lookup por teléfono
+      }
+      const next = getNextCutoffDate(s);
+      const lastMissed = getLastMissedCutoffDate(s);
+      const reminder = new Date(next);
+      reminder.setDate(reminder.getDate() - 5);
+      return {
+        id: s.id,
+        phone: s.phone,
+        serviceName: s.serviceName,
+        dayOfMonth: s.dayOfMonth,
+        amount: s.amount,
+        status: s.status,
+        paidUntil: s.paidUntil,
+        nextCutoff: next.toISOString().slice(0, 10),
+        lastMissedCutoff: lastMissed,
+        nextReminder: `${reminder.getDate()} ${months[reminder.getMonth()]}`,
+        createdAt: s.createdAt,
+        clientEmail,
+        clientId,
+      };
+    });
+    return reply.status(200).send({ ok: true, subscriptions: result });
+  } catch (err) {
+    request.log.error(err);
+    return reply.status(500).send({ ok: false, error: err instanceof Error ? err.message : "Error al listar suscripciones." });
+  }
 });
 
 type UpdateSubscriptionBody = {
