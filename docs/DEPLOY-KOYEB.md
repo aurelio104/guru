@@ -28,6 +28,7 @@ Configuradas en el servicio (Settings → Environment variables):
 | `APLAT_JWT_SECRET` | (secreto) | Clave JWT; generar con `openssl rand -hex 32` |
 | `APLAT_ADMIN_EMAIL` | `admin@aplat.local` | Email de login |
 | `APLAT_ADMIN_PASSWORD` | (secreto) | Contraseña de login |
+| `APLAT_DATA_PATH` | `/data` | Directorio de datos: aquí se crea la base SQLite `aplat.db` (clientes, perfiles, suscripciones). Debe ser la ruta del volumen montado. |
 | `APLAT_WEBAUTHN_STORE_PATH` | `/data/webauthn-store.json` | Persistencia Passkey (volumen `aplat-api-data`) |
 | `APLAT_WEBAUTHN_RP_ID` | `aplat.vercel.app` | **Requerido para Passkey:** debe ser el hostname del front (donde el usuario registra la llave). Si no, verás "The requested RPID did not match the origin". |
 | `APLAT_WHATSAPP_AUTH_PATH` | `/whatsapp-auth` | Directorio auth de WhatsApp (volumen **auth-bot1-aplat**) |
@@ -73,6 +74,7 @@ Se usan **dos volúmenes** para guardar toda la información y la sesión de Wha
    - Volumen `aplat-api-data` → **Mount path**: `/data`
    - Volumen `auth-bot1-aplat` → **Mount path**: `/whatsapp-auth`
 4. Asegurar que las variables de entorno incluyen:
+   - `APLAT_DATA_PATH=/data` (base SQLite: clientes, suscripciones; se crea `aplat.db` ahí)
    - `APLAT_WEBAUTHN_STORE_PATH=/data/webauthn-store.json`
    - `APLAT_WHATSAPP_AUTH_PATH=/whatsapp-auth`
 5. Guardar y **Redeploy** el servicio (el servicio debe estar en la misma región que los volúmenes, ej. `was`).

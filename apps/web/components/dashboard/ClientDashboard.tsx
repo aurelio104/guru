@@ -26,6 +26,7 @@ type SubItem = {
   serviceName: string;
   dayOfMonth: number;
   amount?: number;
+  status: "active" | "suspended";
   nextCutoff: string;
   nextReminder: string;
 };
@@ -115,18 +116,27 @@ export function ClientDashboard() {
           <p className="text-aplat-muted text-sm mb-4">
             {subscriptions.length === 0
               ? "Aún no tienes servicios asociados. Cuando te afilien por WhatsApp, aparecerán aquí."
-              : `${subscriptions.length} servicio(s) activo(s).`}
+              : `${subscriptions.length} servicio(s). Los datos se actualizan al cargar.`}
           </p>
           {subscriptions.length > 0 && (
             <ul className="space-y-2">
               {subscriptions.map((s) => (
                 <li
                   key={s.id}
-                  className="flex items-center justify-between rounded-xl bg-white/5 border border-white/5 px-3 py-2"
+                  className="flex items-center justify-between rounded-xl bg-white/5 border border-white/5 px-3 py-2 gap-2"
                 >
-                  <span className="text-aplat-text font-medium">{s.serviceName}</span>
+                  <span className="text-aplat-text font-medium truncate">{s.serviceName}</span>
+                  <span
+                    className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-lg ${
+                      s.status === "active"
+                        ? "bg-aplat-emerald/20 text-aplat-emerald"
+                        : "bg-amber-500/20 text-amber-400"
+                    }`}
+                  >
+                    {s.status === "active" ? "Activo" : "Suspendido"}
+                  </span>
                   {s.amount != null && (
-                    <span className="text-aplat-emerald text-sm">${s.amount}</span>
+                    <span className="text-aplat-emerald text-sm shrink-0">${s.amount}</span>
                   )}
                 </li>
               ))}
@@ -156,6 +166,13 @@ export function ClientDashboard() {
                   className="rounded-xl bg-white/5 border border-white/5 px-3 py-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm"
                 >
                   <span className="text-aplat-text font-medium">{s.serviceName}</span>
+                  <span
+                    className={`text-xs font-medium px-2 py-0.5 rounded-lg ${
+                      s.status === "active" ? "bg-aplat-emerald/20 text-aplat-emerald" : "bg-amber-500/20 text-amber-400"
+                    }`}
+                  >
+                    {s.status === "active" ? "Activo" : "Suspendido"}
+                  </span>
                   <span className="text-aplat-muted">Corte: {s.nextCutoff}</span>
                   <span className="text-aplat-cyan">Recordatorio: {s.nextReminder}</span>
                 </li>

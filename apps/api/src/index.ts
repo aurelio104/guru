@@ -14,7 +14,16 @@ import {
   consumePhoneCode,
   addServiceSubscription,
   getSubscriptionsByPhone,
+  getSubscriptionById,
+  getNextCutoffDate,
+  getLastMissedCutoffDate,
+  processCutoffs,
+  markSubscriptionPaid,
+  getAllSubscriptions,
   normalizePhone,
+  updateSubscription,
+  deleteSubscription,
+  getClientByPhone,
 } from "./clients-store.js";
 import {
   getCredentialByCredentialId,
@@ -562,17 +571,15 @@ app.post<{ Body: { phone?: string; code?: string } }>("/api/auth/phone/verify", 
 });
 
 app.get("/api/client/subscriptions", async (request, reply) => {
+  processCutoffs();
   const user = await requireRole(request, reply, "client");
   if (!user?.sub) return;
   const client = getClientById(user.sub);
   const phone = client?.profile?.telefono ?? "";
   if (!phone) return reply.status(200).send({ ok: true, subscriptions: [] });
   const subs = getSubscriptionsByPhone(phone);
-  const now = new Date();
   const result = subs.map((s) => {
-    const day = s.dayOfMonth;
-    let nextDate = new Date(now.getFullYear(), now.getMonth(), day);
-    if (nextDate <= now) nextDate = new Date(now.getFullYear(), now.getMonth() + 1, day);
+    const nextDate = getNextCutoffDate(s);
     const reminder = new Date(nextDate);
     reminder.setDate(reminder.getDate() - 5);
     const months = "ene feb mar abr may jun jul ago sep oct nov dic".split(" ");
@@ -581,6 +588,7 @@ app.get("/api/client/subscriptions", async (request, reply) => {
       serviceName: s.serviceName,
       dayOfMonth: s.dayOfMonth,
       amount: s.amount,
+      status: s.status,
       nextCutoff: nextDate.toISOString().slice(0, 10),
       nextReminder: `${reminder.getDate()} ${months[reminder.getMonth()]}`,
     };
@@ -598,6 +606,7 @@ function generateTempPassword(length: number): string {
 }
 
 type SendSubscriptionInviteBody = {
+  subscriptionId?: string;
   serviceName?: string;
   dayOfMonth?: number;
   phone?: string;
@@ -608,18 +617,40 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
   const user = await requireRole(request, reply, "master");
   if (!user) return;
   const body = request.body ?? {};
-  const { serviceName, dayOfMonth, phone, email, amount } = body;
-  if (!serviceName?.trim() || !phone?.trim()) {
-    return reply.status(400).send({ ok: false, error: "Se requieren servicio y teléfono." });
+  const { subscriptionId, serviceName: bodyService, dayOfMonth: bodyDay, phone: bodyPhone, email: bodyEmail, amount: bodyAmount } = body;
+
+  let serviceName: string;
+  let phone: string;
+  let day: number;
+  let amount: number | undefined;
+  let emailNorm: string | undefined;
+
+  if (subscriptionId?.trim()) {
+    const sub = getSubscriptionById(subscriptionId.trim());
+    if (!sub) return reply.status(404).send({ ok: false, error: "Suscripción no encontrada." });
+    serviceName = sub.serviceName;
+    phone = sub.phone;
+    day = Math.min(28, Math.max(1, sub.dayOfMonth));
+    amount = sub.amount;
+    const client = getClientByPhone(sub.phone);
+    emailNorm = client?.email?.trim().toLowerCase();
+  } else {
+    if (!bodyService?.trim() || !bodyPhone?.trim()) {
+      return reply.status(400).send({ ok: false, error: "Se requieren servicio y teléfono." });
+    }
+    serviceName = bodyService.trim();
+    phone = bodyPhone.trim();
+    day = Math.min(28, Math.max(1, Number(bodyDay) || 1));
+    amount = bodyAmount;
+    emailNorm = bodyEmail?.trim().toLowerCase();
   }
-  const emailNorm = email?.trim().toLowerCase();
+
   const adminEmail = (process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local").toLowerCase();
   if (emailNorm && emailNorm === adminEmail) {
     return reply.status(400).send({ ok: false, error: "Ese correo está reservado para el administrador." });
   }
 
-  const day = Math.min(28, Math.max(1, Number(dayOfMonth) || 1));
-  const normalized = normalizePhone(phone.trim());
+  const normalized = normalizePhone(phone);
   const wa = await getWhatsApp();
   if (!wa) return reply.status(503).send({ ok: false, error: "WhatsApp no disponible." });
 
@@ -639,7 +670,7 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
   let clientCreated = false;
   let tempPassword: string | null = null;
 
-  if (emailNorm) {
+  if (!subscriptionId && emailNorm) {
     let client = getClientByEmail(emailNorm);
     if (!client) {
       tempPassword = generateTempPassword(12);
@@ -656,7 +687,7 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
     }
   }
 
-  addServiceSubscription(phone.trim(), serviceName.trim(), day, amount);
+  if (!subscriptionId) addServiceSubscription(phone, serviceName, day, amount);
 
   const amountStr = amount != null ? `\n• Monto: $${amount}` : "";
   let message: string;
@@ -696,6 +727,101 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
     request.log.warn(err);
     return reply.status(500).send({ ok: false, error: "Error al enviar mensaje." });
   }
+});
+
+// Admin: ejecutar lógica de cortes (suspender suscripciones con fecha de pago vencida). Llamar por cron diario o manual.
+app.post("/api/admin/process-cutoffs", async (request, reply) => {
+  const user = await requireRole(request, reply, "master");
+  if (!user) return;
+  const suspended = processCutoffs();
+  return reply.status(200).send({ ok: true, suspended, message: `Cortes procesados. ${suspended} suscripción(es) suspendida(s).` });
+});
+
+// Admin: marcar suscripción como pagada (reactiva si estaba suspendida y actualiza próximo corte)
+type MarkPaidBody = { subscriptionId?: string; cutoffDate?: string };
+app.post<{ Body: MarkPaidBody }>("/api/admin/mark-subscription-paid", async (request, reply) => {
+  const user = await requireRole(request, reply, "master");
+  if (!user) return;
+  const body = request.body ?? {};
+  const { subscriptionId, cutoffDate } = body;
+  if (!subscriptionId?.trim() || !cutoffDate?.trim()) {
+    return reply.status(400).send({ ok: false, error: "Se requieren subscriptionId y cutoffDate (YYYY-MM-DD)." });
+  }
+  const sub = getSubscriptionById(subscriptionId);
+  if (!sub) return reply.status(404).send({ ok: false, error: "Suscripción no encontrada." });
+  const ok = markSubscriptionPaid(subscriptionId, cutoffDate.trim());
+  return reply.status(200).send({ ok: true, message: "Marcado como pagado. El cliente verá el servicio activo y próximo corte actualizado." });
+});
+
+// Admin: listar todas las suscripciones (para ver estado y marcar pagos)
+app.get("/api/admin/subscriptions", async (request, reply) => {
+  const user = await requireRole(request, reply, "master");
+  if (!user) return;
+  processCutoffs();
+  const subs = getAllSubscriptions();
+  const result = subs.map((s) => {
+    const next = getNextCutoffDate(s);
+    const lastMissed = getLastMissedCutoffDate(s);
+    const reminder = new Date(next);
+    reminder.setDate(reminder.getDate() - 5);
+    const months = "ene feb mar abr may jun jul ago sep oct nov dic".split(" ");
+    const client = getClientByPhone(s.phone);
+    return {
+      id: s.id,
+      phone: s.phone,
+      serviceName: s.serviceName,
+      dayOfMonth: s.dayOfMonth,
+      amount: s.amount,
+      status: s.status,
+      paidUntil: s.paidUntil,
+      nextCutoff: next.toISOString().slice(0, 10),
+      lastMissedCutoff: lastMissed,
+      nextReminder: `${reminder.getDate()} ${months[reminder.getMonth()]}`,
+      createdAt: s.createdAt,
+      clientEmail: client?.email ?? null,
+      clientId: client?.id ?? null,
+    };
+  });
+  return reply.status(200).send({ ok: true, subscriptions: result });
+});
+
+type UpdateSubscriptionBody = {
+  phone?: string;
+  serviceName?: string;
+  dayOfMonth?: number;
+  amount?: number;
+  status?: "active" | "suspended";
+  clientEmail?: string;
+};
+app.patch<{ Params: { id: string }; Body: UpdateSubscriptionBody }>("/api/admin/subscriptions/:id", async (request, reply) => {
+  const user = await requireRole(request, reply, "master");
+  if (!user) return;
+  const { id } = request.params;
+  const body = request.body ?? {};
+  const sub = getSubscriptionById(id);
+  if (!sub) return reply.status(404).send({ ok: false, error: "Suscripción no encontrada." });
+  if (body.clientEmail !== undefined && body.clientEmail !== null) {
+    const client = getClientByPhone(sub.phone);
+    if (client) updateClientProfile(client.id, { email: body.clientEmail!.trim().toLowerCase() });
+  }
+  updateSubscription(id, {
+    phone: body.phone,
+    serviceName: body.serviceName,
+    dayOfMonth: body.dayOfMonth,
+    amount: body.amount,
+    status: body.status,
+  });
+  return reply.status(200).send({ ok: true, message: "Suscripción actualizada." });
+});
+
+app.delete<{ Params: { id: string } }>("/api/admin/subscriptions/:id", async (request, reply) => {
+  const user = await requireRole(request, reply, "master");
+  if (!user) return;
+  const { id } = request.params;
+  const sub = getSubscriptionById(id);
+  if (!sub) return reply.status(404).send({ ok: false, error: "Suscripción no encontrada." });
+  const ok = deleteSubscription(id);
+  return reply.status(200).send({ ok: true, message: "Suscripción eliminada. El servicio queda sin usuario asignado." });
 });
 
 // --- WebAuthn / Passkey (como Omac) ---

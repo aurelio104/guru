@@ -9,6 +9,9 @@ node_modules/
 dist/
 out/
 
+# API data (SQLite + JSON local)
+apps/api/data/
+
 # Env (no subir secretos)
 .env
 .env.local
