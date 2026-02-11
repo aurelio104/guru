@@ -1,0 +1,26 @@
+{
+  "name": "APlat · Servicios digitales de última generación",
+  "short_name": "APlat",
+  "description": "Plataforma inteligente: análisis, contexto, aprendizaje. Soluciones digitales con tecnología de vanguardia.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#030306",
+  "background_color": "#030306",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "maskable"
+    }
+  ]
+}

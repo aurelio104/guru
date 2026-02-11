@@ -11,8 +11,10 @@ Backend Node (Fastify) con Passkey, WhatsApp, visitas y dashboard. Se despliega 
 
 - **Build**: Dockerfile en raíz → `Dockerfile.api`
 - **Puerto**: `3001`
-- **Región**: `was` (una sola región por el volumen)
-- **Volumen**: `aplat-api-data` montado en `/data` (persistencia WebAuthn y WhatsApp)
+- **Región**: `was` (Washington D.C.; necesaria para volúmenes)
+- **Volúmenes** (dos):
+  - **aplat-api-data** → `/data`: datos generales (WebAuthn/Passkey, logs, etc.)
+  - **auth-bot1-aplat** → `/whatsapp-auth`: sesión de WhatsApp (Baileys) para que el bot no pierda el inicio de sesión
 
 ### Variables de entorno en Koyeb
 
@@ -22,13 +24,21 @@ Configuradas en el servicio (Settings → Environment variables):
 |----------|--------|-------------|
 | `PORT` | `3001` | Puerto del servidor |
 | `NODE_ENV` | `production` | Entorno |
-| `CORS_ORIGIN` | `https://tu-dominio.vercel.app` | Origen permitido (frontend) |
+| `CORS_ORIGIN` | `https://tu-dominio.vercel.app` | **Exactamente** la URL del front (sin barra final). Si no coincide, verás "Preflight 404" en el navegador. |
 | `APLAT_JWT_SECRET` | (secreto) | Clave JWT; generar con `openssl rand -hex 32` |
 | `APLAT_ADMIN_EMAIL` | `admin@aplat.local` | Email de login |
 | `APLAT_ADMIN_PASSWORD` | (secreto) | Contraseña de login |
-| `APLAT_WEBAUTHN_STORE_PATH` | `/data/webauthn-store.json` | Persistencia Passkey (en volumen) |
+| `APLAT_WEBAUTHN_STORE_PATH` | `/data/webauthn-store.json` | Persistencia Passkey (volumen `aplat-api-data`) |
 | `APLAT_WEBAUTHN_RP_ID` | (opcional) | Dominio del sitio en producción (ej. `aplat.vercel.app`) |
-| `APLAT_WHATSAPP_AUTH_PATH` | `/data/whatsapp-auth` | Directorio auth de Baileys (en volumen) |
+| `APLAT_WHATSAPP_AUTH_PATH` | `/whatsapp-auth` | Directorio auth de WhatsApp (volumen **auth-bot1-aplat**) |
+
+### CORS y error "Preflight 404"
+
+Si en el navegador ves **"Preflight response is not successful. Status code: 404"** al cargar la web o al hacer login:
+
+1. **CORS_ORIGIN** en Koyeb debe ser **exactamente** la URL del frontend que llama a la API (ej. `https://aplat.vercel.app` o `https://tu-app.vercel.app`), sin barra final. Si el front está en Vercel, usa la URL que aparece en la barra de direcciones.
+2. La API ya responde a peticiones **OPTIONS** (preflight) con 204; tras un redeploy, el 404 de preflight debería desaparecer.
+3. Redespliega el servicio en Koyeb después de cambiar `CORS_ORIGIN` o de subir el fix de OPTIONS.
 
 ### Frontend (Vercel) – imprescindible
 
@@ -40,9 +50,32 @@ Para que visitas, login, Passkey, WhatsApp y dashboard funcionen, el frontend de
    - **Value**: `https://aplat-aurelio104-5edd4229.koyeb.app` (o la URL actual del servicio en Koyeb, **sin** barra final)
 3. Redespliega el frontend.
 
-Si esta variable no está definida o apunta a otra URL, verás **404** en `/api/analytics/visit`, `/api/whatsapp/status`, `/api/auth/webauthn/register/begin`, etc.
+Si esta variable no está definida o apunta a otra URL, verás **404** en `/api/analytics/visit`, `/api/auth/login`, etc.
 
-## Crear volumen y configurar con CLI
+## Volúmenes: persistencia de datos y WhatsApp
+
+Se usan **dos volúmenes** para guardar toda la información y la sesión de WhatsApp:
+
+| Volumen Koyeb | Montaje en el contenedor | Uso |
+|---------------|--------------------------|-----|
+| **aplat-api-data** | `/data` | WebAuthn (Passkey), y cualquier otro dato persistente de la API |
+| **auth-bot1-aplat** | `/whatsapp-auth` | Sesión de inicio de sesión de WhatsApp (Baileys); evita tener que escanear QR cada vez |
+
+### Crear y adjuntar volúmenes en la UI de Koyeb
+
+1. En [Koyeb Console](https://app.koyeb.com) → **Volumes** → crear o usar los que ya tienes:
+   - **aplat-api-data** (1 GB), región Washington D.C.
+   - **auth-bot1-aplat** (1 GB), región Washington D.C.
+2. Ir al **servicio** de la API (ej. `aplat`) → **Settings** → **Volumes**.
+3. **Attach volume** dos veces:
+   - Volumen `aplat-api-data` → **Mount path**: `/data`
+   - Volumen `auth-bot1-aplat` → **Mount path**: `/whatsapp-auth`
+4. Asegurar que las variables de entorno incluyen:
+   - `APLAT_WEBAUTHN_STORE_PATH=/data/webauthn-store.json`
+   - `APLAT_WHATSAPP_AUTH_PATH=/whatsapp-auth`
+5. Guardar y **Redeploy** el servicio (el servicio debe estar en la misma región que los volúmenes, ej. `was`).
+
+### Crear volúmenes y configurar con CLI
 
 1. **Instalar Koyeb CLI** (si no lo tienes):
 
@@ -57,23 +90,25 @@ Si esta variable no está definida o apunta a otra URL, verás **404** en `/api/
    koyeb login
    ```
 
-3. **Crear volumen** (solo regiones `was` o `fra`):
+3. **Crear volúmenes** (solo regiones `was` o `fra`):
 
    ```bash
    koyeb volumes create aplat-api-data --region was --size 1
+   koyeb volumes create auth-bot1-aplat --region was --size 1
    ```
 
-4. **Actualizar el servicio** (volumen + variables):
+4. **Actualizar el servicio** (dos volúmenes + variables):
 
    ```bash
    koyeb services update aplat/aplat \
-     --regions '!fra' \
+     --region was \
      --volumes aplat-api-data:/data \
+     --volumes auth-bot1-aplat:/whatsapp-auth \
      --env "APLAT_WEBAUTHN_STORE_PATH=/data/webauthn-store.json" \
-     --env "APLAT_WHATSAPP_AUTH_PATH=/data/whatsapp-auth"
+     --env "APLAT_WHATSAPP_AUTH_PATH=/whatsapp-auth"
    ```
 
-   (Quitar `--regions '!fra'` si el servicio ya está solo en `was`.)
+   (Ajusta el nombre del servicio/app si no es `aplat/aplat`.)
 
 5. **Redeploy** (usa el último commit de `main`):
 

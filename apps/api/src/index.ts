@@ -14,8 +14,17 @@ const app = Fastify({ logger: true });
 
 await app.register(cors, {
   origin: process.env.CORS_ORIGIN ?? true,
-  methods: ["GET", "POST", "OPTIONS"],
+  methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
+  preflightContinue: false,
+});
+
+// Responder OPTIONS (preflight) con 200 para que CORS no devuelva 404
+app.addHook("onRequest", async (request, reply) => {
+  if (request.method === "OPTIONS") {
+    return reply.status(204).send();
+  }
 });
 
 const JWT_SECRET = new TextEncoder().encode(

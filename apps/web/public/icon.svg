@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <!-- A: left leg -->
+  <path d="M8 26 L16 6 L18 6 L26 26 L23 26 L21 20 L11 20 L9 26 Z" fill="url(#icon-grad)"/>
+  <!-- A: crossbar -->
+  <path d="M12 16 L20 16 L19 13 L13 13 Z" fill="#030306"/>
+  <!-- Dot -->
+  <circle cx="24" cy="26" r="3" fill="#22d3ee"/>
+</svg>

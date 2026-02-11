@@ -364,15 +364,16 @@ function PortfolioGrid({
 
 function RepoLogoCarousel({ repos }: { repos: { slug: string; name: string }[] }) {
   const duplicated = [...repos, ...repos];
+  const itemClass = "inline-flex items-center gap-3 shrink-0 group";
   return (
-    <div className="relative w-full overflow-hidden py-6">
-      <div className="flex gap-4 animate-marquee whitespace-nowrap">
+    <div className="relative w-full overflow-hidden py-8">
+      <div className="flex gap-10 animate-marquee whitespace-nowrap">
         {duplicated.map((repo, i) => {
           const url = getProductionUrl(repo.slug);
           const chip = (
             <>
-              <ProjectLogo slug={repo.slug} name={repo.name} size={28} />
-              <span className="text-sm font-medium text-aplat-text group-hover:text-aplat-cyan transition-colors">
+              <ProjectLogo slug={repo.slug} name={repo.name} size={56} className="rounded-2xl" />
+              <span className="text-base font-medium text-aplat-text group-hover:text-aplat-cyan transition-colors">
                 {repo.name}
               </span>
             </>
@@ -383,15 +384,12 @@ function RepoLogoCarousel({ repos }: { repos: { slug: string; name: string }[] }
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 glass glass-strong rounded-xl px-5 py-3 border border-white/10 hover:border-aplat-cyan/30 transition-all shrink-0 group"
+              className={`${itemClass} hover:opacity-90 transition-opacity`}
             >
               {chip}
             </a>
           ) : (
-            <span
-              key={`${repo.slug}-${i}`}
-              className="inline-flex items-center gap-2 glass glass-strong rounded-xl px-5 py-3 border border-white/10 opacity-80 shrink-0"
-            >
+            <span key={`${repo.slug}-${i}`} className={`${itemClass} opacity-70`}>
               {chip}
             </span>
           );
