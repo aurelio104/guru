@@ -222,7 +222,18 @@ function LoginForm() {
       if (data.token) {
         typeof window !== "undefined" && localStorage.setItem("aplat_token", data.token);
       }
-      setMessage({ type: "success", text: "Sesión iniciada." });
+      setMessage({
+        type: "success",
+        text: data.requirePasswordChange
+          ? "Debes cambiar tu contraseña. Redirigiendo..."
+          : "Sesión iniciada.",
+      });
+
+      if (data.role === "client" || data.requirePasswordChange) {
+        setTimeout(doRedirect, 600);
+        setLoading(false);
+        return;
+      }
 
       if (passkeySupported === true) {
         const hasRes = await fetch(`${API_URL.replace(/\/$/, "")}/api/auth/webauthn/has-passkey`, {

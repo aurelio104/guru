@@ -3,6 +3,7 @@
 import { useMemo, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { CreditCard, ExternalLink, ToggleLeft, Calendar, MessageCircle, Send, Loader2 } from "lucide-react";
+import { CountryCodePhoneInput } from "@/components/ui/CountryCodePhoneInput";
 
 const STORAGE_KEY = "aplat_subscription_mode";
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
@@ -15,10 +16,12 @@ function getAuthHeaders(): Record<string, string> {
 
 export type SubscriptionConfig = {
   on: boolean;
-  /** Día del mes en que se cobra (1-28). Si es 1, el recordatorio se envía 5 días antes = día 27 del mes anterior. */
+  /** Día del mes en que se cobra (1-28). */
   dayOfMonth?: number;
-  /** Teléfono (WhatsApp) para enviar el recordatorio. Opcional. */
+  /** Teléfono (WhatsApp) para enviar la invitación. */
   phone?: string;
+  /** Email del cliente (crea cuenta con contraseña temporal si no existe). */
+  email?: string;
 };
 
 function parseStored(raw: string | null): Record<string, SubscriptionConfig> {
@@ -34,6 +37,7 @@ function parseStored(raw: string | null): Record<string, SubscriptionConfig> {
           on: !!value.on,
           dayOfMonth: value.dayOfMonth ?? (value.on ? 1 : undefined),
           phone: value.phone,
+          email: value.email,
         };
       }
     }
@@ -133,12 +137,22 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
     setInviteMessage(null);
   };
 
+  const setEmail = (name: string, email: string) => {
+    const current = state[name] ?? { on: false };
+    const next: SubscriptionConfig = { ...current, email: email.trim() || undefined };
+    const nextState = { ...state, [name]: next };
+    setLocal((prev) => ({ ...prev, [name]: next }));
+    setStored(nextState);
+    setInviteMessage(null);
+  };
+
   const sendSubscriptionInvite = useCallback(async (name: string) => {
     const config = state[name] ?? { on: false };
     const phone = config.phone?.trim();
     const day = config.dayOfMonth ?? 1;
+    const email = config.email?.trim();
     if (!phone || !API_URL) {
-      setInviteMessage({ project: name, type: "error", text: "Ingresa un teléfono primero." });
+      setInviteMessage({ project: name, type: "error", text: "Ingresa teléfono (y opcionalmente correo para crear cuenta)." });
       return;
     }
     setSendingInvite(name);
@@ -147,11 +161,14 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
       const res = await fetch(`${API_URL.replace(/\/$/, "")}/api/admin/send-subscription-invite`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-        body: JSON.stringify({ serviceName: name, dayOfMonth: day, phone }),
+        body: JSON.stringify({ serviceName: name, dayOfMonth: day, phone, email: email || undefined }),
       });
       const data = await res.json().catch(() => ({}));
       if (data.ok) {
-        setInviteMessage({ project: name, type: "success", text: "Invitación enviada por WhatsApp." });
+        const num = data.jid ? `+${(data.jid as string).replace(/@.*/, "").trim()}` : "";
+        let text = num ? `Enviado a ${num}.` : "Invitación enviada.";
+        if (data.clientCreated && email) text = `Cuenta creada para ${email}. ${text}`;
+        setInviteMessage({ project: name, type: "success", text });
       } else {
         setInviteMessage({ project: name, type: "error", text: data.error ?? "Error al enviar." });
       }
@@ -182,8 +199,8 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
         </span>
       </div>
       <p className="text-aplat-muted text-sm mb-2">
-        Activa el modo suscripción por proyecto y define el <strong className="text-aplat-text">día de cobro</strong> (ej. 1 = día 1 de cada mes). 
-        Se enviará recordatorio por WhatsApp <strong className="text-aplat-cyan">5 días antes</strong> para evitar corte de servicios.
+        Activa el modo suscripción por proyecto y define el <strong className="text-aplat-text">día de cobro</strong>. 
+        Indica <strong className="text-aplat-cyan">correo</strong> y <strong className="text-aplat-cyan">WhatsApp</strong>: se crea la cuenta con contraseña temporal, se envía mensaje de bienvenida con datos y enlace. El cliente entra, cambia la contraseña y completa su perfil.
       </p>
       <ul className="space-y-2 max-h-[420px] overflow-y-auto">
         {projects.map((p) => {
@@ -243,14 +260,24 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
                       {reminder.isPreviousMonth ? " (mes anterior)" : ""}
                     </span>
                   )}
-                  <div className="flex items-center gap-1.5 min-w-0">
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1 max-w-[220px]">
                     <MessageCircle className="w-3.5 h-3.5 text-aplat-emerald shrink-0" />
-                    <input
-                      type="tel"
-                      placeholder="Teléfono (WhatsApp)"
+                    <CountryCodePhoneInput
                       value={config.phone ?? ""}
-                      onChange={(e) => setPhone(p.name, e.target.value)}
-                      className="rounded-lg bg-white/5 border border-white/10 text-aplat-text placeholder:text-aplat-muted/60 px-2 py-1 w-44 max-w-full focus:border-aplat-violet/50 focus:outline-none text-xs"
+                      onChange={(v) => setPhone(p.name, v)}
+                      placeholder="Número"
+                      compact
+                      className="flex-1 min-w-0"
+                    />
+                  </div>
+                  <div className="flex items-center gap-1.5 min-w-0 w-full max-w-[240px]">
+                    <span className="text-aplat-muted text-xs shrink-0">Correo:</span>
+                    <input
+                      type="email"
+                      placeholder="cliente@email.com (crea cuenta)"
+                      value={config.email ?? ""}
+                      onChange={(e) => setEmail(p.name, e.target.value)}
+                      className="rounded-lg bg-white/5 border border-white/10 text-aplat-text placeholder:text-aplat-muted/60 px-2 py-1 flex-1 min-w-0 text-xs focus:border-aplat-violet/50 focus:outline-none"
                     />
                   </div>
                   {config.phone?.trim() && (

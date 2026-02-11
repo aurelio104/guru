@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { MessageCircle, Wrench, Loader2, Send } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { CountryCodePhoneInput } from "@/components/ui/CountryCodePhoneInput";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 
@@ -258,12 +259,10 @@ export function DashboardWidgetWhatsApp() {
       {whatsappConnected === true && (
         <form onSubmit={handleSendMessage} className="space-y-2">
           <p className="text-aplat-muted text-xs font-medium">Enviar mensaje</p>
-          <input
-            type="tel"
+          <CountryCodePhoneInput
             value={sendPhone}
-            onChange={(e) => setSendPhone(e.target.value)}
-            placeholder="Número con código de país (ej. 584121234567)"
-            className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-sm text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none"
+            onChange={setSendPhone}
+            placeholder="Número"
           />
           <textarea
             value={sendText}

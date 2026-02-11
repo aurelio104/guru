@@ -2,7 +2,12 @@
 
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 
-export type DashboardUser = { email?: string; role?: string; sub?: string } | null;
+export type DashboardUser = {
+  email?: string;
+  role?: string;
+  sub?: string;
+  requirePasswordChange?: boolean;
+} | null;
 
 const DashboardUserContext = createContext<{
   user: DashboardUser;

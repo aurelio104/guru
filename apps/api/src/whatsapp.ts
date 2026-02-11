@@ -1353,7 +1353,7 @@ export async function isWhatsAppConnected(): Promise<boolean> {
 export async function sendWhatsAppMessage(
   phoneNumber: string,
   message: string
-): Promise<{ success: boolean; messageId?: string; error?: string }> {
+): Promise<{ success: boolean; messageId?: string; jid?: string; error?: string }> {
   try {
     const isVercel = detectVercel();
     const isKoyeb = detectKoyeb();
@@ -1393,30 +1393,32 @@ export async function sendWhatsAppMessage(
       };
     }
     
-    // Limpiar y formatear número
+    // Limpiar y formatear número (E.164 sin +)
     let cleanPhone = phoneNumber.trim().replace(/[^0-9]/g, "");
-    
-    if (cleanPhone.startsWith("+")) {
-      cleanPhone = cleanPhone.substring(1);
-    }
-    
+    if (cleanPhone.startsWith("+")) cleanPhone = cleanPhone.slice(1).trim();
+    // Quitar cero inicial si es número local (ej. 09841234567 → 9841234567)
+    if (cleanPhone.length === 9 && cleanPhone.startsWith("0")) cleanPhone = cleanPhone.slice(1);
+
     if (cleanPhone.length < 8 || cleanPhone.length > 15) {
       return {
         success: false,
-        error: `Número inválido (${cleanPhone.length} dígitos). Debe tener entre 8 y 15 dígitos.`,
+        error: `Número inválido (${cleanPhone.length} dígitos). Debe tener entre 8 y 15 dígitos (E.164, ej. 50412345678).`,
       };
     }
-    
-    const formattedNumber = cleanPhone.includes("@") ? cleanPhone : `${cleanPhone}@c.us`;
-    
-    // Enviar mensaje
-    const result = await sock.sendMessage(formattedNumber, { text: message });
-    
+
+    // JID correcto para Baileys/WhatsApp: número@s.whatsapp.net (no @c.us)
+    const jid = cleanPhone.includes("@") ? cleanPhone : `${cleanPhone}@s.whatsapp.net`;
+
+    console.log(`[WHATSAPP SEND] 📤 Enviando a JID=${jid} mensaje (${message.length} chars): "${message.slice(0, 60)}${message.length > 60 ? "..." : ""}"`);
+
+    const result = await sock.sendMessage(jid, { text: message });
+
     if (result?.key?.id) {
-      console.log(`[WHATSAPP SEND] ✅ Mensaje enviado. ID: ${result.key.id}`);
+      console.log(`[WHATSAPP SEND] ✅ Mensaje enviado. JID=${jid} messageId=${result.key.id}`);
       return {
         success: true,
         messageId: result.key.id,
+        jid,
       };
     } else {
       return {

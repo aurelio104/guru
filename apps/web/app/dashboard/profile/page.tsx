@@ -17,6 +17,7 @@ import {
   Shield,
 } from "lucide-react";
 import { useDashboardUser } from "@/contexts/DashboardUserContext";
+import { CountryCodePhoneInput } from "@/components/ui/CountryCodePhoneInput";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 
@@ -137,7 +138,9 @@ export default function ProfilePage() {
       const data = await res.json().catch(() => ({}));
       if (data.ok) {
         setPhoneCodeSent(true);
-        setMessage({ type: "success", text: "Código enviado por WhatsApp." });
+        const num = data.jid ? `+${(data.jid as string).replace(/@.*/, "").trim()}` : "";
+        const toShow = num ? `Código enviado por WhatsApp al ${num}. Revisa tu teléfono.` : "Código enviado por WhatsApp.";
+        setMessage({ type: "success", text: toShow });
       } else {
         setMessage({ type: "error", text: data.error ?? "Error al enviar código." });
       }
@@ -383,12 +386,10 @@ export default function ProfilePage() {
               </label>
               <label className="block">
                 <span className="text-aplat-muted text-sm mb-1 block">Teléfono</span>
-                <input
-                  type="tel"
+                <CountryCodePhoneInput
                   value={form.telefono}
-                  onChange={(e) => updateForm({ telefono: e.target.value })}
-                  placeholder="Ej. 504 1234 5678"
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none"
+                  onChange={(v) => updateForm({ telefono: v })}
+                  placeholder="9841 2345"
                 />
                 {form.telefonoVerificado && (
                   <span className="mt-1 inline-flex items-center gap-1 text-aplat-emerald text-xs">
@@ -518,16 +519,14 @@ export default function ProfilePage() {
                 >
                   <p className="text-aplat-muted text-sm mb-2">Teléfono (recibirás un código por WhatsApp para verificar)</p>
                   <label className="block">
-                    <span className="text-aplat-muted text-xs mb-1 block">Número de teléfono</span>
-                    <input
-                      type="tel"
+                    <span className="text-aplat-muted text-xs mb-1 block">País y número</span>
+                    <CountryCodePhoneInput
                       value={form.telefono}
-                      onChange={(e) => {
-                        updateForm({ telefono: e.target.value });
+                      onChange={(v) => {
+                        updateForm({ telefono: v });
                         setPhoneCodeSent(false);
                       }}
-                      placeholder="Ej. 504 1234 5678"
-                      className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none"
+                      placeholder="9841 2345"
                     />
                   </label>
                   {!phoneCodeSent ? (

@@ -28,6 +28,8 @@ export type Client = {
   passwordHash: string;
   role: "client";
   createdAt: string;
+  /** Si true, el cliente debe cambiar la contraseña en el primer acceso */
+  mustChangePassword?: boolean;
   profile?: ClientProfile;
 };
 
@@ -104,18 +106,54 @@ export function getClientByEmail(email: string): Client | undefined {
   return clients.find((c) => c.email.toLowerCase() === email.trim().toLowerCase());
 }
 
-export function createClient(email: string, passwordHash: string): Client {
+export function createClient(
+  email: string,
+  passwordHash: string,
+  opts?: { mustChangePassword?: boolean; initialPhone?: string }
+): Client {
   const id = crypto.randomUUID();
+  const now = new Date().toISOString();
   const client: Client = {
     id,
     email: email.trim().toLowerCase(),
     passwordHash,
     role: "client",
-    createdAt: new Date().toISOString(),
+    createdAt: now,
+    mustChangePassword: opts?.mustChangePassword ?? false,
   };
+  if (opts?.initialPhone) {
+    client.profile = {
+      nombres: "",
+      apellidos: "",
+      identidad: "",
+      telefono: normalizePhone(opts.initialPhone),
+      telefonoVerificado: true,
+      direccion: "",
+      email: client.email,
+      tipoServicio: "",
+      updatedAt: now,
+    };
+  }
   clients.push(client);
   persistClients();
   return client;
+}
+
+export function setMustChangePassword(clientId: string, value: boolean): void {
+  const c = clients.find((x) => x.id === clientId);
+  if (c) {
+    c.mustChangePassword = value;
+    persistClients();
+  }
+}
+
+export function updateClientPassword(clientId: string, passwordHash: string): void {
+  const c = clients.find((x) => x.id === clientId);
+  if (c) {
+    c.passwordHash = passwordHash;
+    c.mustChangePassword = false;
+    persistClients();
+  }
 }
 
 export function updateClientProfile(

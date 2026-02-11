@@ -8,6 +8,8 @@ import {
   getClientById,
   updateClientProfile,
   setPhoneVerified,
+  setMustChangePassword,
+  updateClientPassword,
   setPhoneCode,
   consumePhoneCode,
   addServiceSubscription,
@@ -174,7 +176,13 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
       success: true,
     });
     if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
-    return reply.status(200).send({ ok: true, role: "client", token });
+    const requirePasswordChange = !!client.mustChangePassword;
+    return reply.status(200).send({
+      ok: true,
+      role: "client",
+      token,
+      requirePasswordChange,
+    });
   }
 
   connectionLog.unshift({
@@ -232,17 +240,46 @@ app.get("/api/auth/me", async (request, reply) => {
   if (!token) return reply.status(401).send({ ok: false, error: "No autorizado." });
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);
+    const role = (payload as { role?: string }).role;
+    let requirePasswordChange = false;
+    if (role === "client" && payload.sub) {
+      const client = getClientById(String(payload.sub));
+      requirePasswordChange = !!client?.mustChangePassword;
+    }
     return reply.status(200).send({
       ok: true,
       user: {
         sub: payload.sub,
         email: payload.email,
         role: payload.role,
+        requirePasswordChange,
       },
     });
   } catch {
     return reply.status(401).send({ ok: false, error: "Token inválido o expirado." });
   }
+});
+
+// Cliente: cambiar contraseña (obligatorio tras invitación con contraseña temporal)
+type ChangePasswordBody = { currentPassword?: string; newPassword?: string };
+app.post<{ Body: ChangePasswordBody }>("/api/auth/change-password", async (request, reply) => {
+  const user = await requireRole(request, reply, "client");
+  if (!user?.sub) return;
+  const body = request.body ?? {};
+  const { currentPassword, newPassword } = body;
+  if (!currentPassword || !newPassword?.trim()) {
+    return reply.status(400).send({ ok: false, error: "Faltan contraseña actual o nueva." });
+  }
+  if (newPassword.length < 8) {
+    return reply.status(400).send({ ok: false, error: "La nueva contraseña debe tener al menos 8 caracteres." });
+  }
+  const client = getClientById(user.sub);
+  if (!client) return reply.status(404).send({ ok: false, error: "Cliente no encontrado." });
+  if (!verifyPassword(currentPassword, client.passwordHash)) {
+    return reply.status(401).send({ ok: false, error: "Contraseña actual incorrecta." });
+  }
+  updateClientPassword(client.id, hashPassword(newPassword));
+  return reply.status(200).send({ ok: true, message: "Contraseña actualizada. Ya puedes usar tu nueva contraseña." });
 });
 
 // Listar últimas conexiones (solo con token válido)
@@ -440,7 +477,7 @@ app.post<{ Body: { phoneNumber?: string; message?: string } }>("/api/whatsapp/se
   try {
     const result = await wa.sendWhatsAppMessage(phoneNumber.trim(), message.trim());
     if (result.success) {
-      return reply.status(200).send({ ok: true, success: true, messageId: result.messageId });
+      return reply.status(200).send({ ok: true, success: true, messageId: result.messageId, jid: result.jid });
     }
     return reply.status(500).send({ ok: false, error: result.error ?? "Error al enviar." });
   } catch (err) {
@@ -501,11 +538,15 @@ app.post<{ Body: { phone?: string } }>("/api/auth/phone/send-code", async (reque
   const code = String(Math.floor(100_000 + Math.random() * 900_000));
   setPhoneCode(phone, code, user.sub);
   const wa = await getWhatsApp();
+  let jid: string | undefined;
   if (wa) {
     const toSend = normalizePhone(phone);
-    if (toSend.length >= 8) await wa.sendWhatsAppMessage(toSend, `Tu código de verificación APlat: ${code}. Válido 10 minutos.`);
+    if (toSend.length >= 8) {
+      const result = await wa.sendWhatsAppMessage(toSend, `Tu código de verificación APlat: ${code}. Válido 10 minutos.`);
+      jid = result.jid;
+    }
   }
-  return reply.status(200).send({ ok: true, message: "Código enviado por WhatsApp." });
+  return reply.status(200).send({ ok: true, message: "Código enviado por WhatsApp.", jid });
 });
 
 app.post<{ Body: { phone?: string; code?: string } }>("/api/auth/phone/verify", async (request, reply) => {
@@ -547,20 +588,41 @@ app.get("/api/client/subscriptions", async (request, reply) => {
   return reply.status(200).send({ ok: true, subscriptions: result });
 });
 
-// Admin: enviar invitación de suscripción por WhatsApp (mensaje corporativo + fecha de corte)
-type SendSubscriptionInviteBody = { serviceName?: string; dayOfMonth?: number; phone?: string; amount?: number };
+// Admin: enviar invitación de suscripción por WhatsApp (crea usuario si email nuevo, mensaje con bienvenida + datos + link)
+function generateTempPassword(length: number): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  let out = "";
+  const bytes = randomBytes(length);
+  for (let i = 0; i < length; i++) out += chars[bytes[i]! % chars.length];
+  return out;
+}
+
+type SendSubscriptionInviteBody = {
+  serviceName?: string;
+  dayOfMonth?: number;
+  phone?: string;
+  email?: string;
+  amount?: number;
+};
 app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-invite", async (request, reply) => {
   const user = await requireRole(request, reply, "master");
   if (!user) return;
   const body = request.body ?? {};
-  const { serviceName, dayOfMonth, phone, amount } = body;
+  const { serviceName, dayOfMonth, phone, email, amount } = body;
   if (!serviceName?.trim() || !phone?.trim()) {
-    return reply.status(400).send({ ok: false, error: "Se requieren serviceName y phone." });
+    return reply.status(400).send({ ok: false, error: "Se requieren servicio y teléfono." });
   }
+  const emailNorm = email?.trim().toLowerCase();
+  const adminEmail = (process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local").toLowerCase();
+  if (emailNorm && emailNorm === adminEmail) {
+    return reply.status(400).send({ ok: false, error: "Ese correo está reservado para el administrador." });
+  }
+
   const day = Math.min(28, Math.max(1, Number(dayOfMonth) || 1));
   const normalized = normalizePhone(phone.trim());
   const wa = await getWhatsApp();
   if (!wa) return reply.status(503).send({ ok: false, error: "WhatsApp no disponible." });
+
   const nextCutoff = (() => {
     const n = new Date();
     let d = new Date(n.getFullYear(), n.getMonth(), day);
@@ -571,15 +633,63 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
   const reminder = new Date(nextCutoff);
   reminder.setDate(reminder.getDate() - 5);
   const reminderStr = reminder.toLocaleDateString("es-ES", { day: "numeric", month: "short" });
-  const amountStr = amount != null ? ` Monto: $${amount}.` : "";
-  const message = `*APlat* – Afiliación a *${String(serviceName).trim()}*\n\nBienvenido/a. Tu suscripción está activa. Fecha de corte y pago: *${cutoffStr}*. Recordatorio por WhatsApp: ${reminderStr}.${amountStr}\n\nAccede a tu panel en APlat para ver detalles y perfil.`;
+  const baseUrl = (process.env.APLAT_APP_URL || process.env.CORS_ORIGIN || "https://aplat.vercel.app").replace(/\/$/, "");
+  const loginUrl = `${baseUrl}/login`;
+
+  let clientCreated = false;
+  let tempPassword: string | null = null;
+
+  if (emailNorm) {
+    let client = getClientByEmail(emailNorm);
+    if (!client) {
+      tempPassword = generateTempPassword(12);
+      client = createClient(emailNorm, hashPassword(tempPassword), {
+        mustChangePassword: true,
+        initialPhone: normalized,
+      });
+      clientCreated = true;
+    } else if (!client.profile?.telefono || normalizePhone(client.profile.telefono) !== normalized) {
+      updateClientProfile(client.id, {
+        telefono: normalized,
+        telefonoVerificado: true,
+      });
+    }
+  }
+
+  addServiceSubscription(phone.trim(), serviceName.trim(), day, amount);
+
+  const amountStr = amount != null ? `\n• Monto: $${amount}` : "";
+  let message: string;
+  if (clientCreated && emailNorm && tempPassword) {
+    message =
+      `*¡Bienvenido a ${String(serviceName).trim()}!* 🎉\n\n` +
+      `Tu suscripción está activa. Estos son tus datos de acceso:\n\n` +
+      `📧 *Correo:* ${emailNorm}\n` +
+      `🔑 *Contraseña temporal:* ${tempPassword}\n\n` +
+      `👉 *Entra aquí y cambia tu contraseña:*\n${loginUrl}\n\n` +
+      `📅 *Fecha de corte y pago:* ${cutoffStr}\n` +
+      `⏰ Recordatorio por WhatsApp: ${reminderStr}${amountStr}\n\n` +
+      `Después de entrar, completa tu perfil en el panel.`;
+  } else {
+    message =
+      `*APlat* – *${String(serviceName).trim()}*\n\n` +
+      `Bienvenido/a. Tu suscripción está activa.\n\n` +
+      `📅 Fecha de corte y pago: *${cutoffStr}*\n` +
+      `⏰ Recordatorio: ${reminderStr}${amountStr}\n\n` +
+      `Accede a tu panel: ${loginUrl}`;
+  }
+
   try {
     const result = await wa.sendWhatsAppMessage(normalized, message);
     if (!result.success) {
       return reply.status(500).send({ ok: false, error: result.error ?? "Error al enviar." });
     }
-    addServiceSubscription(phone.trim(), serviceName.trim(), day, amount);
-    return reply.status(200).send({ ok: true, message: "Invitación enviada por WhatsApp." });
+    return reply.status(200).send({
+      ok: true,
+      message: clientCreated ? `Invitación enviada. Cuenta creada para ${emailNorm}.` : "Invitación enviada por WhatsApp.",
+      jid: result.jid,
+      clientCreated,
+    });
   } catch (err) {
     request.log.warn(err);
     return reply.status(500).send({ ok: false, error: "Error al enviar mensaje." });
