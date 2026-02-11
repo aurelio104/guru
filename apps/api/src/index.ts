@@ -534,6 +534,15 @@ app.addHook("preHandler", async (request, reply) => {
   }
 });
 
+// 404 para rutas no definidas (evita respuestas HTML por defecto)
+app.setNotFoundHandler((request, reply) => {
+  reply.status(404).send({
+    ok: false,
+    error: "not_found",
+    message: `Route ${request.method}:${request.url} not found`,
+  });
+});
+
 const port = Number(process.env.PORT) || 3001;
 const host = process.env.HOST ?? "0.0.0.0";
 
