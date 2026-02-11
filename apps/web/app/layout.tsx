@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { VisitTracker } from "@/components/analytics/VisitTracker";
 
 export const metadata: Metadata = {
   title: "APlat · Servicios digitales de última generación",
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="dark">
       <body className="min-h-screen bg-aplat-deep text-aplat-text font-sans bg-grid-perspective">
+        <VisitTracker />
         <div className="relative min-h-screen">
           {children}
         </div>

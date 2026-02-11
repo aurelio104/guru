@@ -5,6 +5,7 @@ import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
 import { DashboardWidgetWhatsApp } from "@/components/dashboard/DashboardWidgetWhatsApp";
 import { DashboardWidgetSubscriptions } from "@/components/dashboard/DashboardWidgetSubscriptions";
 import { DashboardWidgetConnections } from "@/components/dashboard/DashboardWidgetConnections";
+import { DashboardWidgetPasskey } from "@/components/dashboard/DashboardWidgetPasskey";
 import type { MetricsData } from "@/components/dashboard/DashboardMetrics";
 import type { ProjectEntry } from "@/components/dashboard/DashboardWidgetSubscriptions";
 import portfolioUrls from "@/data/portfolio-production-urls.json";
@@ -69,6 +70,7 @@ export default function DashboardPage() {
 
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DashboardWidgetWhatsApp />
+        <DashboardWidgetPasskey />
         <DashboardWidgetSubscriptions projects={projects} />
         <DashboardWidgetConnections />
       </section>

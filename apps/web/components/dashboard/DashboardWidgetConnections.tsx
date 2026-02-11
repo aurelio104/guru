@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Users, MapPin, Monitor, CheckCircle, XCircle } from "lucide-react";
+import { Users, Globe, CheckCircle, XCircle, LogIn } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 
@@ -15,39 +15,62 @@ export type ConnectionRecord = {
   success: boolean;
 };
 
+export type VisitorRecord = {
+  id: string;
+  ip: string;
+  userAgent: string;
+  path: string;
+  referrer: string;
+  timestamp: string;
+};
+
 function parseUserAgent(ua: string): string {
   if (!ua || ua === "unknown") return "—";
   if (ua.length > 50) return ua.slice(0, 47) + "...";
   return ua;
 }
 
+type Tab = "logins" | "visitors";
+
 export function DashboardWidgetConnections() {
+  const [tab, setTab] = useState<Tab>("logins");
   const [connections, setConnections] = useState<ConnectionRecord[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [visitors, setVisitors] = useState<VisitorRecord[]>([]);
+  const [loadingConn, setLoadingConn] = useState(true);
+  const [loadingVisitors, setLoadingVisitors] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+    const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
     if (!token || !API_URL) {
-      setLoading(false);
-      if (!API_URL) setConnections([]);
+      setLoadingConn(false);
+      setLoadingVisitors(false);
+      if (!API_URL) setError("API no configurada.");
       return;
     }
-    fetch(`${API_URL.replace(/\/$/, "")}/api/dashboard/connections?limit=30`, {
+    fetch(`${API_URL.replace(/\/$/, "")}/api/dashboard/connections?limit=50`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())
       .then((data) => {
-        if (data.ok && Array.isArray(data.connections)) {
-          setConnections(data.connections);
-        } else {
-          setError("No se pudieron cargar las conexiones.");
-        }
+        if (data.ok && Array.isArray(data.connections)) setConnections(data.connections);
+        else setError("No se pudieron cargar las conexiones.");
       })
       .catch(() => setError("Error de conexión."))
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingConn(false));
+
+    fetch(`${API_URL.replace(/\/$/, "")}/api/dashboard/visitors?limit=100`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok && Array.isArray(data.visitors)) setVisitors(data.visitors);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingVisitors(false));
   }, []);
+
+  const loading = tab === "logins" ? loadingConn : loadingVisitors;
 
   return (
     <motion.div
@@ -55,28 +78,61 @@ export function DashboardWidgetConnections() {
       animate={{ opacity: 1, y: 0 }}
       className="glass glass-strong rounded-2xl p-5 border border-white/10 mirror-shine col-span-1 lg:col-span-2"
     >
-      <div className="flex items-center gap-2 mb-4">
-        <div className="rounded-xl p-2 bg-aplat-cyan/15 text-aplat-cyan">
-          <Users className="w-5 h-5" />
+      <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <div className="rounded-xl p-2 bg-aplat-cyan/15 text-aplat-cyan">
+            <Users className="w-5 h-5" />
+          </div>
+          <h2 className="text-lg font-semibold text-aplat-text">
+            Quién se conecta y desde dónde
+          </h2>
         </div>
-        <h2 className="text-lg font-semibold text-aplat-text">
-          Quién se conecta y desde dónde
-        </h2>
+        <div className="flex rounded-xl bg-white/5 p-0.5 border border-white/10">
+          <button
+            type="button"
+            onClick={() => setTab("logins")}
+            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+              tab === "logins"
+                ? "bg-aplat-cyan/20 text-aplat-cyan"
+                : "text-aplat-muted hover:text-aplat-text"
+            }`}
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            Inicios de sesión
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("visitors")}
+            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+              tab === "visitors"
+                ? "bg-aplat-cyan/20 text-aplat-cyan"
+                : "text-aplat-muted hover:text-aplat-text"
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            Visitas a la página
+          </button>
+        </div>
       </div>
       <p className="text-aplat-muted text-sm mb-4">
-        Registro de accesos al panel (IP, dispositivo, resultado). Como en MundoIAanime.
+        {tab === "logins"
+          ? "Registro de accesos al panel (quién inicia sesión, IP, dispositivo, resultado)."
+          : "Personas que entran al sitio: IP, dispositivo, página y procedencia. Como en MundoIAanime."}
       </p>
-      {loading && (
-        <div className="flex items-center justify-center py-8">
-          <div className="w-8 h-8 border-2 border-aplat-cyan/40 border-t-aplat-cyan rounded-full animate-spin" />
-        </div>
-      )}
+
       {error && (
-        <div className="rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 px-4 py-3 text-sm">
+        <div className="rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 px-4 py-3 text-sm mb-4">
           {error}
         </div>
       )}
-      {!loading && !error && (
+
+      {loading && (
+        <div className="flex justify-center py-8">
+          <div className="w-8 h-8 border-2 border-aplat-cyan/40 border-t-aplat-cyan rounded-full animate-spin" />
+        </div>
+      )}
+
+      {!loading && tab === "logins" && (
         <div className="overflow-x-auto -mx-1">
           <table className="w-full text-sm">
             <thead>
@@ -92,7 +148,7 @@ export function DashboardWidgetConnections() {
               {connections.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-6 text-center text-aplat-muted">
-                    Aún no hay conexiones registradas.
+                    Aún no hay inicios de sesión registrados.
                   </td>
                 </tr>
               ) : (
@@ -105,9 +161,7 @@ export function DashboardWidgetConnections() {
                       {new Date(c.timestamp).toLocaleString("es")}
                     </td>
                     <td className="py-2 px-2 text-aplat-text">{c.email || "—"}</td>
-                    <td className="py-2 px-2 text-aplat-muted font-mono text-xs">
-                      {c.ip}
-                    </td>
+                    <td className="py-2 px-2 text-aplat-muted font-mono text-xs">{c.ip}</td>
                     <td className="py-2 px-2 text-aplat-muted max-w-[180px] truncate" title={c.userAgent}>
                       {parseUserAgent(c.userAgent)}
                     </td>
@@ -123,6 +177,52 @@ export function DashboardWidgetConnections() {
                           Fallido
                         </span>
                       )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {!loading && tab === "visitors" && (
+        <div className="overflow-x-auto -mx-1">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-aplat-muted border-b border-white/10">
+                <th className="text-left py-2 px-2 font-medium">Fecha</th>
+                <th className="text-left py-2 px-2 font-medium">IP</th>
+                <th className="text-left py-2 px-2 font-medium">Página</th>
+                <th className="text-left py-2 px-2 font-medium">Dispositivo</th>
+                <th className="text-left py-2 px-2 font-medium">Procedencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visitors.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-6 text-center text-aplat-muted">
+                    Aún no hay visitas registradas. Las visitas se registran al cargar el sitio.
+                  </td>
+                </tr>
+              ) : (
+                visitors.map((v) => (
+                  <tr
+                    key={v.id}
+                    className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                  >
+                    <td className="py-2 px-2 text-aplat-text whitespace-nowrap">
+                      {new Date(v.timestamp).toLocaleString("es")}
+                    </td>
+                    <td className="py-2 px-2 text-aplat-muted font-mono text-xs">{v.ip}</td>
+                    <td className="py-2 px-2 text-aplat-text max-w-[120px] truncate" title={v.path}>
+                      {v.path || "/"}
+                    </td>
+                    <td className="py-2 px-2 text-aplat-muted max-w-[160px] truncate" title={v.userAgent}>
+                      {parseUserAgent(v.userAgent)}
+                    </td>
+                    <td className="py-2 px-2 text-aplat-muted max-w-[140px] truncate" title={v.referrer}>
+                      {v.referrer ? (v.referrer.length > 25 ? v.referrer.slice(0, 22) + "..." : v.referrer) : "—"}
                     </td>
                   </tr>
                 ))

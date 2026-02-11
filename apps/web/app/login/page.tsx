@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -13,6 +13,7 @@ import {
   Shield,
   Mail,
 } from "lucide-react";
+import { getWebAuthnRpId, decodeBase64UrlToUint8Array } from "@/lib/webauthn";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 
@@ -26,6 +27,85 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [passkeySupported, setPasskeySupported] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const ok =
+      typeof window !== "undefined" &&
+      (window.location.protocol === "https:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") &&
+      typeof window.PublicKeyCredential !== "undefined" &&
+      typeof navigator?.credentials?.get === "function";
+    setPasskeySupported(ok);
+  }, []);
+
+  async function handlePasskeyLogin() {
+    if (!API_URL) {
+      setMessage({ type: "error", text: "API no configurada." });
+      return;
+    }
+    if (passkeySupported === false) {
+      setMessage({ type: "error", text: "Tu navegador o contexto no soporta Passkeys (usa HTTPS o localhost)." });
+      return;
+    }
+    setMessage(null);
+    setLoading(true);
+    try {
+      const challengeRes = await fetch(`${API_URL.replace(/\/$/, "")}/api/auth/webauthn/challenge`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const challengeData = await challengeRes.json().catch(() => ({}));
+      if (!challengeData.ok || !challengeData.challenge) {
+        setMessage({ type: "error", text: challengeData.message || "Error al obtener el challenge." });
+        setLoading(false);
+        return;
+      }
+      const challengeBytes = decodeBase64UrlToUint8Array(challengeData.challenge);
+      const rpId = getWebAuthnRpId();
+      const credential = await navigator.credentials.get({
+        publicKey: {
+          challenge: challengeBytes as BufferSource,
+          allowCredentials: [],
+          timeout: 60000,
+          userVerification: "preferred",
+          rpId: rpId === "localhost" ? undefined : rpId,
+        },
+      }) as PublicKeyCredential | null;
+      if (!credential) {
+        setMessage({ type: "error", text: "Autenticación cancelada o no hay Passkey registrada." });
+        setLoading(false);
+        return;
+      }
+      const response = credential.response as AuthenticatorAssertionResponse;
+      const verifyRes = await fetch(`${API_URL.replace(/\/$/, "")}/api/auth/webauthn/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          credentialId: Array.from(new Uint8Array(credential.rawId)),
+          authenticatorData: Array.from(new Uint8Array(response.authenticatorData)),
+          clientDataJSON: Array.from(new Uint8Array(response.clientDataJSON)),
+          signature: Array.from(new Uint8Array(response.signature)),
+          userHandle: response.userHandle ? Array.from(new Uint8Array(response.userHandle)) : null,
+        }),
+      });
+      const verifyData = await verifyRes.json().catch(() => ({}));
+      if (!verifyRes.ok || !verifyData.ok) {
+        setMessage({ type: "error", text: verifyData.message || verifyData.error || "Passkey no reconocida." });
+        setLoading(false);
+        return;
+      }
+      if (verifyData.token) {
+        localStorage.setItem("aplat_token", verifyData.token);
+      }
+      setMessage({ type: "success", text: "Sesión iniciada con Passkey. Redirigiendo..." });
+      const target = redirectTo && redirectTo.startsWith("/") ? redirectTo : "/dashboard";
+      setTimeout(() => { window.location.href = target; }, 800);
+    } catch (err) {
+      setMessage({ type: "error", text: err instanceof Error ? err.message : "Error de conexión." });
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -187,7 +267,7 @@ function LoginForm() {
             </span>
             <span className="inline-flex items-center gap-1">
               <KeyRound className="w-3.5 h-3.5" />
-              Passkeys próximamente
+              Passkey como Omac
             </span>
           </div>
         </div>
