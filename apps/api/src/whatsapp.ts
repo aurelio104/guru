@@ -108,12 +108,11 @@ if (!isBuildTime() && !fs.existsSync(AUTH_DIR)) {
   } catch (err) {
     const isVercel = detectVercel();
     const isKoyeb = detectKoyeb();
-    const isProduction = process.env.NODE_ENV === "production";
-    
     if (isVercel && !isKoyeb) {
       console.log(`[WHATSAPP] ⚠️ No se puede crear directorio en Vercel. WhatsApp solo disponible en Koyeb.`);
-    } else if (isKoyeb && isProduction) {
-      throw new Error(`No se pudo crear directorio de auth en Koyeb: ${err instanceof Error ? err.message : String(err)}`);
+    } else {
+      // No lanzar: permitir que la API arranque; WhatsApp fallará en uso hasta que /data sea escribible
+      console.warn(`[WHATSAPP] No se pudo crear directorio de auth: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 }
