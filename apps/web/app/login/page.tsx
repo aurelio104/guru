@@ -362,7 +362,13 @@ function LoginForm() {
             </form>
           )}
 
-          <div className="mt-6 flex flex-wrap justify-center gap-4 text-aplat-muted text-xs">
+          <p className="mt-6 text-center text-aplat-muted text-sm">
+            ¿No tienes cuenta?{" "}
+            <Link href="/register" className="text-aplat-cyan hover:underline">
+              Regístrate como cliente
+            </Link>
+          </p>
+          <div className="mt-4 flex flex-wrap justify-center gap-4 text-aplat-muted text-xs">
             <span className="inline-flex items-center gap-1">
               <Shield className="w-3.5 h-3.5" />
               JWT + HTTPS

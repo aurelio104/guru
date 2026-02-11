@@ -6,6 +6,8 @@ import { DashboardWidgetWhatsApp } from "@/components/dashboard/DashboardWidgetW
 import { DashboardWidgetSubscriptions } from "@/components/dashboard/DashboardWidgetSubscriptions";
 import { DashboardWidgetConnections } from "@/components/dashboard/DashboardWidgetConnections";
 import { DashboardWidgetPasskey } from "@/components/dashboard/DashboardWidgetPasskey";
+import { ClientDashboard } from "@/components/dashboard/ClientDashboard";
+import { useDashboardUser } from "@/contexts/DashboardUserContext";
 import type { MetricsData } from "@/components/dashboard/DashboardMetrics";
 import type { ProjectEntry } from "@/components/dashboard/DashboardWidgetSubscriptions";
 import portfolioUrls from "@/data/portfolio-production-urls.json";
@@ -17,12 +19,13 @@ const projects: ProjectEntry[] = Object.entries(portfolioUrls as Record<string, 
 );
 
 export default function DashboardPage() {
+  const { user } = useDashboardUser();
   const [metrics, setMetrics] = useState<Partial<MetricsData>>({});
   const [connectionsCount, setConnectionsCount] = useState(0);
 
   useEffect(() => {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+    if (user?.role !== "master") return;
+    const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
     if (!token || !API_URL) {
       setMetrics({
         proyectosActivos: projects.length,
@@ -57,7 +60,11 @@ export default function DashboardPage() {
           whatsappEstado: "pendiente",
         });
       });
-  }, []);
+  }, [user?.role]);
+
+  if (user?.role === "client") {
+    return <ClientDashboard />;
+  }
 
   return (
     <>

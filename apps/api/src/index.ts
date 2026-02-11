@@ -1,7 +1,19 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { randomBytes } from "crypto";
+import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import { SignJWT, jwtVerify } from "jose";
+import {
+  getClientByEmail,
+  createClient,
+  getClientById,
+  updateClientProfile,
+  setPhoneVerified,
+  setPhoneCode,
+  consumePhoneCode,
+  addServiceSubscription,
+  getSubscriptionsByPhone,
+  normalizePhone,
+} from "./clients-store.js";
 import {
   getCredentialByCredentialId,
   getCredentialsByUserId,
@@ -31,6 +43,28 @@ app.addHook("onRequest", async (request, reply) => {
 const JWT_SECRET = new TextEncoder().encode(
   process.env.APLAT_JWT_SECRET || "dev-aplat-secret-cambiar-en-produccion"
 );
+
+const SALT_LEN = 16;
+const KEY_LEN = 64;
+
+function hashPassword(password: string): string {
+  const salt = randomBytes(SALT_LEN);
+  const key = scryptSync(password, salt, KEY_LEN);
+  return `${salt.toString("base64")}:${Buffer.from(key).toString("base64")}`;
+}
+
+function verifyPassword(password: string, stored: string): boolean {
+  const [saltB64, keyB64] = stored.split(":");
+  if (!saltB64 || !keyB64) return false;
+  try {
+    const salt = Buffer.from(saltB64, "base64");
+    const key = scryptSync(password, salt, KEY_LEN);
+    const storedKey = Buffer.from(keyB64, "base64");
+    return timingSafeEqual(key, storedKey);
+  } catch {
+    return false;
+  }
+}
 
 /** Registro de conexiones (quién se conecta y desde dónde) — en memoria; ampliable a DB */
 export type ConnectionRecord = {
@@ -76,7 +110,7 @@ type LoginBody = {
   password?: string;
 };
 
-// Auth: login email/password (usuario demo o env; ampliable a DB + passkey)
+// Auth: login email/password — admin (env) o cliente (store)
 app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
   const { email, password } = request.body ?? {};
   const ip = getClientIp(request);
@@ -95,40 +129,99 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
     if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
     return reply.status(400).send({ ok: false, error: "Faltan email o contraseña." });
   }
+
   const adminEmail = process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local";
   const adminPassword = process.env.APLAT_ADMIN_PASSWORD || "APlat2025!";
-  if (email.trim().toLowerCase() !== adminEmail.toLowerCase() || password !== adminPassword) {
+  const emailNorm = email.trim().toLowerCase();
+
+  // 1) Admin
+  if (emailNorm === adminEmail.toLowerCase() && password === adminPassword) {
+    const token = await new SignJWT({ sub: "1", email: adminEmail, role: "master" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("7d")
+      .sign(JWT_SECRET);
     connectionLog.unshift({
       id: crypto.randomUUID(),
-      email: email.trim(),
+      email: adminEmail,
       ip,
       userAgent,
       timestamp: ts,
-      success: false,
+      success: true,
     });
     if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
-    return reply.status(401).send({ ok: false, error: "Credenciales inválidas." });
+    return reply.status(200).send({ ok: true, role: "master", token });
   }
-  const token = await new SignJWT({ sub: "1", email: adminEmail, role: "master" })
+
+  // 2) Cliente
+  const client = getClientByEmail(emailNorm);
+  if (client && verifyPassword(password, client.passwordHash)) {
+    const token = await new SignJWT({
+      sub: client.id,
+      email: client.email,
+      role: "client",
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("7d")
+      .sign(JWT_SECRET);
+    connectionLog.unshift({
+      id: crypto.randomUUID(),
+      email: client.email,
+      ip,
+      userAgent,
+      timestamp: ts,
+      success: true,
+    });
+    if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
+    return reply.status(200).send({ ok: true, role: "client", token });
+  }
+
+  connectionLog.unshift({
+    id: crypto.randomUUID(),
+    email: email.trim(),
+    ip,
+    userAgent,
+    timestamp: ts,
+    success: false,
+  });
+  if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
+  return reply.status(401).send({ ok: false, error: "Credenciales inválidas." });
+});
+
+// Registro de cliente (solo rol client)
+type RegisterBody = { email?: string; password?: string };
+app.post<{ Body: RegisterBody }>("/api/auth/register", async (request, reply) => {
+  const { email, password } = request.body ?? {};
+  if (!email?.trim() || !password?.trim()) {
+    return reply.status(400).send({ ok: false, error: "Faltan email o contraseña." });
+  }
+  const emailNorm = email.trim().toLowerCase();
+  const adminEmail = (process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local").toLowerCase();
+  if (emailNorm === adminEmail) {
+    return reply.status(400).send({ ok: false, error: "Este correo está reservado." });
+  }
+  if (getClientByEmail(emailNorm)) {
+    return reply.status(409).send({ ok: false, error: "Ya existe una cuenta con este correo." });
+  }
+  if (password.length < 8) {
+    return reply.status(400).send({ ok: false, error: "La contraseña debe tener al menos 8 caracteres." });
+  }
+  const client = createClient(emailNorm, hashPassword(password));
+  const token = await new SignJWT({
+    sub: client.id,
+    email: client.email,
+    role: "client",
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d")
     .sign(JWT_SECRET);
-
-  connectionLog.unshift({
-    id: crypto.randomUUID(),
-    email: adminEmail,
-    ip,
-    userAgent,
-    timestamp: ts,
-    success: true,
-  });
-  if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
-
-  return reply.status(200).send({
+  return reply.status(201).send({
     ok: true,
-    role: "master",
+    role: "client",
     token,
+    message: "Cuenta creada. Completa tu perfil en el dashboard.",
   });
 });
 
@@ -226,6 +319,20 @@ async function requireAuth(
     await reply.status(401).send({ ok: false, error: "Token inválido o expirado." });
     return null;
   }
+}
+
+async function requireRole(
+  request: { headers: { authorization?: string } },
+  reply: { status: (code: number) => { send: (body: unknown) => unknown } },
+  role: "client" | "master"
+) {
+  const user = await requireAuth(request, reply);
+  if (!user) return null;
+  if (user.role !== role) {
+    await reply.status(403).send({ ok: false, error: "Sin permiso para este recurso." });
+    return null;
+  }
+  return user;
 }
 
 // --- WhatsApp (carga perezosa para no bloquear arranque si /data falla) ---
@@ -342,6 +449,143 @@ app.post<{ Body: { phoneNumber?: string; message?: string } }>("/api/whatsapp/se
   }
 });
 
+// --- Cliente: perfil, teléfono, suscripciones ---
+type ProfileBody = {
+  nombres?: string;
+  apellidos?: string;
+  identidad?: string;
+  telefono?: string;
+  direccion?: string;
+  email?: string;
+  tipoServicio?: string;
+};
+
+app.get("/api/client/profile", async (request, reply) => {
+  const user = await requireRole(request, reply, "client");
+  if (!user?.sub) return;
+  const client = getClientById(user.sub);
+  if (!client) return reply.status(404).send({ ok: false, error: "Cliente no encontrado." });
+  return reply.status(200).send({
+    ok: true,
+    profile: client.profile ?? null,
+    email: client.email,
+  });
+});
+
+app.put<{ Body: ProfileBody }>("/api/client/profile", async (request, reply) => {
+  const user = await requireRole(request, reply, "client");
+  if (!user?.sub) return;
+  const body = request.body ?? {};
+  const client = getClientById(user.sub);
+  if (!client) return reply.status(404).send({ ok: false, error: "Cliente no encontrado." });
+  const prevPhone = client.profile?.telefono ?? "";
+  const nextPhone = (body.telefono ?? prevPhone).trim();
+  const updated = updateClientProfile(user.sub, {
+    nombres: body.nombres?.trim(),
+    apellidos: body.apellidos?.trim(),
+    identidad: body.identidad?.trim(),
+    telefono: nextPhone || prevPhone,
+    telefonoVerificado: nextPhone && normalizePhone(nextPhone) === normalizePhone(prevPhone) ? (client.profile?.telefonoVerificado ?? false) : false,
+    direccion: body.direccion?.trim(),
+    email: body.email?.trim() || client.email,
+    tipoServicio: body.tipoServicio?.trim(),
+  });
+  return reply.status(200).send({ ok: true, profile: updated?.profile });
+});
+
+app.post<{ Body: { phone?: string } }>("/api/auth/phone/send-code", async (request, reply) => {
+  const user = await requireRole(request, reply, "client");
+  if (!user?.sub) return;
+  const phone = (request.body as { phone?: string })?.phone?.trim();
+  if (!phone) return reply.status(400).send({ ok: false, error: "Teléfono requerido." });
+  const code = String(Math.floor(100_000 + Math.random() * 900_000));
+  setPhoneCode(phone, code, user.sub);
+  const wa = await getWhatsApp();
+  if (wa) {
+    const toSend = normalizePhone(phone);
+    if (toSend.length >= 8) await wa.sendWhatsAppMessage(toSend, `Tu código de verificación APlat: ${code}. Válido 10 minutos.`);
+  }
+  return reply.status(200).send({ ok: true, message: "Código enviado por WhatsApp." });
+});
+
+app.post<{ Body: { phone?: string; code?: string } }>("/api/auth/phone/verify", async (request, reply) => {
+  const user = await requireRole(request, reply, "client");
+  if (!user?.sub) return;
+  const { phone, code } = (request.body as { phone?: string; code?: string }) ?? {};
+  if (!phone?.trim() || !code?.trim()) return reply.status(400).send({ ok: false, error: "Teléfono y código requeridos." });
+  if (!consumePhoneCode(phone.trim(), code.trim(), user.sub)) {
+    return reply.status(400).send({ ok: false, error: "Código inválido o expirado." });
+  }
+  setPhoneVerified(user.sub, true);
+  return reply.status(200).send({ ok: true, message: "Teléfono verificado." });
+});
+
+app.get("/api/client/subscriptions", async (request, reply) => {
+  const user = await requireRole(request, reply, "client");
+  if (!user?.sub) return;
+  const client = getClientById(user.sub);
+  const phone = client?.profile?.telefono ?? "";
+  if (!phone) return reply.status(200).send({ ok: true, subscriptions: [] });
+  const subs = getSubscriptionsByPhone(phone);
+  const now = new Date();
+  const result = subs.map((s) => {
+    const day = s.dayOfMonth;
+    let nextDate = new Date(now.getFullYear(), now.getMonth(), day);
+    if (nextDate <= now) nextDate = new Date(now.getFullYear(), now.getMonth() + 1, day);
+    const reminder = new Date(nextDate);
+    reminder.setDate(reminder.getDate() - 5);
+    const months = "ene feb mar abr may jun jul ago sep oct nov dic".split(" ");
+    return {
+      id: s.id,
+      serviceName: s.serviceName,
+      dayOfMonth: s.dayOfMonth,
+      amount: s.amount,
+      nextCutoff: nextDate.toISOString().slice(0, 10),
+      nextReminder: `${reminder.getDate()} ${months[reminder.getMonth()]}`,
+    };
+  });
+  return reply.status(200).send({ ok: true, subscriptions: result });
+});
+
+// Admin: enviar invitación de suscripción por WhatsApp (mensaje corporativo + fecha de corte)
+type SendSubscriptionInviteBody = { serviceName?: string; dayOfMonth?: number; phone?: string; amount?: number };
+app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-invite", async (request, reply) => {
+  const user = await requireRole(request, reply, "master");
+  if (!user) return;
+  const body = request.body ?? {};
+  const { serviceName, dayOfMonth, phone, amount } = body;
+  if (!serviceName?.trim() || !phone?.trim()) {
+    return reply.status(400).send({ ok: false, error: "Se requieren serviceName y phone." });
+  }
+  const day = Math.min(28, Math.max(1, Number(dayOfMonth) || 1));
+  const normalized = normalizePhone(phone.trim());
+  const wa = await getWhatsApp();
+  if (!wa) return reply.status(503).send({ ok: false, error: "WhatsApp no disponible." });
+  const nextCutoff = (() => {
+    const n = new Date();
+    let d = new Date(n.getFullYear(), n.getMonth(), day);
+    if (d <= n) d = new Date(n.getFullYear(), n.getMonth() + 1, day);
+    return d;
+  })();
+  const cutoffStr = nextCutoff.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
+  const reminder = new Date(nextCutoff);
+  reminder.setDate(reminder.getDate() - 5);
+  const reminderStr = reminder.toLocaleDateString("es-ES", { day: "numeric", month: "short" });
+  const amountStr = amount != null ? ` Monto: $${amount}.` : "";
+  const message = `*APlat* – Afiliación a *${String(serviceName).trim()}*\n\nBienvenido/a. Tu suscripción está activa. Fecha de corte y pago: *${cutoffStr}*. Recordatorio por WhatsApp: ${reminderStr}.${amountStr}\n\nAccede a tu panel en APlat para ver detalles y perfil.`;
+  try {
+    const result = await wa.sendWhatsAppMessage(normalized, message);
+    if (!result.success) {
+      return reply.status(500).send({ ok: false, error: result.error ?? "Error al enviar." });
+    }
+    addServiceSubscription(phone.trim(), serviceName.trim(), day, amount);
+    return reply.status(200).send({ ok: true, message: "Invitación enviada por WhatsApp." });
+  } catch (err) {
+    request.log.warn(err);
+    return reply.status(500).send({ ok: false, error: "Error al enviar mensaje." });
+  }
+});
+
 // --- WebAuthn / Passkey (como Omac) ---
 const WEBAUTHN_RP_ID = process.env.APLAT_WEBAUTHN_RP_ID || "localhost";
 const APLAT_ADMIN_EMAIL = process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local";
@@ -402,10 +646,11 @@ app.post<{
   });
 });
 
-// GET /api/auth/webauthn/has-passkey — requiere JWT; indica si el usuario tiene al menos una Passkey (para ofrecer registro tras login)
+// GET /api/auth/webauthn/has-passkey — requiere JWT; indica si el usuario tiene al menos una Passkey (solo admin; clientes no usan Passkey aún)
 app.get("/api/auth/webauthn/has-passkey", async (request, reply) => {
   const user = await requireAuth(request, reply);
   if (!user) return;
+  if (user.role === "client") return reply.status(200).send({ ok: true, hasPasskey: false });
   const credentials = getCredentialsByUserId(USER_ID);
   return reply.status(200).send({ ok: true, hasPasskey: credentials.length > 0 });
 });

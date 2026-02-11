@@ -126,6 +126,7 @@ function ProjectLogo({
         ? `/portafolio/${slug}.svg`
         : externalUrl ?? "";
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- dynamic fallback src (png/svg/external)
     <img
       src={src}
       alt={`Logo ${name}`}

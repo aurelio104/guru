@@ -55,6 +55,7 @@ export function InstallPrompt() {
           className="fixed bottom-4 left-4 right-4 z-[100] md:left-auto md:right-6 md:max-w-sm"
         >
           <div className="glass glass-strong rounded-2xl border border-white/10 shadow-xl p-4 flex items-center gap-4">
+            {/* eslint-disable-next-line @next/next/no-img-element -- static icon */}
             <img src="/icon.svg" alt="" className="w-12 h-12 shrink-0" width={48} height={48} />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-aplat-text">Instalar APlat</p>

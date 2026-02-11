@@ -1,10 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { CreditCard, ExternalLink, ToggleLeft, Calendar, MessageCircle } from "lucide-react";
+import { CreditCard, ExternalLink, ToggleLeft, Calendar, MessageCircle, Send, Loader2 } from "lucide-react";
 
 const STORAGE_KEY = "aplat_subscription_mode";
+const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+
+function getAuthHeaders(): Record<string, string> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  if (!token) return {};
+  return { Authorization: `Bearer ${token}` };
+}
 
 export type SubscriptionConfig = {
   on: boolean;
@@ -74,6 +81,8 @@ export type ProjectEntry = { name: string; url: string };
 
 export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEntry[] }) {
   const [local, setLocal] = useState<Record<string, SubscriptionConfig>>({});
+  const [sendingInvite, setSendingInvite] = useState<string | null>(null);
+  const [inviteMessage, setInviteMessage] = useState<{ project: string; type: "success" | "error"; text: string } | null>(null);
 
   const initial = useMemo(() => getStored(), []);
   const configByProject = useMemo(() => {
@@ -121,7 +130,37 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
     const nextState = { ...state, [name]: next };
     setLocal((prev) => ({ ...prev, [name]: next }));
     setStored(nextState);
+    setInviteMessage(null);
   };
+
+  const sendSubscriptionInvite = useCallback(async (name: string) => {
+    const config = state[name] ?? { on: false };
+    const phone = config.phone?.trim();
+    const day = config.dayOfMonth ?? 1;
+    if (!phone || !API_URL) {
+      setInviteMessage({ project: name, type: "error", text: "Ingresa un teléfono primero." });
+      return;
+    }
+    setSendingInvite(name);
+    setInviteMessage(null);
+    try {
+      const res = await fetch(`${API_URL.replace(/\/$/, "")}/api/admin/send-subscription-invite`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify({ serviceName: name, dayOfMonth: day, phone }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (data.ok) {
+        setInviteMessage({ project: name, type: "success", text: "Invitación enviada por WhatsApp." });
+      } else {
+        setInviteMessage({ project: name, type: "error", text: data.error ?? "Error al enviar." });
+      }
+    } catch {
+      setInviteMessage({ project: name, type: "error", text: "Error de conexión." });
+    } finally {
+      setSendingInvite(null);
+    }
+  }, [state]);
 
   const activeCount = Object.values(state).filter((c) => c.on).length;
 
@@ -208,12 +247,34 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
                     <MessageCircle className="w-3.5 h-3.5 text-aplat-emerald shrink-0" />
                     <input
                       type="tel"
-                      placeholder="Teléfono recordatorio (WhatsApp)"
+                      placeholder="Teléfono (WhatsApp)"
                       value={config.phone ?? ""}
                       onChange={(e) => setPhone(p.name, e.target.value)}
                       className="rounded-lg bg-white/5 border border-white/10 text-aplat-text placeholder:text-aplat-muted/60 px-2 py-1 w-44 max-w-full focus:border-aplat-violet/50 focus:outline-none text-xs"
                     />
                   </div>
+                  {config.phone?.trim() && (
+                    <div className="w-full pl-0">
+                      <button
+                        type="button"
+                        onClick={() => sendSubscriptionInvite(p.name)}
+                        disabled={sendingInvite === p.name}
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-aplat-emerald/20 hover:bg-aplat-emerald/30 text-aplat-emerald border border-aplat-emerald/40 px-2.5 py-1.5 text-xs font-medium disabled:opacity-60"
+                      >
+                        {sendingInvite === p.name ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Send className="w-3.5 h-3.5" />
+                        )}
+                        Enviar invitación por WhatsApp
+                      </button>
+                      {inviteMessage?.project === p.name && (
+                        <span className={`ml-2 text-xs ${inviteMessage.type === "success" ? "text-aplat-emerald" : "text-red-400"}`}>
+                          {inviteMessage.text}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </li>
