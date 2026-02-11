@@ -8,23 +8,54 @@ import initSqlJs, { type Database } from "sql.js";
 
 const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
 const DB_PATH = path.join(DATA_DIR, "aplat.db");
+const DB_TMP_PATH = `${DB_PATH}.tmp`;
 
 let dbInstance: Database | null = null;
+let persistInterval: ReturnType<typeof setInterval> | null = null;
 
 /** Debe llamarse una vez al arrancar la API (await initStoreDb()). */
 export async function initStoreDb(): Promise<void> {
   if (dbInstance) return;
   const dir = path.dirname(DB_PATH);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  console.log("[clients-store] Ruta de la base de datos:", DB_PATH);
   const SQL = await initSqlJs();
   let data: Uint8Array | undefined;
   if (fs.existsSync(DB_PATH)) {
     data = new Uint8Array(fs.readFileSync(DB_PATH));
+    console.log("[clients-store] Base de datos existente cargada, tamaño:", data.length, "bytes");
+  } else {
+    console.log("[clients-store] Base de datos nueva (archivo no existía). En producción usa un volumen persistente (APLAT_DATA_PATH).");
   }
   dbInstance = new SQL.Database(data);
   initSchema(dbInstance);
   migrateFromJsonIfNeeded(dbInstance);
   persistDb();
+  const clients = getDb().exec("SELECT COUNT(*) AS n FROM clients");
+  const subs = getDb().exec("SELECT COUNT(*) AS n FROM service_subscriptions");
+  const nClients = clients[0]?.values?.[0]?.[0] ?? 0;
+  const nSubs = subs[0]?.values?.[0]?.[0] ?? 0;
+  console.log("[clients-store] Inicializado. Clientes:", nClients, "| Suscripciones:", nSubs);
+  if (!persistInterval) {
+    persistInterval = setInterval(() => {
+      try {
+        if (dbInstance) persistDb();
+      } catch (e) {
+        console.warn("[clients-store] Error en guardado periódico:", e);
+      }
+    }, 20_000);
+  }
+  const onExit = () => {
+    try {
+      if (dbInstance) persistDb();
+    } catch (e) {
+      console.warn("[clients-store] Error al guardar al salir:", e);
+    }
+    if (persistInterval) clearInterval(persistInterval);
+  };
+  process.once("beforeExit", onExit);
+  process.once("SIGINT", () => { onExit(); process.exit(0); });
+  process.once("SIGTERM", () => { onExit(); process.exit(0); });
 }
 
 function getDb(): Database {
@@ -34,11 +65,14 @@ function getDb(): Database {
 
 function persistDb(): void {
   if (!dbInstance) return;
+  const dir = path.dirname(DB_PATH);
   try {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     const buf = dbInstance.export();
-    fs.writeFileSync(DB_PATH, Buffer.from(buf));
+    fs.writeFileSync(DB_TMP_PATH, Buffer.from(buf), { flag: "w" });
+    fs.renameSync(DB_TMP_PATH, DB_PATH);
   } catch (err) {
-    console.warn("[clients-store] No se pudo guardar DB:", err);
+    console.warn("[clients-store] No se pudo guardar DB en", DB_PATH, err);
   }
 }
 

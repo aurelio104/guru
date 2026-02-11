@@ -7,7 +7,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "test:persist": "APLAT_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase1 && APLAT_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase2"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",

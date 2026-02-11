@@ -11,6 +11,7 @@ out/
 
 # API data (SQLite + JSON local)
 apps/api/data/
+apps/api/data-persist-test/
 
 # Env (no subir secretos)
 .env

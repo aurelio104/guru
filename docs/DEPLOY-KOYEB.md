@@ -38,7 +38,7 @@ Configuradas en el servicio (Settings → Environment variables):
 | `APLAT_JWT_SECRET` | (secreto) | Clave JWT; generar con `openssl rand -hex 32` |
 | `APLAT_ADMIN_EMAIL` | `admin@aplat.local` | Email de login |
 | `APLAT_ADMIN_PASSWORD` | (secreto) | Contraseña de login |
-| `APLAT_DATA_PATH` | `/data` | Directorio de datos: aquí se crea la base SQLite `aplat.db` (clientes, perfiles, suscripciones). Debe ser la ruta del volumen montado. |
+| `APLAT_DATA_PATH` | `/data` | Directorio de datos: aquí se crea la base SQLite `aplat.db` (clientes, perfiles, suscripciones). **Debe** ser la ruta de un **volumen persistente** montado; si no, tras cada reinicio o redeploy los datos se pierden (todo quedará vacío). |
 | `APLAT_WEBAUTHN_STORE_PATH` | `/data/webauthn-store.json` | Persistencia Passkey (volumen `aplat-api-data`) |
 | `APLAT_WEBAUTHN_RP_ID` | `aplat.vercel.app` | **Requerido para Passkey:** debe ser el hostname del front (donde el usuario registra la llave). Si no, verás "The requested RPID did not match the origin". |
 | `APLAT_WHATSAPP_AUTH_PATH` | `/whatsapp-auth` | Directorio auth de WhatsApp (volumen **auth-bot1-aplat**) |
@@ -172,6 +172,16 @@ Desde la raíz del repo:
 ```
 
 Comprueba health, visit, login, auth/me, connections, visitors, whatsapp/status, webauthn challenge/register/begin y contact. Si varias rutas dan 404, en Koyeb el despliegue activo puede ser una imagen antigua; un despliegue nuevo (con todas las rutas) puede estar en estado STARTING/PENDING hasta que pase a activo.
+
+## Prueba de persistencia (local)
+
+Para comprobar que clientes, perfiles y suscripciones se guardan y sobreviven a un reinicio:
+
+```bash
+cd apps/api && pnpm test:persist
+```
+
+Crea datos en `./data-persist-test`, sale, y en una segunda ejecución comprueba que sigan ahí. En producción, `APLAT_DATA_PATH` debe apuntar a un volumen persistente (ej. `/data` en Koyeb).
 
 ## Desarrollo local
 
