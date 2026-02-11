@@ -661,9 +661,11 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
   const amountStr = amount != null ? `\n• Monto: $${amount}` : "";
   let message: string;
   if (clientCreated && emailNorm && tempPassword) {
+    const serviceLabel = String(serviceName).trim();
     message =
-      `*¡Bienvenido a ${String(serviceName).trim()}!* 🎉\n\n` +
-      `Tu suscripción está activa. Estos son tus datos de acceso:\n\n` +
+      `*¡Bienvenido a APlat!* 🎉\n\n` +
+      `Tu suscripción está activa para *${serviceLabel}*.\n\n` +
+      `Estos son tus datos de acceso:\n\n` +
       `📧 *Correo:* ${emailNorm}\n` +
       `🔑 *Contraseña temporal:* ${tempPassword}\n\n` +
       `👉 *Entra aquí y cambia tu contraseña:*\n${loginUrl}\n\n` +
