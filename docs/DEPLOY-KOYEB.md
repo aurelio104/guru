@@ -9,8 +9,18 @@ Backend Node (Fastify) con Passkey, WhatsApp, visitas y dashboard. Se despliega 
 
 ## Configuración actual (servicio `aplat`)
 
-- **Build**: Dockerfile en raíz → `Dockerfile.api`
+- **Build**: Dockerfile en raíz → `Dockerfile.api` (o imagen preconstruida desde GitHub Actions, ver más abajo)
 - **Puerto**: `3001`
+
+### Si el build con Docker falla en Koyeb ("Unable to start Docker daemon")
+
+Koyeb a veces no puede arrancar Docker en su entorno de build. En ese caso usa la **imagen preconstruida** en GitHub Container Registry:
+
+1. En cada push a `main` (o manualmente desde Actions), el workflow **Docker API** construye la imagen y la sube a `ghcr.io/aurelio104/aplat-api:latest`.
+2. En Koyeb → tu servicio → **Settings** → **Source**: cambia a **Docker image**.
+3. **Image**: `ghcr.io/aurelio104/aplat-api:latest`
+4. Si el repo es privado: en **Settings** → **Secret** añade un secret con un GitHub PAT con permiso `read:packages` y úsalo como registry secret para `ghcr.io` (usuario: tu usuario, contraseña: el PAT).
+5. Guarda y redeploy. Koyeb ya no construye la imagen; solo descarga y ejecuta la de GHCR.
 - **Región**: `was` (Washington D.C.; necesaria para volúmenes)
 - **Volúmenes** (dos):
   - **aplat-api-data** → `/data`: datos generales (WebAuthn/Passkey, logs, etc.)
