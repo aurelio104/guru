@@ -1,80 +1,117 @@
 # Desplegar APlat API en Koyeb
 
-Backend Node 24 + Fastify para el formulario de contacto y futuras APIs.
+Backend Node (Fastify) con Passkey, WhatsApp, visitas y dashboard. Se despliega desde el monorepo con **Dockerfile.api** en la raíz.
 
 ## Requisitos
 
 - Cuenta en [Koyeb](https://www.koyeb.com)
-- Repositorio Git con el monorepo APlat (apps/api)
+- Repositorio GitHub del monorepo APlat (aurelio104/APlat)
 
-## Pasos
+## Configuración actual (servicio `aplat`)
 
-### 1. Crear servicio en Koyeb
+- **Build**: Dockerfile en raíz → `Dockerfile.api`
+- **Puerto**: `3001`
+- **Región**: `was` (una sola región por el volumen)
+- **Volumen**: `aplat-api-data` montado en `/data` (persistencia WebAuthn y WhatsApp)
 
-1. Entra en [Koyeb Console](https://app.koyeb.com) → **Create App** o **Create Service**.
-2. **Deploy from**: GitHub (conecta el repo de APlat).
-3. **Branch**: `main` (o la rama que uses).
+### Variables de entorno en Koyeb
 
-### 2. Configuración de build
+Configuradas en el servicio (Settings → Environment variables):
 
-- **Build type**: Dockerfile
-- **Dockerfile path**: `apps/api/Dockerfile`
-- **Build context / Root directory**: `apps/api`  
-  (Así los `COPY` del Dockerfile resuelven correctamente.)
+| Variable | Valor | Descripción |
+|----------|--------|-------------|
+| `PORT` | `3001` | Puerto del servidor |
+| `NODE_ENV` | `production` | Entorno |
+| `CORS_ORIGIN` | `https://tu-dominio.vercel.app` | Origen permitido (frontend) |
+| `APLAT_JWT_SECRET` | (secreto) | Clave JWT; generar con `openssl rand -hex 32` |
+| `APLAT_ADMIN_EMAIL` | `admin@aplat.local` | Email de login |
+| `APLAT_ADMIN_PASSWORD` | (secreto) | Contraseña de login |
+| `APLAT_WEBAUTHN_STORE_PATH` | `/data/webauthn-store.json` | Persistencia Passkey (en volumen) |
+| `APLAT_WEBAUTHN_RP_ID` | (opcional) | Dominio del sitio en producción (ej. `aplat.vercel.app`) |
+| `APLAT_WHATSAPP_AUTH_PATH` | `/data/whatsapp-auth` | Directorio auth de Baileys (en volumen) |
 
-Si Koyeb no permite “Build context” por separado, sube solo la carpeta `apps/api` en un repo propio o usa un Dockerfile en la raíz que haga `COPY apps/api .` y trabaje desde ahí; en ese caso habría que ajustar el Dockerfile.
+### Frontend (Vercel) – imprescindible
 
-### 3. Puerto y variables
+Para que visitas, login, Passkey, WhatsApp y dashboard funcionen, el frontend debe llamar a la API:
 
-- **Port**: `3001`
-- **Variables de entorno**:
-  - `PORT` = `3001`
-  - `NODE_ENV` = `production`
-  - `CORS_ORIGIN` = URL del frontend en Vercel (ej. `https://aplat.vercel.app`). Sin `CORS_ORIGIN` la API acepta cualquier origen (útil solo en desarrollo).
-
-### 4. Desplegar
-
-Pulsa **Deploy**. Koyeb construirá la imagen y asignará una URL tipo `https://tu-app-xxx.koyeb.app`.
-
-### 5. Conectar el frontend (Vercel)
-
-En el proyecto Next.js en Vercel:
-
-1. **Settings** → **Environment Variables**
+1. En Vercel → proyecto APlat → **Settings** → **Environment Variables**
 2. Añade:
    - **Name**: `NEXT_PUBLIC_APLAT_API_URL`
-   - **Value**: `https://tu-app-xxx.koyeb.app` (la URL del servicio en Koyeb, sin barra final)
-3. Redespliega el frontend para que el formulario de contacto use la API.
+   - **Value**: `https://aplat-aurelio104-5edd4229.koyeb.app` (o la URL actual del servicio en Koyeb, **sin** barra final)
+3. Redespliega el frontend.
 
-## Desarrollo local
+Si esta variable no está definida o apunta a otra URL, verás **404** en `/api/analytics/visit`, `/api/whatsapp/status`, `/api/auth/webauthn/register/begin`, etc.
 
-**Terminal 1 – API:**
+## Crear volumen y configurar con CLI
 
-```bash
-cd apps/api
-pnpm install
-pnpm dev
-```
+1. **Instalar Koyeb CLI** (si no lo tienes):
 
-API en `http://localhost:3001`.
+   ```bash
+   brew install koyeb/tap/koyeb
+   # o: curl -fsSL https://raw.githubusercontent.com/koyeb/koyeb-cli/master/install.sh | sh
+   ```
 
-**Terminal 2 – Frontend:**
+2. **Iniciar sesión**:
 
-```bash
-cd apps/web
-NEXT_PUBLIC_APLAT_API_URL=http://localhost:3001 pnpm dev
-```
+   ```bash
+   koyeb login
+   ```
 
-O crea `apps/web/.env.local` con:
+3. **Crear volumen** (solo regiones `was` o `fra`):
 
-```
-NEXT_PUBLIC_APLAT_API_URL=http://localhost:3001
-```
+   ```bash
+   koyeb volumes create aplat-api-data --region was --size 1
+   ```
+
+4. **Actualizar el servicio** (volumen + variables):
+
+   ```bash
+   koyeb services update aplat/aplat \
+     --regions '!fra' \
+     --volumes aplat-api-data:/data \
+     --env "APLAT_WEBAUTHN_STORE_PATH=/data/webauthn-store.json" \
+     --env "APLAT_WHATSAPP_AUTH_PATH=/data/whatsapp-auth"
+   ```
+
+   (Quitar `--regions '!fra'` si el servicio ya está solo en `was`.)
+
+5. **Redeploy** (usa el último commit de `main`):
+
+   ```bash
+   koyeb services update aplat/aplat --git-sha ""
+   ```
+
+## Build desde raíz (monorepo)
+
+En Koyeb, el servicio debe usar:
+
+- **Repository**: `github.com/aurelio104/APlat`
+- **Branch**: `main`
+- **Dockerfile path**: `Dockerfile.api` (en la **raíz** del repo)
+- **Work directory**: vacío (raíz)
+
+Así el Dockerfile puede hacer `COPY apps/api/...` correctamente.
 
 ## Health check
 
 ```bash
-curl https://tu-app-xxx.koyeb.app/api/health
+curl https://aplat-aurelio104-5edd4229.koyeb.app/api/health
 ```
 
 Respuesta esperada: `{"ok":true,"service":"aplat-api"}`.
+
+## Desarrollo local
+
+**API:**
+
+```bash
+cd apps/api && pnpm install && pnpm dev
+```
+
+**Frontend** (en otra terminal):
+
+```bash
+cd apps/web
+echo "NEXT_PUBLIC_APLAT_API_URL=http://localhost:3001" > .env.local
+pnpm dev
+```
