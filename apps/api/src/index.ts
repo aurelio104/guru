@@ -218,23 +218,27 @@ async function requireAuth(
   }
 }
 
-// --- WhatsApp (mismo módulo que Omac, protegido por JWT) ---
-const {
-  isWhatsAppConnected,
-  getWhatsAppQR,
-  getCurrentQR,
-  cleanWhatsAppCredentials,
-  sendWhatsAppMessage,
-  getQRRateLimitInfo,
-  getCooldownInfo,
-  hasLinkingError,
-} = await import("./whatsapp.js");
+// --- WhatsApp (carga perezosa para no bloquear arranque si /data falla) ---
+let whatsappModule: Awaited<typeof import("./whatsapp.js")> | null = null;
+async function getWhatsApp() {
+  if (!whatsappModule) {
+    try {
+      whatsappModule = await import("./whatsapp.js");
+    } catch (err) {
+      app.log.warn(err, "WhatsApp module failed to load");
+      return null;
+    }
+  }
+  return whatsappModule;
+}
 
 app.get("/api/whatsapp/status", async (request, reply) => {
   const user = await requireAuth(request, reply);
   if (!user) return;
+  const wa = await getWhatsApp();
+  if (!wa) return reply.status(200).send({ ok: true, connected: false });
   try {
-    const connected = await isWhatsAppConnected();
+    const connected = await wa.isWhatsAppConnected();
     return reply.status(200).send({ ok: true, connected });
   } catch (err) {
     request.log.warn(err);
@@ -245,12 +249,14 @@ app.get("/api/whatsapp/status", async (request, reply) => {
 app.get("/api/whatsapp/qr", async (request, reply) => {
   const user = await requireAuth(request, reply);
   if (!user) return;
+  const wa = await getWhatsApp();
+  if (!wa) return reply.status(200).send({ ok: true, qr: null, message: "WhatsApp no disponible." });
   const generate = (request.query as { generate?: string }).generate === "true";
   try {
-    let qr: string | null = getCurrentQR();
-    if (!qr && generate) qr = await getWhatsAppQR();
+    let qr: string | null = wa.getCurrentQR();
+    if (!qr && generate) qr = await wa.getWhatsAppQR();
     if (qr) return reply.status(200).send({ ok: true, qr });
-    const rateLimit = getQRRateLimitInfo();
+    const rateLimit = wa.getQRRateLimitInfo();
     if (rateLimit.isRateLimited) {
       return reply.status(200).send({
         ok: true,
@@ -260,7 +266,7 @@ app.get("/api/whatsapp/qr", async (request, reply) => {
         remainingMinutes: rateLimit.remainingMinutes,
       });
     }
-    const cooldown = getCooldownInfo();
+    const cooldown = wa.getCooldownInfo();
     if (cooldown.inCooldown) {
       return reply.status(200).send({
         ok: true,
@@ -272,7 +278,7 @@ app.get("/api/whatsapp/qr", async (request, reply) => {
         linkingError: cooldown.isLinkingError,
       });
     }
-    if (hasLinkingError()) {
+    if (wa.hasLinkingError()) {
       return reply.status(200).send({
         ok: true,
         qr: null,
@@ -280,7 +286,7 @@ app.get("/api/whatsapp/qr", async (request, reply) => {
         linkingError: true,
       });
     }
-    const connected = await isWhatsAppConnected();
+    const connected = await wa.isWhatsAppConnected();
     if (connected) {
       return reply.status(200).send({ ok: true, qr: null, message: "WhatsApp ya está conectado.", connected: true });
     }
@@ -294,8 +300,10 @@ app.get("/api/whatsapp/qr", async (request, reply) => {
 app.post("/api/whatsapp/clean", async (request, reply) => {
   const user = await requireAuth(request, reply);
   if (!user) return;
+  const wa = await getWhatsApp();
+  if (!wa) return reply.status(200).send({ ok: false, message: "WhatsApp no disponible." });
   try {
-    const result = await cleanWhatsAppCredentials();
+    const result = await wa.cleanWhatsAppCredentials();
     return reply.status(200).send({ ok: result.success, message: result.message });
   } catch (err) {
     request.log.warn(err);
@@ -306,12 +314,14 @@ app.post("/api/whatsapp/clean", async (request, reply) => {
 app.post<{ Body: { phoneNumber?: string; message?: string } }>("/api/whatsapp/send", async (request, reply) => {
   const user = await requireAuth(request, reply);
   if (!user) return;
+  const wa = await getWhatsApp();
+  if (!wa) return reply.status(503).send({ ok: false, error: "WhatsApp no disponible." });
   const { phoneNumber, message } = request.body ?? {};
   if (!phoneNumber?.trim() || !message?.trim()) {
     return reply.status(400).send({ ok: false, error: "Se requieren phoneNumber y message." });
   }
   try {
-    const result = await sendWhatsAppMessage(phoneNumber.trim(), message.trim());
+    const result = await wa.sendWhatsAppMessage(phoneNumber.trim(), message.trim());
     if (result.success) {
       return reply.status(200).send({ ok: true, success: true, messageId: result.messageId });
     }
