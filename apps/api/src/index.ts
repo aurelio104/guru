@@ -65,7 +65,16 @@ await app.register(rateLimit, {
 });
 
 await app.register(cors, {
-  origin: process.env.CORS_ORIGIN ?? true,
+  origin: (() => {
+    const origin = process.env.CORS_ORIGIN;
+    const isProduction = process.env.NODE_ENV === "production";
+    
+    if (!origin && isProduction) {
+      console.warn("⚠️  ADVERTENCIA: CORS_ORIGIN no configurado en producción. Recomendado: configurar dominio específico");
+    }
+    
+    return origin || true;
+  })(),
   methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -79,9 +88,20 @@ app.addHook("onRequest", async (request, reply) => {
   }
 });
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.APLAT_JWT_SECRET || "dev-aplat-secret-cambiar-en-produccion"
-);
+const JWT_SECRET = (() => {
+  const secret = process.env.APLAT_JWT_SECRET;
+  const isProduction = process.env.NODE_ENV === "production";
+  
+  if (!secret && isProduction) {
+    throw new Error("❌ SEGURIDAD: APLAT_JWT_SECRET es obligatorio en producción. Generar con: openssl rand -hex 32");
+  }
+  
+  if (isProduction && secret && secret.length < 32) {
+    console.warn("⚠️  ADVERTENCIA: APLAT_JWT_SECRET debería tener al menos 32 caracteres");
+  }
+  
+  return new TextEncoder().encode(secret || "dev-aplat-secret-SOLO-DESARROLLO-CAMBIAR");
+})();
 
 const SALT_LEN = 16;
 const KEY_LEN = 64;
@@ -190,7 +210,20 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
   }
 
   const adminEmail = process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local";
-  const adminPassword = process.env.APLAT_ADMIN_PASSWORD || "APlat2025!";
+  const adminPassword = (() => {
+    const pass = process.env.APLAT_ADMIN_PASSWORD;
+    const isProduction = process.env.NODE_ENV === "production";
+    
+    if (!pass && isProduction) {
+      throw new Error("❌ SEGURIDAD: APLAT_ADMIN_PASSWORD es obligatorio en producción");
+    }
+    
+    if (pass && pass.length < 12 && isProduction) {
+      console.warn("⚠️  ADVERTENCIA: APLAT_ADMIN_PASSWORD debería tener al menos 12 caracteres");
+    }
+    
+    return pass || "APlat2025!-SOLO-DESARROLLO";
+  })();
   const emailNorm = sanitizeString(email.trim().toLowerCase());
 
   if (!isValidEmail(emailNorm)) {
