@@ -1,10 +1,12 @@
 /**
  * Almacén de clientes, perfiles, códigos de verificación y suscripciones.
  * Persistencia con sql.js (SQLite en WebAssembly, sin binarios nativos; funciona en Koyeb y cualquier entorno).
+ * Auditoría: todos los cambios (crear, actualizar, eliminar) se registran en audit-store.
  */
 import fs from "fs";
 import path from "path";
 import initSqlJs, { type Database } from "sql.js";
+import { logAudit } from "./audit-store.js";
 
 const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
 const DB_PATH = path.join(DATA_DIR, "aplat.db");
@@ -340,7 +342,7 @@ export function getClientByEmail(email: string): Client | undefined {
 export function createClient(
   email: string,
   passwordHash: string,
-  opts?: { mustChangePassword?: boolean; initialPhone?: string }
+  opts?: { mustChangePassword?: boolean; initialPhone?: string; ip?: string; userId?: string }
 ): Client {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
@@ -358,6 +360,15 @@ export function createClient(
       [id, ph, email.trim().toLowerCase(), now]
     );
   }
+  logAudit({
+    action: "CREATE",
+    entity: "client",
+    entity_id: id,
+    user_id: opts?.userId ?? null,
+    user_email: email.trim().toLowerCase(),
+    ip: opts?.ip ?? "system",
+    details: JSON.stringify({ email: email.trim().toLowerCase(), mustChangePassword: opts?.mustChangePassword }),
+  });
   return getClientById(id)!;
 }
 
@@ -365,11 +376,21 @@ export function setMustChangePassword(clientId: string, value: boolean): void {
   dbRun("UPDATE clients SET must_change_password = ? WHERE id = ?", [value ? 1 : 0, clientId]);
 }
 
-export function updateClientPassword(clientId: string, passwordHash: string): void {
+export function updateClientPassword(clientId: string, passwordHash: string, opts?: { ip?: string; userId?: string }): void {
   dbRun("UPDATE clients SET password_hash = ?, must_change_password = 0 WHERE id = ?", [passwordHash, clientId]);
+  const c = getClientById(clientId);
+  logAudit({
+    action: "UPDATE",
+    entity: "client",
+    entity_id: clientId,
+    user_id: opts?.userId ?? clientId,
+    user_email: c?.email ?? null,
+    ip: opts?.ip ?? "system",
+    details: JSON.stringify({ field: "password" }),
+  });
 }
 
-export function updateClientProfile(clientId: string, profile: Partial<ClientProfile>): Client | undefined {
+export function updateClientProfile(clientId: string, profile: Partial<ClientProfile>, opts?: { ip?: string; userId?: string; userEmail?: string }): Client | undefined {
   const c = getClientById(clientId);
   if (!c) return undefined;
   const updatedAt = new Date().toISOString();
@@ -402,6 +423,15 @@ export function updateClientProfile(clientId: string, profile: Partial<ClientPro
        direccion=excluded.direccion, email=excluded.email, tipo_servicio=excluded.tipo_servicio, updated_at=excluded.updated_at`,
     [clientId, nombres, apellidos, identidad, telefono, telefonoVerificado ? 1 : 0, direccion, email, tipoServicio, updatedAt]
   );
+  logAudit({
+    action: "UPDATE",
+    entity: "profile",
+    entity_id: clientId,
+    user_id: opts?.userId ?? clientId,
+    user_email: c.email,
+    ip: opts?.ip ?? "system",
+    details: JSON.stringify(profile),
+  });
   return getClientById(clientId);
 }
 
@@ -476,7 +506,8 @@ export function addServiceSubscription(
   phone: string,
   serviceName: string,
   dayOfMonth: number,
-  amount?: number
+  amount?: number,
+  opts?: { ip?: string; userId?: string; userEmail?: string }
 ): ServiceSubscription {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
@@ -484,6 +515,15 @@ export function addServiceSubscription(
     "INSERT INTO service_subscriptions (id, phone, service_name, day_of_month, amount, created_at, status, paid_until) VALUES (?, ?, ?, ?, ?, ?, 'active', NULL)",
     [id, normalizePhone(phone), serviceName, dayOfMonth, amount ?? null, now]
   );
+  logAudit({
+    action: "CREATE",
+    entity: "subscription",
+    entity_id: id,
+    user_id: opts?.userId ?? null,
+    user_email: opts?.userEmail ?? null,
+    ip: opts?.ip ?? "system",
+    details: JSON.stringify({ phone: normalizePhone(phone), serviceName, dayOfMonth, amount }),
+  });
   return getSubscriptionById(id)!;
 }
 
@@ -553,20 +593,30 @@ export function processCutoffs(): number {
 }
 
 /** Marcar suscripción como pagada hasta esa fecha de corte (YYYY-MM-DD); reactiva si estaba suspendida. */
-export function markSubscriptionPaid(subscriptionId: string, cutoffDate: string): boolean {
+export function markSubscriptionPaid(subscriptionId: string, cutoffDate: string, opts?: { ip?: string; userId?: string; userEmail?: string }): boolean {
   const sub = getSubscriptionById(subscriptionId);
   if (!sub) return false;
   dbRun("UPDATE service_subscriptions SET paid_until = ?, status = 'active' WHERE id = ?", [
     cutoffDate,
     subscriptionId,
   ]);
+  logAudit({
+    action: "UPDATE",
+    entity: "subscription",
+    entity_id: subscriptionId,
+    user_id: opts?.userId ?? null,
+    user_email: opts?.userEmail ?? null,
+    ip: opts?.ip ?? "system",
+    details: JSON.stringify({ action: "mark_paid", cutoffDate }),
+  });
   return true;
 }
 
 /** Actualizar suscripción (solo campos enviados). */
 export function updateSubscription(
   id: string,
-  patch: { phone?: string; serviceName?: string; dayOfMonth?: number; amount?: number; status?: SubscriptionStatus }
+  patch: { phone?: string; serviceName?: string; dayOfMonth?: number; amount?: number; status?: SubscriptionStatus },
+  opts?: { ip?: string; userId?: string; userEmail?: string }
 ): boolean {
   const sub = getSubscriptionById(id);
   if (!sub) return false;
@@ -579,14 +629,34 @@ export function updateSubscription(
     "UPDATE service_subscriptions SET phone = ?, service_name = ?, day_of_month = ?, amount = ?, status = ? WHERE id = ?",
     [phone, serviceName, Math.min(28, Math.max(1, dayOfMonth)), amount ?? null, status, id]
   );
+  logAudit({
+    action: "UPDATE",
+    entity: "subscription",
+    entity_id: id,
+    user_id: opts?.userId ?? null,
+    user_email: opts?.userEmail ?? null,
+    ip: opts?.ip ?? "system",
+    details: JSON.stringify(patch),
+  });
   return true;
 }
 
 /** Eliminar suscripción (queda el servicio; el usuario queda sin esta suscripción). */
-export function deleteSubscription(id: string): boolean {
+export function deleteSubscription(id: string, opts?: { ip?: string; userId?: string; userEmail?: string }): boolean {
+  const sub = getSubscriptionById(id);
+  if (!sub) return false;
   getDb().run("DELETE FROM service_subscriptions WHERE id = ?", [id]);
   const n = getDb().getRowsModified();
   persistDb();
+  logAudit({
+    action: "DELETE",
+    entity: "subscription",
+    entity_id: id,
+    user_id: opts?.userId ?? null,
+    user_email: opts?.userEmail ?? null,
+    ip: opts?.ip ?? "system",
+    details: JSON.stringify({ phone: sub.phone, serviceName: sub.serviceName }),
+  });
   return n > 0;
 }
 

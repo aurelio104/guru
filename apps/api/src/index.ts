@@ -1,5 +1,7 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import rateLimit from "@fastify/rate-limit";
+import helmet from "@fastify/helmet";
 import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import { SignJWT, jwtVerify } from "jose";
 import {
@@ -34,8 +36,33 @@ import {
   getAndConsumeChallenge,
   updateCredentialLastUsed,
 } from "./webauthn-store.js";
+import { initAuditDb, logAudit, getAuditLogs } from "./audit-store.js";
 
 const app = Fastify({ logger: true });
+
+// Seguridad: Headers HTTP (Helmet)
+await app.register(helmet, {
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  },
+});
+
+// Seguridad: Rate limiting (protección DDoS y fuerza bruta)
+await app.register(rateLimit, {
+  max: 100, // 100 requests
+  timeWindow: "1 minute", // por minuto
+  ban: 5, // después de 5 superaciones, ban temporal
+});
 
 await app.register(cors, {
   origin: process.env.CORS_ORIGIN ?? true,
@@ -76,6 +103,17 @@ function verifyPassword(password: string, stored: string): boolean {
   } catch {
     return false;
   }
+}
+
+/** Sanitización: eliminar caracteres peligrosos para prevenir inyección */
+function sanitizeString(input: string): string {
+  return input.replace(/[<>'"&]/g, "").trim();
+}
+
+/** Validación de email */
+function isValidEmail(email: string): boolean {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
 }
 
 /** Registro de conexiones (quién se conecta y desde dónde) — en memoria; ampliable a DB */
@@ -139,12 +177,34 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
       success: false,
     });
     if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
+    logAudit({
+      action: "LOGIN_FAIL",
+      entity: "auth",
+      entity_id: "login",
+      user_id: null,
+      user_email: email?.trim() ?? null,
+      ip,
+      details: JSON.stringify({ reason: "missing_credentials" }),
+    });
     return reply.status(400).send({ ok: false, error: "Faltan email o contraseña." });
   }
 
   const adminEmail = process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local";
   const adminPassword = process.env.APLAT_ADMIN_PASSWORD || "APlat2025!";
-  const emailNorm = email.trim().toLowerCase();
+  const emailNorm = sanitizeString(email.trim().toLowerCase());
+
+  if (!isValidEmail(emailNorm)) {
+    logAudit({
+      action: "LOGIN_FAIL",
+      entity: "auth",
+      entity_id: "login",
+      user_id: null,
+      user_email: emailNorm,
+      ip,
+      details: JSON.stringify({ reason: "invalid_email" }),
+    });
+    return reply.status(400).send({ ok: false, error: "Email inválido." });
+  }
 
   // 1) Admin
   if (emailNorm === adminEmail.toLowerCase() && password === adminPassword) {
@@ -162,6 +222,15 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
       success: true,
     });
     if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
+    logAudit({
+      action: "LOGIN",
+      entity: "auth",
+      entity_id: "1",
+      user_id: "1",
+      user_email: adminEmail,
+      ip,
+      details: JSON.stringify({ role: "master" }),
+    });
     return reply.status(200).send({ ok: true, role: "master", token });
   }
 
@@ -187,6 +256,15 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
     });
     if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
     const requirePasswordChange = !!client.mustChangePassword;
+    logAudit({
+      action: "LOGIN",
+      entity: "auth",
+      entity_id: client.id,
+      user_id: client.id,
+      user_email: client.email,
+      ip,
+      details: JSON.stringify({ role: "client", requirePasswordChange }),
+    });
     return reply.status(200).send({
       ok: true,
       role: "client",
@@ -204,6 +282,15 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
     success: false,
   });
   if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
+  logAudit({
+    action: "LOGIN_FAIL",
+    entity: "auth",
+    entity_id: "login",
+    user_id: null,
+    user_email: emailNorm,
+    ip,
+    details: JSON.stringify({ reason: "invalid_credentials" }),
+  });
   return reply.status(401).send({ ok: false, error: "Credenciales inválidas." });
 });
 
@@ -211,10 +298,14 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
 type RegisterBody = { email?: string; password?: string };
 app.post<{ Body: RegisterBody }>("/api/auth/register", async (request, reply) => {
   const { email, password } = request.body ?? {};
+  const ip = getClientIp(request);
   if (!email?.trim() || !password?.trim()) {
     return reply.status(400).send({ ok: false, error: "Faltan email o contraseña." });
   }
-  const emailNorm = email.trim().toLowerCase();
+  const emailNorm = sanitizeString(email.trim().toLowerCase());
+  if (!isValidEmail(emailNorm)) {
+    return reply.status(400).send({ ok: false, error: "Email inválido." });
+  }
   const adminEmail = (process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local").toLowerCase();
   if (emailNorm === adminEmail) {
     return reply.status(400).send({ ok: false, error: "Este correo está reservado." });
@@ -225,7 +316,7 @@ app.post<{ Body: RegisterBody }>("/api/auth/register", async (request, reply) =>
   if (password.length < 8) {
     return reply.status(400).send({ ok: false, error: "La contraseña debe tener al menos 8 caracteres." });
   }
-  const client = createClient(emailNorm, hashPassword(password));
+  const client = createClient(emailNorm, hashPassword(password), { ip });
   const token = await new SignJWT({
     sub: client.id,
     email: client.email,
@@ -275,6 +366,7 @@ type ChangePasswordBody = { currentPassword?: string; newPassword?: string };
 app.post<{ Body: ChangePasswordBody }>("/api/auth/change-password", async (request, reply) => {
   const user = await requireRole(request, reply, "client");
   if (!user?.sub) return;
+  const ip = getClientIp(request);
   const body = request.body ?? {};
   const { currentPassword, newPassword } = body;
   if (!currentPassword || !newPassword?.trim()) {
@@ -288,7 +380,7 @@ app.post<{ Body: ChangePasswordBody }>("/api/auth/change-password", async (reque
   if (!verifyPassword(currentPassword, client.passwordHash)) {
     return reply.status(401).send({ ok: false, error: "Contraseña actual incorrecta." });
   }
-  updateClientPassword(client.id, hashPassword(newPassword));
+  updateClientPassword(client.id, hashPassword(newPassword), { ip, userId: user.sub });
   return reply.status(200).send({ ok: true, message: "Contraseña actualizada. Ya puedes usar tu nueva contraseña." });
 });
 
@@ -522,6 +614,7 @@ app.get("/api/client/profile", async (request, reply) => {
 app.put<{ Body: ProfileBody }>("/api/client/profile", async (request, reply) => {
   const user = await requireRole(request, reply, "client");
   if (!user?.sub) return;
+  const ip = getClientIp(request);
   const body = request.body ?? {};
   const client = getClientById(user.sub);
   if (!client) return reply.status(404).send({ ok: false, error: "Cliente no encontrado." });
@@ -536,7 +629,7 @@ app.put<{ Body: ProfileBody }>("/api/client/profile", async (request, reply) => 
     direccion: body.direccion?.trim(),
     email: body.email?.trim() || client.email,
     tipoServicio: body.tipoServicio?.trim(),
-  });
+  }, { ip, userId: user.sub });
   return reply.status(200).send({ ok: true, profile: updated?.profile });
 });
 
@@ -678,17 +771,19 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
       client = createClient(emailNorm, hashPassword(tempPassword), {
         mustChangePassword: true,
         initialPhone: normalized,
+        ip: getClientIp(request),
+        userId: user.sub,
       });
       clientCreated = true;
     } else if (!client.profile?.telefono || normalizePhone(client.profile.telefono) !== normalized) {
       updateClientProfile(client.id, {
         telefono: normalized,
         telefonoVerificado: true,
-      });
+      }, { ip: getClientIp(request), userId: user.sub, userEmail: user.email });
     }
   }
 
-  if (!subscriptionId) addServiceSubscription(phone, serviceName, day, amount);
+  if (!subscriptionId) addServiceSubscription(phone, serviceName, day, amount, { ip: getClientIp(request), userId: user.sub, userEmail: user.email });
 
   const amountStr = amount != null ? `\n• Monto: $${amount}` : "";
   let message: string;
@@ -774,7 +869,7 @@ app.post<{ Body: MarkPaidBody }>("/api/admin/mark-subscription-paid", async (req
   }
   const sub = getSubscriptionById(subscriptionId);
   if (!sub) return reply.status(404).send({ ok: false, error: "Suscripción no encontrada." });
-  const ok = markSubscriptionPaid(subscriptionId, cutoffDate.trim());
+  const ok = markSubscriptionPaid(subscriptionId, cutoffDate.trim(), { ip: getClientIp(request), userId: user.sub, userEmail: user.email });
   return reply.status(200).send({ ok: true, message: "Marcado como pagado. El cliente verá el servicio activo y próximo corte actualizado." });
 });
 
@@ -860,7 +955,7 @@ app.delete<{ Params: { id: string } }>("/api/admin/subscriptions/:id", async (re
   const { id } = request.params;
   const sub = getSubscriptionById(id);
   if (!sub) return reply.status(404).send({ ok: false, error: "Suscripción no encontrada." });
-  const ok = deleteSubscription(id);
+  const ok = deleteSubscription(id, { ip: getClientIp(request), userId: user.sub, userEmail: user.email });
   return reply.status(200).send({ ok: true, message: "Suscripción eliminada. El servicio queda sin usuario asignado." });
 });
 
@@ -1007,7 +1102,7 @@ app.post<{
     credentialId: credentialIdStr,
     publicKey: JSON.stringify(body.publicKey),
     deviceName: body.deviceName || "Unknown",
-  });
+  }, { ip: getClientIp(request), userEmail: APLAT_ADMIN_EMAIL });
   return reply.status(200).send({
     ok: true,
     message: "Passkey registrada correctamente",
@@ -1044,6 +1139,19 @@ app.post<{ Body: ContactBody }>("/api/contact", async (request, reply) => {
     ok: true,
     message: "Mensaje recibido. Te responderemos pronto.",
   });
+});
+
+// Admin: ver logs de auditoría (registro completo de cambios)
+app.get("/api/admin/audit-logs", async (request, reply) => {
+  const user = await requireRole(request, reply, "master");
+  if (!user) return;
+  const query = request.query as { entity?: string; entity_id?: string; limit?: string };
+  const logs = getAuditLogs({
+    entity: query.entity,
+    entity_id: query.entity_id,
+    limit: Math.min(Number(query.limit) || 100, 500),
+  });
+  return reply.status(200).send({ ok: true, logs });
 });
 
 app.get("/api/health", async (_, reply) => {
@@ -1097,7 +1205,9 @@ app.setNotFoundHandler((request, reply) => {
 const port = Number(process.env.PORT) || 3001;
 const host = process.env.HOST ?? "0.0.0.0";
 
+// Inicializar base de datos de clientes y auditoría
 await initStoreDb();
+await initAuditDb();
 
 try {
   await app.listen({ port, host });

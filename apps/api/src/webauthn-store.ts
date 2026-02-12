@@ -1,9 +1,11 @@
 /**
  * Almacén de credenciales y challenges WebAuthn (como Omac).
  * Persistencia en JSON para un solo usuario admin (userId = 1).
+ * Auditoría: registro de creación y uso de credenciales.
  */
 import fs from "fs";
 import path from "path";
+import { logAudit } from "./audit-store.js";
 
 const STORE_FILE = process.env.APLAT_WEBAUTHN_STORE_PATH || path.join(process.cwd(), ".webauthn-store.json");
 
@@ -61,7 +63,7 @@ export function getCredentialsByUserId(userId: number): StoredCredential[] {
   return memory.credentials.filter((c) => c.userId === userId);
 }
 
-export function addCredential(cred: Omit<StoredCredential, "createdAt" | "counter">): void {
+export function addCredential(cred: Omit<StoredCredential, "createdAt" | "counter">, opts?: { ip?: string; userEmail?: string }): void {
   memory.credentials = memory.credentials.filter((c) => c.credentialId !== cred.credentialId);
   memory.credentials.push({
     ...cred,
@@ -69,6 +71,15 @@ export function addCredential(cred: Omit<StoredCredential, "createdAt" | "counte
     createdAt: Date.now(),
   });
   saveStore(memory);
+  logAudit({
+    action: "CREATE",
+    entity: "credential",
+    entity_id: cred.credentialId,
+    user_id: String(cred.userId),
+    user_email: opts?.userEmail ?? null,
+    ip: opts?.ip ?? "system",
+    details: JSON.stringify({ deviceName: cred.deviceName }),
+  });
 }
 
 export function setChallenge(challengeKey: string, userId: number, expiresAt: number): void {
@@ -89,11 +100,20 @@ export function getAndConsumeChallenge(challengeKey: string): StoredChallenge | 
   return c;
 }
 
-export function updateCredentialLastUsed(credentialId: string): void {
+export function updateCredentialLastUsed(credentialId: string, opts?: { ip?: string; userEmail?: string }): void {
   const cred = memory.credentials.find((c) => c.credentialId === credentialId);
   if (cred) {
     cred.lastUsedAt = Date.now();
     cred.counter += 1;
     saveStore(memory);
+    logAudit({
+      action: "UPDATE",
+      entity: "credential",
+      entity_id: credentialId,
+      user_id: String(cred.userId),
+      user_email: opts?.userEmail ?? null,
+      ip: opts?.ip ?? "system",
+      details: JSON.stringify({ action: "used", counter: cred.counter }),
+    });
   }
 }
