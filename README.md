@@ -1,16 +1,44 @@
 # APlat
 
-**APlat** es la marca bajo la cual se ofrecen servicios digitales: plataformas web, venta y reservas, centros de mando, control de acceso, automatización de reportes e integraciones.
+Plataforma integrada de ciberseguridad y gestión con autenticación avanzada (Passkey), WhatsApp, dashboard y análisis.
 
-## Contenido de este repositorio
+## ✨ Características
 
-- **apps/web/** — Sitio público APlat (Next.js 15, Tailwind 4, TypeScript). Listo para Vercel.
-- **apps/api/** — API Node 24 + Fastify (formulario de contacto). Listo para Koyeb.
-- **APLAT-PLAN-MAESTRO.md** — Plan maestro: análisis del portafolio, catálogo de servicios, plan de acción.
-- **docs/** — Portafolio, servicios, estudio de 5 plataformas, despliegue (Vercel + Koyeb).
-- La carpeta **_repos** no se sube a Git (está en `.gitignore`).
+- 🔐 **Autenticación multi-factor**: Email/password + Passkey (WebAuthn)
+- 📊 **Dashboard**: Métricas, conexiones, visitas, suscripciones
+- 💬 **WhatsApp**: Integración con Baileys para notificaciones y gestión
+- 👥 **Gestión de clientes**: Perfiles, suscripciones, pagos
+- 📈 **Analytics**: Registro de visitas (público) y conexiones (autenticado)
+- 🔒 **Seguridad completa**: Rate limiting, Helmet, validación, sanitización, auditoría
 
-## Cómo ejecutar el sitio APlat
+## 🔒 Seguridad
+
+APlat implementa múltiples capas de seguridad:
+
+- **Rate limiting**: 100 req/min (protección DDoS y fuerza bruta)
+- **Headers**: Helmet con CSP, HSTS, X-Frame-Options
+- **Validación**: Email, contraseña, longitud de campos
+- **Sanitización**: Eliminación de caracteres peligrosos
+- **Hashing**: scrypt con salt aleatorio
+- **Auditoría**: Registro completo en `aplat-audit.db`
+- **JWT**: HS256 con secret fuerte
+- **Persistencia**: Guardado periódico + al salir + escritura atómica
+
+Ver [docs/SEGURIDAD-APLAT.md](docs/SEGURIDAD-APLAT.md) para detalles completos.
+
+## 🏗️ Estructura
+
+```
+APlat/
+├── apps/
+│   ├── api/          # Backend (Fastify + SQLite + Auditoría)
+│   └── web/          # Frontend (Next.js 15 + Tailwind 4)
+├── docs/             # Documentación
+├── scripts/          # Scripts de pruebas y deploy
+└── .github/          # CI/CD workflows
+```
+
+## Cómo ejecutar
 
 ```bash
 # Desde la raíz (con pnpm)
@@ -26,6 +54,28 @@ Abre [http://localhost:3000](http://localhost:3000).
 **Formulario de contacto:** para que envíe a la API, en `apps/web` crea `.env.local` con `NEXT_PUBLIC_APLAT_API_URL=http://localhost:3001` y en otra terminal ejecuta `pnpm dev:api` (o `cd apps/api && pnpm dev`).
 
 **Producción:** frontend en Vercel (`vercel --cwd apps/web --prod` tras `vercel login`); API en Koyeb (ya desplegada). Ver `docs/DEPLOY-PRODUCCION.md`.
+
+## 🧪 Pruebas
+
+```bash
+# Pruebas de persistencia (clients, profiles, subscriptions)
+cd apps/api && pnpm test:persist
+
+# Pruebas de seguridad (rate limiting, headers, validación, auditoría)
+./scripts/test-security.sh http://localhost:3001
+
+# Pruebas de API en producción
+./scripts/test-production-api.sh
+```
+
+## 📚 Documentación
+
+- [Seguridad](docs/SEGURIDAD-APLAT.md) - Guía completa de seguridad y auditoría
+- [Deploy en Koyeb](docs/DEPLOY-KOYEB.md) - Configuración de variables y volúmenes
+- [Deploy en producción](docs/DEPLOY-PRODUCCION.md) - Flujo completo de deploy
+- [Negocio](docs/NEGOCIO-APLAT.md) - Modelo de negocio y valoración
+- [Servicios](docs/servicios.md) - Servicios ofrecidos
+- [Portafolio](docs/portafolio.md) - Proyectos realizados
 
 ## Repositorio y producción
 
