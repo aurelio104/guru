@@ -12,6 +12,7 @@ out/
 # API data (SQLite + JSON local)
 apps/api/data/
 apps/api/data-persist-test/
+apps/api/data-test/
 apps/api/.webauthn-store.json
 
 # Env (no subir secretos)
