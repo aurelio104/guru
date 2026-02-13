@@ -68,7 +68,7 @@ check "whatsapp status 200" "200" "$code"
 echo ""
 
 echo "8. POST /api/auth/webauthn/challenge"
-r=$(curl -s -w "\n%{http_code}" -X POST "$API/api/auth/webauthn/challenge" -H "Content-Type: application/json")
+r=$(curl -s -w "\n%{http_code}" -X POST "$API/api/auth/webauthn/challenge" -H "Content-Type: application/json" -d '{}')
 code=$(echo "$r" | tail -1)
 check "webauthn challenge 200" "200" "$code"
 echo ""
