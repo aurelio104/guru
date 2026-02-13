@@ -1,6 +1,34 @@
 # Desplegar APlat API en Koyeb
 
-Backend Node (Fastify) con Passkey, WhatsApp, visitas y dashboard. Se despliega desde el monorepo con **Dockerfile.api** en la raíz.
+Backend Node (Fastify) con Passkey, WhatsApp, visitas y dashboard. Se despliega desde el monorepo con **Dockerfile.api** en la raíz. **Imagen Docker: Node 24.**
+
+## Variables obligatorias para que arranque la API
+
+Si la API sale con **exit code 1** y en los logs ves:
+
+```text
+Error: ❌ SEGURIDAD: APLAT_JWT_SECRET es obligatorio en producción. Generar con: openssl rand -hex 32
+```
+
+o:
+
+```text
+Error: ❌ SEGURIDAD: APLAT_ADMIN_PASSWORD es obligatorio en producción
+```
+
+debes configurar **variables de entorno** en Koyeb **antes** del primer arranque:
+
+1. En [Koyeb](https://app.koyeb.com) → tu **servicio** de la API → **Settings** → **Environment variables**.
+2. Añade estas dos (obligatorias en producción):
+
+| Variable | Cómo generar / valor |
+|----------|----------------------|
+| `APLAT_JWT_SECRET` | En tu máquina: `openssl rand -hex 32` → copia el resultado y pégalo como valor. |
+| `APLAT_ADMIN_PASSWORD` | Contraseña segura (mín. 12 caracteres) para el login de admin. |
+
+3. Guarda y haz **Redeploy** del servicio.
+
+Sin `APLAT_JWT_SECRET` y `APLAT_ADMIN_PASSWORD` la API **no arranca** en producción por seguridad.
 
 ## Requisitos
 
@@ -153,7 +181,7 @@ En Koyeb, el servicio debe usar:
 - **Dockerfile path**: `Dockerfile.api` (en la **raíz** del repo)
 - **Work directory**: vacío (raíz)
 
-Así el Dockerfile puede hacer `COPY apps/api/...` correctamente.
+Así el Dockerfile puede hacer `COPY apps/api/...` correctamente. La imagen usa **Node 24** (`node:24-alpine`).
 
 ## Health check
 
