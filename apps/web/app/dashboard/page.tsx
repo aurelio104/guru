@@ -1,14 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
-import { DashboardWidgetWhatsApp } from "@/components/dashboard/DashboardWidgetWhatsApp";
+import { DashboardMetricPanel } from "@/components/dashboard/DashboardMetricPanel";
 import { DashboardWidgetSubscriptions } from "@/components/dashboard/DashboardWidgetSubscriptions";
 import { DashboardWidgetConnections } from "@/components/dashboard/DashboardWidgetConnections";
-import { DashboardWidgetPasskey } from "@/components/dashboard/DashboardWidgetPasskey";
 import { ClientDashboard } from "@/components/dashboard/ClientDashboard";
 import { useDashboardUser } from "@/contexts/DashboardUserContext";
-import type { MetricsData } from "@/components/dashboard/DashboardMetrics";
+import type { MetricsData, MetricPanelKey } from "@/components/dashboard/DashboardMetrics";
 import type { ProjectEntry } from "@/components/dashboard/DashboardWidgetSubscriptions";
 import portfolioUrls from "@/data/portfolio-production-urls.json";
 
@@ -28,6 +28,7 @@ function getAuthHeaders(): Record<string, string> {
 export default function DashboardPage() {
   const { user } = useDashboardUser();
   const [metrics, setMetrics] = useState<Partial<MetricsData>>({});
+  const [openPanel, setOpenPanel] = useState<MetricPanelKey | null>(null);
 
   const fetchMetrics = useCallback(async () => {
     if (user?.role !== "master") return;
@@ -94,11 +95,24 @@ export default function DashboardPage() {
         Métricas globales, widgets por servicio y registro de conexiones.
       </p>
 
-      <DashboardMetrics metrics={metrics} />
+      <DashboardMetrics
+        metrics={metrics}
+        onCardClick={(key) => setOpenPanel(key)}
+      />
+
+      <AnimatePresence>
+        {openPanel && (
+          <DashboardMetricPanel
+            key={openPanel}
+            panel={openPanel}
+            onClose={() => setOpenPanel(null)}
+            projects={projects}
+            mrrUsd={metrics.mrrUsd}
+          />
+        )}
+      </AnimatePresence>
 
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <DashboardWidgetWhatsApp />
-        <DashboardWidgetPasskey />
         <DashboardWidgetSubscriptions projects={projects} />
         <DashboardWidgetConnections />
       </section>
