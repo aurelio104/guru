@@ -1155,20 +1155,26 @@ export function getWhatsAppSocket(): WASocket | null {
   return socket;
 }
 
+const isDev = () => process.env.NODE_ENV === "development";
+let lastWhatsAppStatusLog = 0;
+const WHATSAPP_STATUS_LOG_INTERVAL_MS = 5 * 60 * 1000; // En producción, log como mucho cada 5 min
+
 export async function isWhatsAppConnected(): Promise<boolean> {
   const isVercel = detectVercel();
   const isKoyeb = detectKoyeb();
   
-  console.log(`[isWhatsAppConnected] 🔍 Verificando conexión: connectionState="${connectionState}", socket existe=${!!socket}, socket?.user existe=${!!socket?.user}, currentQR=${!!currentQR}`);
+  if (isDev()) {
+    console.log(`[isWhatsAppConnected] 🔍 Verificando conexión: connectionState="${connectionState}", socket existe=${!!socket}, socket?.user existe=${!!socket?.user}, currentQR=${!!currentQR}`);
+  }
   
   if (isVercel && !isKoyeb) {
-    console.log(`[isWhatsAppConnected] ❌ Vercel detectado, retornando false`);
+    if (isDev()) console.log(`[isWhatsAppConnected] ❌ Vercel detectado, retornando false`);
     return false;
   }
   
   // Si hay QR activo, NO está conectado (está esperando escaneo)
   if (currentQR) {
-    console.log(`[isWhatsAppConnected] ❌ QR activo detectado, retornando false`);
+    if (isDev()) console.log(`[isWhatsAppConnected] ❌ QR activo detectado, retornando false`);
     return false;
   }
   
@@ -1177,33 +1183,27 @@ export async function isWhatsAppConnected(): Promise<boolean> {
   if (socket && socket.user) {
     // Si el socket está activo y tiene usuario, está conectado
     if (connectionState !== "open") {
-      // Actualizar connectionState si no está sincronizado
-      console.log(`[isWhatsAppConnected] ✅ Socket activo encontrado pero connectionState="${connectionState}", actualizando a "open"`);
       connectionState = "open";
+      if (isDev()) console.log(`[isWhatsAppConnected] ✅ Socket activo encontrado, actualizando connectionState="open"`);
     }
-    console.log(`[isWhatsAppConnected] ✅ Socket activo con usuario, retornando true`);
+    if (isDev()) console.log(`[isWhatsAppConnected] ✅ Socket activo con usuario, retornando true`);
     return true;
   }
   
   // IMPORTANTE: Verificar el estado real de la conexión
-  // Si connectionState es "open", está realmente conectado
-  // Incluso si el socket no está disponible en este momento, el estado indica que está conectado
   if (connectionState === "open") {
-    // Verificar que el socket existe y tiene usuario
     if (socket && socket.user) {
-      console.log(`[isWhatsAppConnected] ✅ connectionState === "open" y socket válido, retornando true`);
+      if (isDev()) console.log(`[isWhatsAppConnected] ✅ connectionState === "open" y socket válido, retornando true`);
       return true;
     }
     
-    // Si connectionState es "open" pero el socket no está disponible, verificar credenciales
-    // Si hay credenciales guardadas, significa que estaba conectado
     if (fs.existsSync(AUTH_DIR)) {
       try {
         const files = fs.readdirSync(AUTH_DIR);
         const hasCreds = files.some(f => f.includes('creds'));
         const hasKeys = files.some(f => f.includes('key') || f.includes('pre-key'));
         if (hasCreds && hasKeys && files.length >= 10) {
-          console.log(`[isWhatsAppConnected] ✅ connectionState === "open" y credenciales válidas encontradas (${files.length} archivos), retornando true`);
+          if (isDev()) console.log(`[isWhatsAppConnected] ✅ connectionState === "open" y credenciales válidas (${files.length} archivos), retornando true`);
           return true;
         }
       } catch (checkErr) {
@@ -1211,20 +1211,15 @@ export async function isWhatsAppConnected(): Promise<boolean> {
       }
     }
     
-    // Si connectionState es "open", asumir que está conectado aunque el socket no esté disponible
-    console.log(`[isWhatsAppConnected] ✅ connectionState === "open", retornando true (socket puede no estar disponible en este momento)`);
+    if (isDev()) console.log(`[isWhatsAppConnected] ✅ connectionState === "open", retornando true`);
     return true;
   }
   
-  // Si connectionState es null pero hay credenciales válidas y socket activo, 
-  // actualizar el estado basándose en el socket real
-  // Esto puede pasar si el servidor se reinició pero el socket ya está conectado
+  // Si connectionState es null pero hay credenciales válidas y socket activo
   if (connectionState === null || connectionState === undefined) {
-    // PRIMERO: Verificar si el socket está conectado aunque connectionState sea null
-    // Esto puede pasar si el estado se desincronizó
     if (socket && socket.user) {
-      console.log(`[isWhatsAppConnected] ✅ Socket conectado encontrado aunque connectionState era "${connectionState}", estableciendo connectionState="open" y retornando true`);
-      connectionState = "open"; // Actualizar el estado basándose en el socket real
+      connectionState = "open";
+      if (isDev()) console.log(`[isWhatsAppConnected] ✅ Socket conectado encontrado, estableciendo connectionState="open"`);
       return true;
     }
     
@@ -1319,30 +1314,36 @@ export async function isWhatsAppConnected(): Promise<boolean> {
   
   // Verificar que el socket existe
   if (!socket) {
-    console.log(`[isWhatsAppConnected] ❌ Socket no existe y connectionState !== "open", retornando false`);
+    if (isDev()) {
+      console.log(`[isWhatsAppConnected] ❌ Socket no existe y connectionState !== "open", retornando false`);
+    } else {
+      const now = Date.now();
+      if (now - lastWhatsAppStatusLog >= WHATSAPP_STATUS_LOG_INTERVAL_MS) {
+        lastWhatsAppStatusLog = now;
+        console.log(`[isWhatsAppConnected] WhatsApp no conectado (socket no existe, connectionState="${connectionState}")`);
+      }
+    }
     return false;
   }
   
-  // Verificar que tiene usuario (significa que está autenticado)
   if (!socket.user) {
-    console.log(`[isWhatsAppConnected] ❌ Socket sin usuario, retornando false`);
+    if (isDev()) console.log(`[isWhatsAppConnected] ❌ Socket sin usuario, retornando false`);
     return false;
   }
   
-  // Si connectionState es "close", NO está conectado
   if (connectionState === "close") {
-    console.log(`[isWhatsAppConnected] ❌ connectionState es "close", retornando false`);
+    if (isDev()) console.log(`[isWhatsAppConnected] ❌ connectionState es "close", retornando false`);
     return false;
   }
   
-  // Si está "connecting", aún no está conectado
   if (connectionState === "connecting") {
-    console.log(`[isWhatsAppConnected] ⏳ connectionState === "connecting", retornando false`);
+    if (isDev()) console.log(`[isWhatsAppConnected] ⏳ connectionState === "connecting", retornando false`);
     return false;
   }
   
-  // Por defecto, si hay socket y user pero no sabemos el estado, asumir no conectado
-  console.log(`[isWhatsAppConnected] ⚠️ Estado desconocido: connectionState="${connectionState}", socket existe=${!!socket}, socket.user existe=${!!socket?.user}, retornando false`);
+  if (isDev()) {
+    console.log(`[isWhatsAppConnected] ⚠️ Estado desconocido: connectionState="${connectionState}", retornando false`);
+  }
   return false;
 }
 
