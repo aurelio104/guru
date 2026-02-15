@@ -95,12 +95,17 @@ export default function PresenceDashboardPage() {
         }
       }
     } catch {
+      /* fallthrough */
+    } finally {
       setLoading(false);
     }
   }, [selectedSiteId]);
 
   const fetchAnalytics = useCallback(async () => {
-    if (!selectedSiteId || !API_URL) return;
+    if (!selectedSiteId || !API_URL) {
+      setLoading(false);
+      return;
+    }
     const headers = getAuthHeaders();
     if (!Object.keys(headers).length) return;
     setRefreshing(true);
@@ -163,6 +168,14 @@ export default function PresenceDashboardPage() {
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="w-8 h-8 animate-spin text-aplat-cyan" />
+      </div>
+    );
+  }
+
+  if (!loading && sites.length === 0) {
+    return (
+      <div className="rounded-xl glass p-6 text-center">
+        <p className="text-aplat-muted">No hay sitios configurados. Contacta al administrador.</p>
       </div>
     );
   }
@@ -272,6 +285,19 @@ export default function PresenceDashboardPage() {
       {refreshing && !analytics && (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-aplat-cyan" />
+        </div>
+      )}
+
+      {!refreshing && !analytics && sites.length > 0 && (
+        <div className="rounded-xl glass p-6 text-center">
+          <p className="text-aplat-muted">No se pudieron cargar los datos. Revisa la conexión e intenta de nuevo.</p>
+          <button
+            type="button"
+            onClick={() => fetchAnalytics()}
+            className="mt-3 px-4 py-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan hover:bg-aplat-cyan/30 text-sm"
+          >
+            Reintentar
+          </button>
         </div>
       )}
 
