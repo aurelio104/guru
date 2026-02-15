@@ -10,6 +10,7 @@ import {
   Shield,
   ArrowLeft,
   User,
+  MapPin,
 } from "lucide-react";
 import { DashboardUserProvider, useDashboardUser } from "@/contexts/DashboardUserContext";
 import { ChangePasswordForm } from "@/components/dashboard/ChangePasswordForm";
@@ -112,6 +113,15 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
               <LayoutDashboard className="w-5 h-5 text-aplat-cyan" />
               {isClient ? "Mi panel" : "APlat Dashboard"}
             </Link>
+            {!isClient && (
+              <Link
+                href="/dashboard/presence"
+                className="flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors"
+              >
+                <MapPin className="w-4 h-4" />
+                Presence
+              </Link>
+            )}
             {isClient && (
               <Link
                 href="/dashboard/profile"

@@ -61,8 +61,8 @@ export function CybersecurityBackground() {
           {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => {
             const rad = (deg * Math.PI) / 180;
             const r = 42;
-            const x = 50 + r * Math.cos(rad);
-            const y = 50 - r * Math.sin(rad);
+            const x = Number((50 + r * Math.cos(rad)).toFixed(2));
+            const y = Number((50 - r * Math.sin(rad)).toFixed(2));
             return (
               <line
                 key={deg}

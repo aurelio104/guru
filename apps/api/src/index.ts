@@ -37,6 +37,8 @@ import {
   updateCredentialLastUsed,
 } from "./webauthn-store.js";
 import { initAuditDb, logAudit, getAuditLogs } from "./audit-store.js";
+import { initPresenceDb } from "./presence-store.js";
+import { registerPresenceRoutes } from "./presence.routes.js";
 
 const app = Fastify({ logger: true });
 
@@ -877,6 +879,31 @@ app.post("/api/cron/process-cutoffs", async (request, reply) => {
   }
 });
 
+// Cron: alertas Presence por WhatsApp (pico ocupación, anomalías). Cada 5–15 min. Requiere APLAT_CRON_SECRET.
+app.post("/api/cron/presence-alerts", async (request, reply) => {
+  const secret = process.env.APLAT_CRON_SECRET;
+  const headerSecret = (request.headers["x-cron-secret"] as string) ?? "";
+  const querySecret = (request.query as { secret?: string }).secret ?? "";
+  const provided = headerSecret || querySecret;
+  if (!secret || provided !== secret) {
+    return reply.status(401).send({ ok: false, error: "No autorizado." });
+  }
+  try {
+    const { checkAndSendPresenceAlerts } = await import("./presence-whatsapp-alerts.js");
+    const siteId = (request.query as { site_id?: string }).site_id;
+    const result = await checkAndSendPresenceAlerts(siteId);
+    request.log.info(result, "Cron presence-alerts ejecutado");
+    return reply.status(200).send({
+      ok: true,
+      ...result,
+      message: `Alertas: ${result.sent} enviadas, ${result.skipped} omitidas (rate limit).`,
+    });
+  } catch (err) {
+    request.log.error(err);
+    return reply.status(500).send({ ok: false, error: err instanceof Error ? err.message : "Error al enviar alertas." });
+  }
+});
+
 // Admin: ejecutar lógica de cortes (suspender suscripciones con fecha de pago vencida). Llamar por cron diario o manual.
 app.post("/api/admin/process-cutoffs", async (request, reply) => {
   const user = await requireRole(request, reply, "master");
@@ -887,6 +914,25 @@ app.post("/api/admin/process-cutoffs", async (request, reply) => {
   } catch (err) {
     request.log.error(err);
     return reply.status(500).send({ ok: false, error: err instanceof Error ? err.message : "Error al ejecutar cortes." });
+  }
+});
+
+// Admin: enviar alertas Presence por WhatsApp (pico ocupación, anomalías)
+app.post("/api/admin/presence-alerts", async (request, reply) => {
+  const user = await requireRole(request, reply, "master");
+  if (!user) return;
+  try {
+    const { checkAndSendPresenceAlerts } = await import("./presence-whatsapp-alerts.js");
+    const siteId = (request.body as { site_id?: string })?.site_id;
+    const result = await checkAndSendPresenceAlerts(siteId);
+    return reply.status(200).send({
+      ok: true,
+      ...result,
+      message: `Alertas: ${result.sent} enviadas, ${result.skipped} omitidas.`,
+    });
+  } catch (err) {
+    request.log.error(err);
+    return reply.status(500).send({ ok: false, error: err instanceof Error ? err.message : "Error al enviar alertas." });
   }
 });
 
@@ -1191,6 +1237,9 @@ app.get("/api/health", async (_, reply) => {
   return reply.send({ ok: true, service: "aplat-api" });
 });
 
+// APlat Presence: check-in, zonas, inteligencia
+await registerPresenceRoutes(app);
+
 // Cabeceras de seguridad en todas las respuestas
 app.addHook("onSend", async (_, reply, payload) => {
   reply.header("X-Content-Type-Options", "nosniff");
@@ -1238,9 +1287,10 @@ app.setNotFoundHandler((request, reply) => {
 const port = Number(process.env.PORT) || 3001;
 const host = process.env.HOST ?? "0.0.0.0";
 
-// Inicializar base de datos de clientes y auditoría
+// Inicializar base de datos de clientes, auditoría y presencia
 await initStoreDb();
 await initAuditDb();
+await initPresenceDb();
 
 try {
   await app.listen({ port, host });
