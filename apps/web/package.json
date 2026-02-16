@@ -6,7 +6,8 @@
     "dev": "next dev -p 3000 --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "node scripts/patch-serwist-typings.js"
   },
   "dependencies": {
     "@serwist/next": "^9.5.6",
