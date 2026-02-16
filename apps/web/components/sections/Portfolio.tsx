@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card3D } from "@/components/ui/Card3D";
 import { PortfolioBackground } from "@/components/ui/PortfolioBackground";
@@ -364,47 +364,85 @@ function PortfolioGrid({
 }
 
 function RepoLogoCarousel({ repos }: { repos: { slug: string; name: string }[] }) {
-  const centerIndex = (repos.length - 1) / 2;
+  const duplicated = [...repos, ...repos];
   const baseSize = 72;
-  const getScale = (i: number) => {
-    const distance = Math.abs(i - centerIndex);
-    const scale = 1.7 - 0.28 * distance;
-    return Math.max(0.82, scale);
-  };
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [centeredIndex, setCenteredIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!viewport || !track) return;
+
+    let rafId: number;
+    const updateCenter = () => {
+      const vRect = viewport.getBoundingClientRect();
+      const centerX = vRect.left + vRect.width / 2;
+      const children = Array.from(track.children) as HTMLElement[];
+      let closestIndex: number | null = null;
+      let closestDist = Infinity;
+      children.forEach((el, i) => {
+        const rect = el.getBoundingClientRect();
+        const elCenterX = rect.left + rect.width / 2;
+        const dist = Math.abs(elCenterX - centerX);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closestIndex = i;
+        }
+      });
+      setCenteredIndex((prev) => (prev === closestIndex ? prev : closestIndex));
+      rafId = requestAnimationFrame(updateCenter);
+    };
+    rafId = requestAnimationFrame(updateCenter);
+    return () => cancelAnimationFrame(rafId);
+  }, [repos.length]);
+
+  const isCentered = (i: number) => centeredIndex === i;
+  const scale = (i: number) => (isCentered(i) ? 1.5 : 1);
+
   return (
-    <div className="relative w-full overflow-hidden py-10 sm:py-12">
-      <div className="flex items-center justify-center gap-6 sm:gap-8 md:gap-10 flex-wrap">
-        {repos.map((repo, i) => {
+    <div ref={viewportRef} className="relative w-full overflow-hidden py-10 sm:py-12">
+      <div
+        ref={trackRef}
+        className="flex items-center gap-8 sm:gap-10 md:gap-12 animate-marquee whitespace-nowrap"
+      >
+        {duplicated.map((repo, i) => {
           const url = getProductionUrl(repo.slug);
-          const scale = getScale(i);
-          return url ? (
-            <a
-              key={repo.slug}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex shrink-0 hover:opacity-90 transition-opacity"
-              style={{ transform: `scale(${scale})` }}
-            >
-              <ProjectLogo
-                slug={repo.slug}
-                name={repo.name}
-                size={baseSize}
-                className="rounded-2xl transition-transform duration-300 hover:scale-105"
-              />
-            </a>
-          ) : (
+          const s = scale(i);
+          const wrapperClass =
+            "inline-flex shrink-0 transition-transform duration-200 ease-out origin-center hover:opacity-90 transition-opacity";
+          const logo = (
+            <ProjectLogo
+              slug={repo.slug}
+              name={repo.name}
+              size={baseSize}
+              className="rounded-2xl"
+            />
+          );
+          if (url) {
+            return (
+              <a
+                key={`${repo.slug}-${i}`}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={wrapperClass}
+                style={{ transform: `scale(${s})` }}
+                data-carousel-index={i}
+              >
+                {logo}
+              </a>
+            );
+          }
+          return (
             <span
-              key={repo.slug}
-              className="inline-flex shrink-0 opacity-70"
-              style={{ transform: `scale(${scale})` }}
+              key={`${repo.slug}-${i}`}
+              className={`${wrapperClass} opacity-70`}
+              style={{ transform: `scale(${s})` }}
+              data-carousel-index={i}
             >
-              <ProjectLogo
-                slug={repo.slug}
-                name={repo.name}
-                size={baseSize}
-                className="rounded-2xl"
-              />
+              {logo}
             </span>
           );
         })}
