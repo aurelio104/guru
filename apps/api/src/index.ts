@@ -2,6 +2,8 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
 import helmet from "@fastify/helmet";
+import websocket from "@fastify/websocket";
+import multipart from "@fastify/multipart";
 import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import { SignJWT, jwtVerify } from "jose";
 import {
@@ -39,8 +41,21 @@ import {
 import { initAuditDb, logAudit, getAuditLogs } from "./audit-store.js";
 import { initPresenceDb } from "./presence-store.js";
 import { registerPresenceRoutes } from "./presence.routes.js";
+import { initCatalogStore, getCatalogServices, getQuote } from "./catalog-store.js";
+import { registerGeofencingRoutes } from "./geofencing.routes.js";
+import { registerVerifySignatureRoutes } from "./verify-signature.routes.js";
+import { registerAssetsRoutes } from "./assets.routes.js";
+import { registerSecurityRoutes } from "./security.routes.js";
+import { registerGdprRoutes } from "./gdpr.routes.js";
+import { registerIncidentsRoutes } from "./incidents.routes.js";
+import { registerSlotsRoutes } from "./slots.routes.js";
+import { registerReportsRoutes } from "./reports.routes.js";
+import { registerCommerceRoutes } from "./commerce.routes.js";
+import { registerPushRoutes } from "./push.routes.js";
 
-const app = Fastify({ logger: true });
+// Límite de body para evitar payloads enormes (ataques DoS)
+const BODY_LIMIT_BYTES = 512 * 1024; // 512 KB
+const app = Fastify({ logger: true, bodyLimit: BODY_LIMIT_BYTES });
 
 // Seguridad: Headers HTTP (Helmet)
 await app.register(helmet, {
@@ -65,6 +80,9 @@ await app.register(rateLimit, {
   timeWindow: "1 minute", // por minuto
   ban: 5, // después de 5 superaciones, ban temporal
 });
+
+await app.register(websocket);
+await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } }); // 10 MB
 
 await app.register(cors, {
   origin: (() => {
@@ -127,9 +145,22 @@ function verifyPassword(password: string, stored: string): boolean {
   }
 }
 
-/** Sanitización: eliminar caracteres peligrosos para prevenir inyección */
-function sanitizeString(input: string): string {
-  return input.replace(/[<>'"&]/g, "").trim();
+/** Longitudes máximas para validación (evitar overflow y DoS) */
+const MAX_EMAIL_LEN = 254;
+const MAX_PASSWORD_LEN = 256;
+const MAX_NAME_LEN = 200;
+const MAX_MESSAGE_LEN = 5000;
+const MAX_PATH_LEN = 500;
+const MAX_REFERRER_LEN = 500;
+
+/** Sanitización: eliminar caracteres peligrosos (XSS, inyección) y control chars */
+function sanitizeString(input: string, maxLength: number = 1000): string {
+  if (typeof input !== "string") return "";
+  // Eliminar null bytes y caracteres de control
+  let s = input.replace(/\0/g, "").replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
+  // Eliminar caracteres peligrosos para XSS e inyección
+  s = s.replace(/[<>'"&\\]/g, "").trim();
+  return s.length > maxLength ? s.slice(0, maxLength) : s;
 }
 
 /** Validación de email */
@@ -190,25 +221,10 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
   const ts = new Date().toISOString();
 
   if (!email?.trim() || !password?.trim()) {
-    connectionLog.unshift({
-      id: crypto.randomUUID(),
-      email: email?.trim() ?? "",
-      ip,
-      userAgent,
-      timestamp: ts,
-      success: false,
-    });
-    if (connectionLog.length > MAX_CONNECTIONS) connectionLog.pop();
-    logAudit({
-      action: "LOGIN_FAIL",
-      entity: "auth",
-      entity_id: "login",
-      user_id: null,
-      user_email: email?.trim() ?? null,
-      ip,
-      details: JSON.stringify({ reason: "missing_credentials" }),
-    });
     return reply.status(400).send({ ok: false, error: "Faltan email o contraseña." });
+  }
+  if (email.length > MAX_EMAIL_LEN || password.length > MAX_PASSWORD_LEN) {
+    return reply.status(400).send({ ok: false, error: "Datos inválidos." });
   }
 
   const adminEmail = process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local";
@@ -226,7 +242,7 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
     
     return pass || "APlat2025!-SOLO-DESARROLLO";
   })();
-  const emailNorm = sanitizeString(email.trim().toLowerCase());
+  const emailNorm = sanitizeString(email.trim().toLowerCase(), MAX_EMAIL_LEN);
 
   if (!isValidEmail(emailNorm)) {
     logAudit({
@@ -243,6 +259,7 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
 
   // 1) Admin
   if (emailNorm === adminEmail.toLowerCase() && password === adminPassword) {
+    clearLoginFailures(ip);
     const token = await new SignJWT({ sub: "1", email: adminEmail, role: "master" })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
@@ -272,6 +289,7 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
   // 2) Cliente
   const client = getClientByEmail(emailNorm);
   if (client && verifyPassword(password, client.passwordHash)) {
+    clearLoginFailures(ip);
     const token = await new SignJWT({
       sub: client.id,
       email: client.email,
@@ -308,6 +326,7 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
     });
   }
 
+  recordLoginFailure(ip);
   connectionLog.unshift({
     id: crypto.randomUUID(),
     email: email.trim(),
@@ -337,7 +356,7 @@ app.post<{ Body: RegisterBody }>("/api/auth/register", async (request, reply) =>
   if (!email?.trim() || !password?.trim()) {
     return reply.status(400).send({ ok: false, error: "Faltan email o contraseña." });
   }
-  const emailNorm = sanitizeString(email.trim().toLowerCase());
+  const emailNorm = sanitizeString(email.trim().toLowerCase(), MAX_EMAIL_LEN);
   if (!isValidEmail(emailNorm)) {
     return reply.status(400).send({ ok: false, error: "Email inválido." });
   }
@@ -444,14 +463,18 @@ app.post<{ Body: VisitBody }>("/api/analytics/visit", async (request, reply) => 
   const referrerHeader = request.headers["referer"] ?? request.headers["referrer"];
   const ref = typeof referrerHeader === "string" ? referrerHeader : Array.isArray(referrerHeader) ? referrerHeader[0] : "";
   const body = request.body ?? {};
-  const path = typeof body.path === "string" ? body.path : "/";
-  const referrer = typeof body.referrer === "string" ? body.referrer : ref;
+  const pathRaw = typeof body.path === "string" ? body.path : "/";
+  const path = sanitizeString(pathRaw, MAX_PATH_LEN) || "/";
+  const referrer = sanitizeString(
+    typeof body.referrer === "string" ? body.referrer : ref,
+    MAX_REFERRER_LEN
+  );
   visitorLog.unshift({
     id: crypto.randomUUID(),
     ip,
     userAgent,
     path,
-    referrer: referrer.slice(0, 500),
+    referrer,
     timestamp: new Date().toISOString(),
   });
   if (visitorLog.length > MAX_VISITORS) visitorLog.pop();
@@ -1198,19 +1221,31 @@ app.post<{ Body: ContactBody }>("/api/contact", async (request, reply) => {
       error: "Faltan nombre, email o mensaje.",
     });
   }
+  if (
+    name.length > MAX_NAME_LEN ||
+    email.length > MAX_EMAIL_LEN ||
+    message.length > MAX_MESSAGE_LEN
+  ) {
+    return reply.status(400).send({
+      ok: false,
+      error: "Campos demasiado largos.",
+    });
+  }
+
+  const nameSafe = sanitizeString(name.trim(), MAX_NAME_LEN);
+  const emailSafe = sanitizeString(email.trim().toLowerCase(), MAX_EMAIL_LEN);
+  const messageSafe = sanitizeString(message.trim(), MAX_MESSAGE_LEN);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email.trim())) {
+  if (!emailRegex.test(emailSafe)) {
     return reply.status(400).send({
       ok: false,
       error: "Email no válido.",
     });
   }
 
-  // Aquí puedes: guardar en DB, enviar a un webhook, enviar email, etc.
-  // Por ahora solo log y respuesta exitosa.
   request.log.info(
-    { name: name.trim(), email: email.trim(), messageLength: message.trim().length },
+    { nameLength: nameSafe.length, email: emailSafe, messageLength: messageSafe.length },
     "Contact form submission"
   );
 
@@ -1237,60 +1272,113 @@ app.get("/api/health", async (_, reply) => {
   return reply.send({ ok: true, service: "aplat-api" });
 });
 
+// Catálogo de servicios (ecosistema B2B: paquetes y membresías)
+app.get("/api/catalog/services", async (_, reply) => {
+  const services = getCatalogServices();
+  return reply.status(200).send({ ok: true, services });
+});
+
+app.get("/api/catalog/quote", async (request, reply) => {
+  const query = request.query as { ids?: string };
+  const ids = typeof query.ids === "string" ? query.ids.split(",").map((s) => s.trim()).filter(Boolean) : [];
+  const result = getQuote(ids);
+  return reply.status(200).send(result);
+});
+
 // APlat Presence: check-in, zonas, inteligencia
 await registerPresenceRoutes(app);
+await registerGeofencingRoutes(app);
+await registerVerifySignatureRoutes(app);
+await registerAssetsRoutes(app);
+await registerSecurityRoutes(app);
+await registerGdprRoutes(app);
+await registerIncidentsRoutes(app);
+await registerSlotsRoutes(app);
+await registerReportsRoutes(app);
+await registerCommerceRoutes(app);
+await registerPushRoutes(app);
+
+// WebSocket: ping/pong y broadcast de eventos Presence
+const { addWsConnection, removeWsConnection, broadcast } = await import("./ws-broadcast.js");
+app.get("/ws", { websocket: true }, (socket, req) => {
+  addWsConnection(socket);
+  socket.on("message", (message: Buffer | string) => {
+    const raw = typeof message === "string" ? message : message.toString();
+    try {
+      const data = raw.startsWith("{") ? JSON.parse(raw) : { type: raw };
+      if (data.type === "ping") {
+        socket.send(JSON.stringify({ type: "pong", at: new Date().toISOString() }));
+      }
+    } catch {
+      if (raw === "ping") socket.send("pong");
+    }
+  });
+  socket.on("close", () => removeWsConnection(socket));
+});
 
 // Cabeceras de seguridad en todas las respuestas
 app.addHook("onSend", async (_, reply, payload) => {
   reply.header("X-Content-Type-Options", "nosniff");
-  reply.header("X-Frame-Options", "SAMEORIGIN");
+  reply.header("X-Frame-Options", "DENY");
   reply.header("Referrer-Policy", "strict-origin-when-cross-origin");
+  reply.header("X-Permitted-Cross-Domain-Policies", "none");
   return payload;
 });
 
-// Rate limit simple en memoria para login (max 5 intentos por IP por minuto)
-const loginAttempts = new Map<string, { count: number; resetAt: number }>();
-const LOGIN_RATE_WINDOW_MS = 60_000;
-const LOGIN_RATE_MAX = 5;
+// Lockout por fallos de login: 5 fallos → bloqueo 15 min (anti fuerza bruta)
+const loginFailLockout = new Map<string, { failed: number; lockoutUntil: number }>();
+const LOGIN_FAIL_MAX = 5;
+const LOGIN_LOCKOUT_MS = 15 * 60 * 1000; // 15 minutos
 
 app.addHook("preHandler", async (request, reply) => {
   if (request.url !== "/api/auth/login" || request.method !== "POST") return;
   const ip = getClientIp(request);
   const now = Date.now();
-  let entry = loginAttempts.get(ip);
-  if (!entry) {
-    entry = { count: 0, resetAt: now + LOGIN_RATE_WINDOW_MS };
-    loginAttempts.set(ip, entry);
-  }
-  if (now > entry.resetAt) {
-    entry.count = 0;
-    entry.resetAt = now + LOGIN_RATE_WINDOW_MS;
-  }
-  entry.count += 1;
-  if (entry.count > LOGIN_RATE_MAX) {
+  const entry = loginFailLockout.get(ip);
+  if (entry && now < entry.lockoutUntil) {
     return reply.status(429).send({
       ok: false,
-      error: "Demasiados intentos. Espera un momento antes de volver a intentar.",
+      error: "Demasiados intentos fallidos. Espera 15 minutos antes de volver a intentar.",
     });
   }
 });
 
-// 404 para rutas no definidas (evita respuestas HTML por defecto)
+function recordLoginFailure(ip: string): void {
+  const now = Date.now();
+  let entry = loginFailLockout.get(ip);
+  if (!entry || now > entry.lockoutUntil) {
+    entry = { failed: 0, lockoutUntil: 0 };
+  }
+  if (now > entry.lockoutUntil) entry.failed = 0;
+  entry.failed += 1;
+  if (entry.failed >= LOGIN_FAIL_MAX) {
+    entry.lockoutUntil = now + LOGIN_LOCKOUT_MS;
+  }
+  loginFailLockout.set(ip, entry);
+}
+
+function clearLoginFailures(ip: string): void {
+  loginFailLockout.delete(ip);
+}
+
+// 404 para rutas no definidas (no exponer URL en producción)
 app.setNotFoundHandler((request, reply) => {
+  const isProduction = process.env.NODE_ENV === "production";
   reply.status(404).send({
     ok: false,
     error: "not_found",
-    message: `Route ${request.method}:${request.url} not found`,
+    ...(isProduction ? {} : { message: `${request.method}:${request.url} not found` }),
   });
 });
 
 const port = Number(process.env.PORT) || 3001;
 const host = process.env.HOST ?? "0.0.0.0";
 
-// Inicializar base de datos de clientes, auditoría y presencia
+// Inicializar base de datos de clientes, auditoría, presencia y catálogo
 await initStoreDb();
 await initAuditDb();
 await initPresenceDb();
+initCatalogStore();
 
 try {
   await app.listen({ port, host });

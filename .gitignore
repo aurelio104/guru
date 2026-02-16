@@ -9,6 +9,10 @@ node_modules/
 dist/
 out/
 
+# Serwist PWA
+apps/web/public/sw*
+apps/web/public/swe-worker*
+
 # API data (SQLite + JSON local)
 apps/api/data/
 apps/api/data-persist-test/

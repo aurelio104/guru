@@ -67,6 +67,51 @@ type ChartData = {
   by_channel: Array<{ channel: string; count: number }>;
 };
 
+function CreateFirstSiteCard({ onCreated }: { onCreated: () => void }) {
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleCreate = async () => {
+    if (!BASE) return;
+    setError(null);
+    setCreating(true);
+    try {
+      const res = await fetch(`${BASE}/api/presence/admin/sites`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify({ name: "Sede Principal", enabled_channels: "geolocation,qr,wifi_portal,ble,nfc" }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (data.ok) {
+        onCreated();
+      } else {
+        setError(data.error || "Error al crear el sitio.");
+      }
+    } catch {
+      setError("Error de conexión.");
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  return (
+    <div className="rounded-xl glass p-8 text-center max-w-md mx-auto">
+      <MapPin className="w-12 h-12 text-aplat-cyan mx-auto mb-4 opacity-80" />
+      <p className="text-aplat-muted mb-4">No hay sitios configurados. Crea el primero para usar Presence.</p>
+      {error && <p className="text-red-400 text-sm mb-3">{error}</p>}
+      <button
+        type="button"
+        onClick={handleCreate}
+        disabled={creating}
+        className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-5 py-2.5 font-medium disabled:opacity-60"
+      >
+        {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+        Crear sitio «Sede Principal»
+      </button>
+    </div>
+  );
+}
+
 export default function PresenceDashboardPage() {
   const { user } = useDashboardUser();
   const [sites, setSites] = useState<Site[]>([]);
@@ -174,9 +219,12 @@ export default function PresenceDashboardPage() {
 
   if (!loading && sites.length === 0) {
     return (
-      <div className="rounded-xl glass p-6 text-center">
-        <p className="text-aplat-muted">No hay sitios configurados. Contacta al administrador.</p>
-      </div>
+      <CreateFirstSiteCard
+        onCreated={() => {
+          setLoading(true);
+          fetchData();
+        }}
+      />
     );
   }
 

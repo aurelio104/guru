@@ -29,9 +29,13 @@ max: 100 requests por minuto
 ban: 5 superaciones → ban temporal
 ```
 
-- Protege contra fuerza bruta en login
 - Evita abuso de endpoints públicos
 - Por IP (usando X-Forwarded-For si está detrás de proxy)
+
+### Lockout por fallos de login (anti fuerza bruta)
+- **5 intentos fallidos** desde la misma IP → **bloqueo 15 minutos** (429)
+- Solo se cuentan fallos (credenciales inválidas); los intentos correctos no consumen cupo
+- Tras login exitoso se limpia el contador para esa IP
 
 ## 3. Validación de Entrada y Sanitización
 
@@ -42,13 +46,22 @@ ban: 5 superaciones → ban temporal
 - **Longitud**: Limits en campos de texto (ej. referrer: 500 chars)
 
 ### Sanitización
-```typescript
-function sanitizeString(input: string): string {
-  return input.replace(/[<>'"&]/g, "").trim();
-}
-```
-- Elimina caracteres peligrosos para prevenir XSS
-- Se aplica en email, nombres, direcciones
+- Elimina null bytes, caracteres de control y `<>'"&\\` para prevenir XSS e inyección
+- Límite de longitud por campo (`maxLength`) para evitar overflow y DoS
+- Se aplica en email, nombres, mensajes, path y referrer
+
+### Límites de entrada (anti DoS y overflow)
+| Campo      | Máximo |
+|-----------|--------|
+| Email     | 254    |
+| Contraseña (login) | 256 |
+| Nombre    | 200    |
+| Mensaje (contacto) | 5000 |
+| Path (visitas) | 500 |
+| Referrer  | 500    |
+
+### Body limit
+- **512 KB** máximo por request body (Fastify `bodyLimit`) para evitar payloads enormes
 
 ## 4. Headers de Seguridad (Helmet)
 
@@ -68,8 +81,12 @@ HSTS:
 Otros:
   - X-Frame-Options: DENY
   - X-Content-Type-Options: nosniff
-  - X-XSS-Protection: 1; mode=block
+  - X-Permitted-Cross-Domain-Policies: none
+  - Referrer-Policy: strict-origin-when-cross-origin
 ```
+
+### 404 en producción
+- Las respuestas 404 no incluyen la URL solicitada en producción para no exponer rutas internas
 
 ## 5. Hashing de Contraseñas
 
@@ -240,7 +257,18 @@ curl -H "Authorization: Bearer $ADMIN_TOKEN" http://localhost:3001/api/admin/aud
 - `GET /api/dashboard/connections` → Últimas conexiones (requiere auth)
 - `GET /api/admin/audit-logs` → Logs de auditoría (requiere master)
 
-## 14. Actualizaciones y Mantenimiento
+## 14. Frontend (Next.js) – Headers de seguridad
+
+- **X-Frame-Options**: SAMEORIGIN (evita clickjacking)
+- **X-Content-Type-Options**: nosniff
+- **Referrer-Policy**: strict-origin-when-cross-origin
+- **Permissions-Policy**: camera, microphone, geolocation, payment, usb, interest-cohort deshabilitados
+- **Content-Security-Policy**: default-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+- **X-Permitted-Cross-Domain-Policies**: none
+
+El token JWT se guarda en `localStorage`; en entornos de máximo riesgo considerar migrar a httpOnly cookie (requiere cambios en API y front).
+
+## 15. Actualizaciones y Mantenimiento
 
 ### Dependencias
 ```bash
@@ -259,7 +287,7 @@ pnpm audit
 - Aplicar parches críticos inmediatamente
 - Probar en desarrollo antes de producción
 
-## 15. Respuesta a Incidentes
+## 16. Respuesta a Incidentes
 
 ### En caso de compromiso
 1. **Rotación de secrets**: Cambiar `APLAT_JWT_SECRET`, `APLAT_ADMIN_PASSWORD`, `APLAT_CRON_SECRET`
@@ -275,11 +303,15 @@ pnpm audit
 ## Resumen de Implementación
 
 ✅ **Rate limiting**: 100 req/min, ban tras 5 superaciones  
-✅ **Headers de seguridad**: Helmet con CSP, HSTS, X-Frame-Options  
-✅ **Validación**: Email, contraseña, longitud de campos  
-✅ **Sanitización**: Eliminación de caracteres peligrosos  
-✅ **Hashing**: scrypt con salt aleatorio  
+✅ **Lockout login**: 5 fallos → bloqueo 15 min por IP  
+✅ **Body limit**: 512 KB por request  
+✅ **Headers de seguridad**: Helmet con CSP, HSTS, X-Frame-Options DENY, X-Permitted-Cross-Domain-Policies  
+✅ **Validación**: Email, contraseña, longitudes máximas por campo  
+✅ **Sanitización**: Null bytes, control chars, caracteres peligrosos; límite de longitud  
+✅ **Hashing**: scrypt con salt aleatorio, timingSafeEqual  
+✅ **404 en producción**: Sin exponer URL en la respuesta  
 ✅ **Persistencia**: Guardado periódico, al salir, atómico  
+✅ **Frontend**: CSP, frame-ancestors 'none', upgrade-insecure-requests, Permissions-Policy  
 ✅ **Auditoría**: Registro completo en `aplat-audit.db`  
 ✅ **JWT**: HS256 con secret fuerte  
 ✅ **CORS**: Origen restringido  

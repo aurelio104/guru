@@ -8,6 +8,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Wifi, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import { OcrCedulaCapture } from "@/components/portal/OcrCedulaCapture";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 
@@ -150,13 +151,21 @@ function PortalForm() {
 
       <div>
         <label className="block text-sm font-medium text-aplat-muted mb-1">Documento / Cédula</label>
-        <input
-          type="text"
-          value={document}
-          onChange={(e) => setDocument(e.target.value)}
-          placeholder="V-12345678"
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text placeholder-aplat-muted/60 focus:outline-none focus:ring-2 focus:ring-aplat-cyan/40"
-        />
+        <div className="flex flex-col gap-2">
+          <input
+            type="text"
+            value={document}
+            onChange={(e) => setDocument(e.target.value)}
+            placeholder="V-12345678"
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text placeholder-aplat-muted/60 focus:outline-none focus:ring-2 focus:ring-aplat-cyan/40"
+          />
+          <OcrCedulaCapture
+            onExtract={(_, docNum) => {
+              if (docNum) setDocument(docNum);
+            }}
+            disabled={status === "loading"}
+          />
+        </div>
       </div>
 
       <div>

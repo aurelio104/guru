@@ -87,3 +87,12 @@ export async function flushOfflineQueue(
 export function getQueuedCount(): number {
   return getQueue().length;
 }
+
+/** Registra un Sync para que el SW dispare el flush al recuperar red (Background Sync). */
+export function registerSyncForPresence(): void {
+  if (typeof navigator === "undefined" || !navigator.serviceWorker?.ready) return;
+  navigator.serviceWorker.ready.then((reg) => {
+    const r = reg as ServiceWorkerRegistration & { sync?: { register: (tag: string) => Promise<void> } };
+    if (r.sync) r.sync.register("presence-checkin").catch(() => {});
+  });
+}

@@ -85,6 +85,46 @@ code=$(echo "$r" | tail -1)
 check "contact 200" "200" "$code"
 echo ""
 
+echo "11. GET /api/catalog/services"
+r=$(curl -s -w "\n%{http_code}" "$API/api/catalog/services")
+code=$(echo "$r" | tail -1)
+body=$(echo "$r" | sed '$d')
+check "catalog services 200" "200" "$code"
+check "catalog services body" '"ok":true' "$body"
+echo ""
+
+echo "12. GET /api/catalog/quote?ids=1,2,4"
+r=$(curl -s -w "\n%{http_code}" "$API/api/catalog/quote?ids=1,2,4")
+code=$(echo "$r" | tail -1)
+body=$(echo "$r" | sed '$d')
+check "catalog quote 200" "200" "$code"
+check "catalog quote body" "totalMonthly" "$body"
+echo ""
+
+echo "13. GET /api/geofencing/validate"
+r=$(curl -s -w "\n%{http_code}" "$API/api/geofencing/validate?lat=10&lng=-66&target_lat=10&target_lng=-66&radius_m=50")
+code=$(echo "$r" | tail -1)
+body=$(echo "$r" | sed '$d')
+check "geofencing 200" "200" "$code"
+check "geofencing inside" "inside" "$body"
+echo ""
+
+echo "14. POST /api/verify-signature"
+r=$(curl -s -w "\n%{http_code}" -X POST "$API/api/verify-signature" -H "Content-Type: application/json" -d '{"data":"hello","expectedHash":"2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824","algorithm":"sha256"}')
+code=$(echo "$r" | tail -1)
+body=$(echo "$r" | sed '$d')
+check "verify-signature 200" "200" "$code"
+check "verify-signature valid" "valid" "$body"
+echo ""
+
+echo "15. GET /api/assets"
+r=$(curl -s -w "\n%{http_code}" "$API/api/assets" -H "Authorization: Bearer $token")
+code=$(echo "$r" | tail -1)
+body=$(echo "$r" | sed '$d')
+check "assets 200" "200" "$code"
+check "assets body" '"ok":true' "$body"
+echo ""
+
 if [[ $FAIL -eq 0 ]]; then
   echo "=== Todas las pruebas pasaron ==="
   exit 0

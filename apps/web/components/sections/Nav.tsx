@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 const LINKS = [
+  { href: "/producto", label: "Producto" },
+  { href: "/servicios", label: "Paquetes" },
   { href: "#ciberseguridad", label: "Ciberseguridad" },
   { href: "#servicios", label: "Servicios" },
   { href: "#como-funciona", label: "Cómo funciona" },

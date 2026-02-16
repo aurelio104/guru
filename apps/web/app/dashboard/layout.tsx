@@ -11,6 +11,13 @@ import {
   ArrowLeft,
   User,
   MapPin,
+  Package,
+  ShieldAlert,
+  FileCheck,
+  AlertTriangle,
+  Calendar,
+  FileText,
+  ShoppingCart,
 } from "lucide-react";
 import { DashboardUserProvider, useDashboardUser } from "@/contexts/DashboardUserContext";
 import { ChangePasswordForm } from "@/components/dashboard/ChangePasswordForm";
@@ -114,13 +121,64 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
               {isClient ? "Mi panel" : "APlat Dashboard"}
             </Link>
             {!isClient && (
-              <Link
-                href="/dashboard/presence"
-                className="flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors"
-              >
-                <MapPin className="w-4 h-4" />
-                Presence
-              </Link>
+              <>
+                <Link
+                  href="/dashboard/presence"
+                  className="flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Presence
+                </Link>
+                <Link
+                  href="/dashboard/assets"
+                  className="flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors"
+                >
+                  <Package className="w-4 h-4" />
+                  Activos
+                </Link>
+                <Link
+                  href="/dashboard/security"
+                  className="flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors"
+                >
+                  <ShieldAlert className="w-4 h-4" />
+                  Security
+                </Link>
+                <Link
+                  href="/dashboard/gdpr"
+                  className="flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors"
+                >
+                  <FileCheck className="w-4 h-4" />
+                  GDPR
+                </Link>
+                <Link
+                  href="/dashboard/incidents"
+                  className="flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors"
+                >
+                  <AlertTriangle className="w-4 h-4" />
+                  Incidentes
+                </Link>
+                <Link
+                  href="/dashboard/slots"
+                  className="flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors"
+                >
+                  <Calendar className="w-4 h-4" />
+                  Slots
+                </Link>
+                <Link
+                  href="/dashboard/reports"
+                  className="flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors"
+                >
+                  <FileText className="w-4 h-4" />
+                  Reportes
+                </Link>
+                <Link
+                  href="/dashboard/commerce"
+                  className="flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  Commerce
+                </Link>
+              </>
             )}
             {isClient && (
               <Link

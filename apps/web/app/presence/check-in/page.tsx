@@ -5,7 +5,7 @@
  * Geolocalización, QR, BLE, NFC. Cola offline para reintentos automáticos.
  */
 import { useState, useEffect, useCallback } from "react";
-import { enqueueCheckIn, flushOfflineQueue, getQueuedCount } from "@/lib/presence-offline-queue";
+import { enqueueCheckIn, flushOfflineQueue, getQueuedCount, registerSyncForPresence } from "@/lib/presence-offline-queue";
 import { parseBleAdvertisement, selectStrongestBeacon, type BleBeaconDetected } from "@/lib/ble-scanner";
 import { motion } from "framer-motion";
 import { MapPin, Loader2, CheckCircle2, AlertCircle, Navigation, QrCode, Bluetooth, CreditCard } from "lucide-react";
@@ -99,6 +99,21 @@ export default function CheckInPage() {
       window.removeEventListener("online", onOnline);
       window.removeEventListener("offline", onOffline);
     };
+  }, []);
+
+  useEffect(() => {
+    const sw = navigator.serviceWorker;
+    if (!sw) return;
+    const onMessage = (e: MessageEvent) => {
+      if (e.data?.type === "FLUSH_PRESENCE_QUEUE") {
+        flushOfflineQueue(
+          () => setQueuedCount(getQueuedCount()),
+          () => {}
+        ).then(() => setQueuedCount(getQueuedCount()));
+      }
+    };
+    sw.addEventListener("message", onMessage);
+    return () => sw.removeEventListener("message", onMessage);
   }, []);
 
   useEffect(() => {
@@ -340,6 +355,7 @@ export default function CheckInPage() {
       }
     } catch {
       enqueueCheckIn(`${BASE}/api/presence/check-in`, headers, body);
+      registerSyncForPresence();
       setQueuedCount(getQueuedCount());
       setStatus("error");
       setMessage("Sin conexión. Check-in guardado y se enviará al recuperar red.");
@@ -374,6 +390,7 @@ export default function CheckInPage() {
       }
     } catch {
       enqueueCheckIn(`${BASE}/api/presence/check-in`, headers, body);
+      registerSyncForPresence();
       setQueuedCount(getQueuedCount());
       setStatus("error");
       setMessage("Sin conexión. Check-in guardado y se enviará al recuperar red.");
@@ -410,6 +427,7 @@ export default function CheckInPage() {
       }
     } catch {
       enqueueCheckIn(`${BASE}/api/presence/check-in`, headers, body);
+      registerSyncForPresence();
       setQueuedCount(getQueuedCount());
       setStatus("error");
       setMessage("Sin conexión. Check-in guardado y se enviará al recuperar red.");

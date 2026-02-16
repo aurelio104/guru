@@ -25,6 +25,7 @@ import {
   addNfcTag,
   getNfcTagsBySite,
 } from "./presence-store.js";
+import { broadcast } from "./ws-broadcast.js";
 import {
   validateLocationInZone,
   getAnalyticsContext,
@@ -251,6 +252,19 @@ export async function registerPresenceRoutes(app: FastifyInstance): Promise<void
       userIdAudit,
     });
 
+    try {
+      broadcast({
+        type: "presence_checkin",
+        id: checkIn.id,
+        site_id: checkIn.site_id,
+        zone_id: checkIn.zone_id,
+        channel: checkIn.channel,
+        checked_in_at: checkIn.checked_in_at,
+      });
+    } catch {
+      /* ignore */
+    }
+
     return reply.status(201).send({
       ok: true,
       check_in: {
@@ -438,7 +452,11 @@ export async function registerPresenceRoutes(app: FastifyInstance): Promise<void
   app.get("/api/presence/admin/sites", async (request, reply) => {
     const user = await requireMaster(request, reply);
     if (!user) return;
-    const sites = getSites();
+    let sites = await getSites();
+    if (sites.length === 0) {
+      await createSite("Sede Principal", {}, "geolocation,qr,wifi_portal,ble,nfc");
+      sites = await getSites();
+    }
     return reply.status(200).send({ ok: true, sites });
   });
 

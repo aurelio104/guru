@@ -6,6 +6,7 @@ import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
 import { DashboardMetricPanel } from "@/components/dashboard/DashboardMetricPanel";
 import { DashboardWidgetSubscriptions } from "@/components/dashboard/DashboardWidgetSubscriptions";
 import { DashboardWidgetConnections } from "@/components/dashboard/DashboardWidgetConnections";
+import { DashboardWidgetPush } from "@/components/dashboard/DashboardWidgetPush";
 import { ClientDashboard } from "@/components/dashboard/ClientDashboard";
 import { useDashboardUser } from "@/contexts/DashboardUserContext";
 import type { MetricsData, MetricPanelKey } from "@/components/dashboard/DashboardMetrics";
@@ -115,6 +116,9 @@ export default function DashboardPage() {
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DashboardWidgetSubscriptions projects={projects} />
         <DashboardWidgetConnections />
+      </section>
+      <section className="mt-6">
+        <DashboardWidgetPush />
       </section>
     </>
   );

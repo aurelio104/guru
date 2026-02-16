@@ -30,6 +30,22 @@ debes configurar **variables de entorno** en Koyeb **antes** del primer arranque
 
 Sin `APLAT_JWT_SECRET` y `APLAT_ADMIN_PASSWORD` la API **no arranca** en producción por seguridad.
 
+### Configurar desde la CLI (recomendado)
+
+Con [Koyeb CLI](https://github.com/koyeb/koyeb-cli) instalado y logueado (`koyeb login`):
+
+```bash
+./scripts/koyeb-set-required-env.sh
+```
+
+El script genera `APLAT_JWT_SECRET` y, si no defines `APLAT_ADMIN_PASSWORD`, genera también una contraseña de admin y la muestra (guárdala para el login). Para usar tu propia contraseña:
+
+```bash
+APLAT_ADMIN_PASSWORD='TuContraseñaSegura123' ./scripts/koyeb-set-required-env.sh
+```
+
+Tras ejecutarlo, Koyeb redesplegará el servicio y la API debería arrancar.
+
 ## Requisitos
 
 - Cuenta en [Koyeb](https://www.koyeb.com)
