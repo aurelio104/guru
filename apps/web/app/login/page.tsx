@@ -62,6 +62,7 @@ function LoginForm() {
       const challengeRes = await fetch(`${API_URL.replace(/\/$/, "")}/api/auth/webauthn/challenge`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
       });
       const challengeData = await challengeRes.json().catch(() => ({}));
       if (!challengeData.ok || !challengeData.challenge) {
