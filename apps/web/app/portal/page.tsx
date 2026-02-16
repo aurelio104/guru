@@ -240,7 +240,7 @@ export default function PortalPage() {
         <PortalForm />
       </Suspense>
       <p className="mt-6 text-aplat-muted/60 text-xs text-center">
-        APlat Presence · Check-in automático
+        GURU Presence · Check-in automático
       </p>
     </div>
   );

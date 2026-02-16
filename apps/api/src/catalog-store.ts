@@ -22,14 +22,14 @@ export type CatalogService = {
 let catalog: CatalogService[] = [];
 
 const DEFAULT_SERVICES: CatalogService[] = [
-  { id: "1", name: "Presence", slug: "presence", description: "Check-in BLE/NFC, zonas, portal, ocupación, alertas WhatsApp, export", priceOneTime: 0, priceMonthly: 99, active: true, order: 1 },
-  { id: "2", name: "Ciberseguridad", slug: "ciberseguridad", description: "APlat Security, GDPR/LOPD, incidentes, verificación firma, Jcloud", priceOneTime: 150, priceMonthly: 79, active: true, order: 2 },
-  { id: "3", name: "Reportes", slug: "reportes", description: "Subida Excel, análisis, gráficos, dashboard reportes", priceOneTime: 0, priceMonthly: 49, active: true, order: 3 },
-  { id: "4", name: "Commerce", slug: "commerce", description: "Catálogo, pedidos, bot WhatsApp opcional", priceOneTime: 100, priceMonthly: 89, active: true, order: 4 },
-  { id: "5", name: "Slots", slug: "slots", description: "Reserva de recursos y slots, disponibilidad", priceOneTime: 0, priceMonthly: 39, active: true, order: 5 },
-  { id: "6", name: "Geofencing", slug: "geofencing", description: "Validación lat/lng en radio (órdenes de trabajo)", priceOneTime: 50, priceMonthly: 29, active: true, order: 6 },
-  { id: "7", name: "Web Push / PWA", slug: "web-push-pwa", description: "Notificaciones push, offline, Background Sync", priceOneTime: 0, priceMonthly: 19, active: true, order: 7 },
-  { id: "8", name: "Otros", slug: "otros", description: "OCR cédulas, verify firma, integraciones", priceOneTime: 0, priceMonthly: 0, active: true, order: 8 },
+  { id: "1", name: "Guru Presence", slug: "presence", description: "Check-in BLE/NFC, zonas, portal, ocupación, alertas WhatsApp, export", priceOneTime: 0, priceMonthly: 99, active: true, order: 1 },
+  { id: "2", name: "Guru Ciberseguridad", slug: "ciberseguridad", description: "Guru Security, GDPR/LOPD, incidentes, verificación firma, Jcloud", priceOneTime: 150, priceMonthly: 79, active: true, order: 2 },
+  { id: "3", name: "Guru Reportes", slug: "reportes", description: "Subida Excel, análisis, gráficos, dashboard reportes", priceOneTime: 0, priceMonthly: 49, active: true, order: 3 },
+  { id: "4", name: "Guru Commerce", slug: "commerce", description: "Catálogo, pedidos, bot WhatsApp opcional", priceOneTime: 100, priceMonthly: 89, active: true, order: 4 },
+  { id: "5", name: "Guru Slots", slug: "slots", description: "Reserva de recursos y slots, disponibilidad", priceOneTime: 0, priceMonthly: 39, active: true, order: 5 },
+  { id: "6", name: "Guru Geofencing", slug: "geofencing", description: "Validación lat/lng en radio (órdenes de trabajo)", priceOneTime: 50, priceMonthly: 29, active: true, order: 6 },
+  { id: "7", name: "Guru Web Push / PWA", slug: "web-push-pwa", description: "Notificaciones push, offline, Background Sync", priceOneTime: 0, priceMonthly: 19, active: true, order: 7 },
+  { id: "8", name: "Guru Otros", slug: "otros", description: "OCR cédulas, verify firma, integraciones", priceOneTime: 0, priceMonthly: 0, active: true, order: 8 },
 ];
 
 function loadCatalog(): CatalogService[] {

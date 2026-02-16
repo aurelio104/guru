@@ -41,7 +41,7 @@ self.addEventListener("sync", (event: ExtendableEvent & { tag?: string }) => {
 
 self.addEventListener("push", (event: PushEvent) => {
   const data = event.data?.json() as { title?: string; body?: string; tag?: string } | undefined;
-  const title = data?.title ?? "APlat";
+  const title = data?.title ?? "GURU";
   const options: NotificationOptions = {
     body: data?.body ?? "",
     tag: data?.tag ?? "default",

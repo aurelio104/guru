@@ -1,26 +1,28 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useLocale } from "@/components/providers/LocaleProvider";
 
 const FOOTER_LINKS = [
-  { href: "#ciberseguridad", label: "Ciberseguridad" },
-  { href: "#servicios", label: "Servicios" },
-  { href: "#como-funciona", label: "Cómo funciona" },
-  { href: "#portafolio", label: "Portafolio" },
-  { href: "#contacto", label: "Contacto" },
+  { href: "#ciberseguridad", labelKey: "nav.ciberseguridad" },
+  { href: "#servicios", labelKey: "nav.servicios" },
+  { href: "#como-funciona", labelKey: "nav.comoFunciona" },
+  { href: "#portafolio", labelKey: "nav.portafolio" },
+  { href: "#contacto", labelKey: "nav.contacto" },
 ];
 
 export function Footer() {
+  const { t } = useLocale();
   return (
     <footer className="relative border-t border-white/10 py-12 bg-aplat-surface/30">
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <motion.a
-            href="#"
+            href="/"
             className="text-xl font-bold text-aplat-text"
             whileHover={{ opacity: 0.8 }}
           >
-            APlat<span className="text-aplat-cyan">.</span>
+            GURU<span className="text-aplat-cyan">.</span>
           </motion.a>
           <nav aria-label="Enlaces del pie">
             <ul className="flex flex-wrap justify-center gap-6">
@@ -30,7 +32,7 @@ export function Footer() {
                     href={link.href}
                     className="text-aplat-muted hover:text-aplat-text text-sm transition-colors"
                   >
-                    {link.label}
+                    {t(link.labelKey)}
                   </a>
                 </li>
               ))}
@@ -39,8 +41,7 @@ export function Footer() {
         </div>
         <div className="mt-8 pt-8 border-t border-white/5 text-center">
           <p className="text-aplat-muted text-sm">
-            Servicios digitales de última generación · TypeScript · Node 24 ·
-            Tailwind 4 · Vercel & Koyeb
+            {t("footer.tagline")}
           </p>
         </div>
       </div>

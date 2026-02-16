@@ -58,7 +58,7 @@ export function InstallPrompt() {
             {/* eslint-disable-next-line @next/next/no-img-element -- static icon */}
             <img src="/icon.svg" alt="" className="w-12 h-12 shrink-0" width={48} height={48} />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-aplat-text">Instalar APlat</p>
+              <p className="text-sm font-semibold text-aplat-text">Instalar GURU</p>
               <p className="text-xs text-aplat-muted">Abrir como app y usar sin depender del navegador.</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">

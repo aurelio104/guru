@@ -4,12 +4,19 @@ import { motion } from "framer-motion";
 import { TypingAnimation } from "@/components/ui/TypingAnimation";
 import { HeroBackground } from "@/components/ui/HeroBackground";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useLocale } from "@/components/providers/LocaleProvider";
+
+const HERO_PHRASES = {
+  es: ["Inteligencia.", "Análisis.", "Contexto.", "Aprendizaje."],
+  en: ["Intelligence.", "Analysis.", "Context.", "Learning."],
+};
 
 export function Hero() {
+  const { t, locale } = useLocale();
   return (
     <section
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden perspective-3d scanlines"
-      aria-label="Presentación APlat"
+      aria-label="Presentación GURU"
     >
       <HeroBackground />
 
@@ -21,7 +28,7 @@ export function Hero() {
           transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
         >
           <Sparkles className="w-4 h-4 text-aplat-cyan" />
-          <span>Servicios digitales de última generación</span>
+          <span>{t("hero.badge")}</span>
         </motion.div>
 
         <motion.h1
@@ -30,16 +37,11 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
-          <span className="text-aplat-text">APlat.</span>
+          <span className="text-aplat-text">{t("hero.title")}</span>
           <br />
           <span className="text-gradient-cyan">
             <TypingAnimation
-              phrases={[
-                "Inteligencia.",
-                "Análisis.",
-                "Contexto.",
-                "Aprendizaje.",
-              ]}
+              phrases={HERO_PHRASES[locale]}
               className="text-gradient-cyan"
             />
           </span>
@@ -51,8 +53,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
         >
-          Plataforma inteligente que combina análisis, contexto y aprendizaje
-          continuo para entregar soluciones que escalan.
+          {t("hero.subtitle")}
         </motion.p>
 
         <motion.div
@@ -67,7 +68,7 @@ export function Hero() {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
-            Ver servicios
+            {t("hero.cta.servicios")}
             <ArrowRight className="w-4 h-4" />
           </motion.a>
           <motion.a
@@ -76,7 +77,7 @@ export function Hero() {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
-            Cómo funciona
+            {t("hero.cta.como")}
           </motion.a>
         </motion.div>
       </div>

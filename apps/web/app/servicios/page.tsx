@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Check, Loader2, ShoppingCart } from "lucide-react";
+import { useLocale } from "@/components/providers/LocaleProvider";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 
@@ -21,6 +22,7 @@ type CatalogService = {
 type QuoteItem = { id: string; name: string; priceOneTime: number; priceMonthly: number };
 
 export default function ServiciosPage() {
+  const { t } = useLocale();
   const [services, setServices] = useState<CatalogService[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [quote, setQuote] = useState<{ items: QuoteItem[]; totalOneTime: number; totalMonthly: number } | null>(null);
@@ -81,10 +83,10 @@ export default function ServiciosPage() {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold text-aplat-text mb-2">
-            Paquetes y membresías
+            {t("servicios.title")}
           </h1>
           <p className="text-aplat-muted">
-            Selecciona los servicios del ecosistema APlat que te interesan. Precios a convenir.
+            {t("servicios.subtitle")}
           </p>
         </motion.div>
 
@@ -126,7 +128,7 @@ export default function ServiciosPage() {
                       <p className="font-semibold text-aplat-text">{svc.name}</p>
                       <p className="text-sm text-aplat-muted mt-0.5">{svc.description}</p>
                       <p className="text-xs text-aplat-muted mt-2">
-                        Precio a convenir
+                        {t("servicios.priceLabel")}
                       </p>
                     </div>
                   </div>
@@ -142,7 +144,7 @@ export default function ServiciosPage() {
               >
                 <h2 className="text-lg font-semibold text-aplat-text mb-4 flex items-center gap-2">
                   <ShoppingCart className="w-5 h-5" />
-                  Resumen
+                  {t("servicios.resumen")}
                 </h2>
                 <ul className="space-y-2 mb-4">
                   {quote.items.map((item) => (
@@ -153,7 +155,7 @@ export default function ServiciosPage() {
                 </ul>
                 <div className="border-t border-white/10 pt-4 flex justify-between font-semibold">
                   <span>Total</span>
-                  <span className="text-aplat-cyan">A convenir</span>
+                  <span className="text-aplat-cyan">{t("servicios.total")}</span>
                 </div>
               </motion.div>
             )}

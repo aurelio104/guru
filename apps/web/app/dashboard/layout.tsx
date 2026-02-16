@@ -118,7 +118,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
             </Link>
             <Link href="/dashboard" className="flex items-center gap-2 text-aplat-text font-semibold">
               <LayoutDashboard className="w-5 h-5 text-aplat-cyan" />
-              {isClient ? "Mi panel" : "APlat Dashboard"}
+              {isClient ? "Mi panel" : "GURU Dashboard"}
             </Link>
             {!isClient && (
               <>

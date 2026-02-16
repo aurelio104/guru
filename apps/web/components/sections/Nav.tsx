@@ -3,15 +3,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { useLocale } from "@/components/providers/LocaleProvider";
 
 const LINKS = [
-  { href: "/producto", label: "Producto" },
-  { href: "/servicios", label: "Paquetes" },
-  { href: "#ciberseguridad", label: "Ciberseguridad" },
-  { href: "#servicios", label: "Servicios" },
-  { href: "#como-funciona", label: "Cómo funciona" },
-  { href: "#portafolio", label: "Portafolio" },
-  { href: "#contacto", label: "Contacto" },
+  { href: "/producto", labelKey: "nav.producto" },
+  { href: "/servicios", labelKey: "nav.paquetes" },
+  { href: "#ciberseguridad", labelKey: "nav.ciberseguridad" },
+  { href: "#servicios", labelKey: "nav.servicios" },
+  { href: "#como-funciona", labelKey: "nav.comoFunciona" },
+  { href: "#portafolio", labelKey: "nav.portafolio" },
+  { href: "#contacto", labelKey: "nav.contacto" },
 ];
 
 export function Nav() {
@@ -29,6 +30,8 @@ export function Nav() {
     setHasToken(!!(typeof window !== "undefined" && localStorage.getItem("aplat_token")));
   }, []);
 
+  const { t } = useLocale();
+
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -39,8 +42,8 @@ export function Nav() {
       transition={{ duration: 0.5 }}
     >
       <nav className="container mx-auto px-6 h-16 flex items-center justify-between max-w-6xl">
-        <a href="#" className="text-xl font-bold text-aplat-text">
-          APlat<span className="text-aplat-cyan">.</span>
+        <a href="/" className="text-xl font-bold text-aplat-text">
+          GURU<span className="text-aplat-cyan">.</span>
         </a>
 
         <ul className="hidden md:flex items-center gap-8">
@@ -50,7 +53,7 @@ export function Nav() {
                 href={link.href}
                 className="text-aplat-muted hover:text-aplat-text transition-colors text-sm font-medium"
               >
-                {link.label}
+                {t(link.labelKey)}
               </a>
             </li>
           ))}
@@ -58,13 +61,13 @@ export function Nav() {
 
         <div className="hidden md:flex items-center gap-3">
           <a href="/login" className="text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors">
-            Iniciar sesión
+            {t("nav.login")}
           </a>
           <a
             href="#contacto"
             className="inline-flex items-center rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan px-4 py-2 text-sm font-medium transition-all border border-aplat-cyan/30"
           >
-            Contactar
+            {t("nav.contactar")}
           </a>
         </div>
 
@@ -96,7 +99,7 @@ export function Nav() {
                     className="block text-aplat-muted hover:text-aplat-text py-2"
                     onClick={() => setOpen(false)}
                   >
-                    {link.label}
+                    {t(link.labelKey)}
                   </a>
                 </li>
               ))}
@@ -106,7 +109,7 @@ export function Nav() {
                   className="block text-aplat-muted hover:text-aplat-text py-2"
                   onClick={() => setOpen(false)}
                 >
-                  {hasToken ? "Dashboard" : "Iniciar sesión"}
+                  {hasToken ? "Dashboard" : t("nav.login")}
                 </a>
               </li>
               <li>
@@ -115,7 +118,7 @@ export function Nav() {
                   className="inline-flex rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm"
                   onClick={() => setOpen(false)}
                 >
-                  Contactar
+                  {t("nav.contactar")}
                 </a>
               </li>
             </ul>

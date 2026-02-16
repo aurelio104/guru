@@ -138,7 +138,7 @@ function LoginForm() {
       const beginRes = await fetch(`${API_URL.replace(/\/$/, "")}/api/auth/webauthn/register/begin`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-        body: JSON.stringify({ deviceName: "APlat Login" }),
+        body: JSON.stringify({ deviceName: "GURU Login" }),
       });
       const beginData = await beginRes.json().catch(() => ({}));
       if (!beginRes.ok || !beginData.ok || !beginData.options) {
@@ -181,7 +181,7 @@ function LoginForm() {
             key: Array.from(new Uint8Array(response.getPublicKey() ?? [])),
             cosePublicKey: Array.from(new Uint8Array(response.getPublicKey() ?? [])),
           },
-          deviceName: "APlat Login",
+          deviceName: "GURU Login",
         }),
       });
       const completeData = await completeRes.json().catch(() => ({}));

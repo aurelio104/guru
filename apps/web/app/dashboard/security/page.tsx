@@ -283,7 +283,7 @@ export default function DashboardSecurityPage() {
             <Shield className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-aplat-text">APlat Security</h1>
+            <h1 className="text-2xl font-bold text-aplat-text">Guru Security</h1>
             <p className="text-aplat-muted text-sm">Vulnerabilidades, escaneos y estado de seguridad</p>
           </div>
         </div>

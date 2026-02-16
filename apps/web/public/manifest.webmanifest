@@ -1,6 +1,6 @@
 {
-  "name": "APlat · Servicios digitales de última generación",
-  "short_name": "APlat",
+  "name": "GURU Platform · Servicios digitales de última generación",
+  "short_name": "GURU",
   "description": "Plataforma inteligente: análisis, contexto, aprendizaje. Soluciones digitales con tecnología de vanguardia.",
   "start_url": "/",
   "scope": "/",
@@ -10,17 +10,9 @@
   "background_color": "#030306",
   "lang": "es",
   "icons": [
-    {
-      "src": "/icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any",
-      "purpose": "any"
-    },
-    {
-      "src": "/icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any",
-      "purpose": "maskable"
-    }
+    { "src": "/logo.png", "type": "image/png", "sizes": "512x512", "purpose": "any" },
+    { "src": "/logo.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" },
+    { "src": "/icon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" },
+    { "src": "/icon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "maskable" }
   ]
 }

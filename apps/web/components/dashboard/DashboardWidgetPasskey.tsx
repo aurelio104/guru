@@ -33,7 +33,7 @@ export function DashboardWidgetPasskey() {
       const beginRes = await fetch(`${API_URL.replace(/\/$/, "")}/api/auth/webauthn/register/begin`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-        body: JSON.stringify({ deviceName: "APlat Dashboard" }),
+        body: JSON.stringify({ deviceName: "GURU Dashboard" }),
       });
       const beginData = await beginRes.json().catch(() => ({}));
       if (!beginRes.ok || !beginData.ok || !beginData.options) {
@@ -76,7 +76,7 @@ export function DashboardWidgetPasskey() {
             key: Array.from(new Uint8Array(response.getPublicKey() ?? [])),
             cosePublicKey: Array.from(new Uint8Array(response.getPublicKey() ?? [])),
           },
-          deviceName: "APlat Dashboard",
+          deviceName: "GURU Dashboard",
         }),
       });
       const completeData = await completeRes.json().catch(() => ({}));

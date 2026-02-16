@@ -6,7 +6,7 @@ import { Card3D } from "@/components/ui/Card3D";
 import { PortfolioBackground } from "@/components/ui/PortfolioBackground";
 import { ExternalLink, Sparkles } from "lucide-react";
 
-/** Dominios de producción: generado/actualizado por scripts/sync-vercel-domains.mjs (Vercel API). Al cambiar dominio en Vercel y volver a ejecutar el script, APlat muestra el nuevo enlace. */
+/** Dominios de producción: generado/actualizado por scripts/sync-vercel-domains.mjs (Vercel API). Al cambiar dominio en Vercel y volver a ejecutar el script, GURU muestra el nuevo enlace. */
 import productionUrlsData from "@/data/portfolio-production-urls.json";
 
 const PRODUCTION_URLS: Record<string, string> = productionUrlsData as Record<string, string>;
@@ -18,7 +18,7 @@ const LOGO_EXTERNAL: Record<string, string> = {
 
 /** Nombre para mostrar por slug (Listos se construye desde PRODUCTION_URLS). */
 const SLUG_DISPLAY_NAMES: Record<string, string> = {
-  APlat: "APlat",
+  GURU: "GURU",
   Omac: "Omac",
   JCavalier: "JCavalier",
   "control-acceso-albatros": "Control de acceso",
@@ -35,7 +35,7 @@ const SLUG_DISPLAY_NAMES: Record<string, string> = {
 
 /** Orden preferido para la sección Listos (los que tengan URL en PRODUCTION_URLS). */
 const LISTOS_ORDER = [
-  "APlat",
+  "GURU",
   "Omac",
   "JCavalier",
   "control-acceso-albatros",
@@ -218,7 +218,7 @@ const REPO_DETAIL: Record<string, { tagline: string; stack: string; result: stri
     stack: "Web · Admin",
     result: "Gestión centralizada",
   },
-  APlat: {
+  GURU: {
     tagline: "Plataforma de servicios",
     stack: "Next.js · Tailwind 4 · Vercel",
     result: "Portafolio y servicios",
