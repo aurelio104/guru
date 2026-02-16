@@ -364,34 +364,47 @@ function PortfolioGrid({
 }
 
 function RepoLogoCarousel({ repos }: { repos: { slug: string; name: string }[] }) {
-  const duplicated = [...repos, ...repos];
-  const itemClass = "inline-flex items-center gap-3 shrink-0 group";
+  const centerIndex = (repos.length - 1) / 2;
+  const baseSize = 72;
+  const getScale = (i: number) => {
+    const distance = Math.abs(i - centerIndex);
+    const scale = 1.7 - 0.28 * distance;
+    return Math.max(0.82, scale);
+  };
   return (
-    <div className="relative w-full overflow-hidden py-8">
-      <div className="flex gap-10 animate-marquee whitespace-nowrap">
-        {duplicated.map((repo, i) => {
+    <div className="relative w-full overflow-hidden py-10 sm:py-12">
+      <div className="flex items-center justify-center gap-6 sm:gap-8 md:gap-10 flex-wrap">
+        {repos.map((repo, i) => {
           const url = getProductionUrl(repo.slug);
-          const chip = (
-            <>
-              <ProjectLogo slug={repo.slug} name={repo.name} size={56} className="rounded-2xl" />
-              <span className="text-base font-medium text-aplat-text group-hover:text-aplat-cyan transition-colors">
-                {repo.name}
-              </span>
-            </>
-          );
+          const scale = getScale(i);
           return url ? (
             <a
-              key={`${repo.slug}-${i}`}
+              key={repo.slug}
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`${itemClass} hover:opacity-90 transition-opacity`}
+              className="inline-flex shrink-0 hover:opacity-90 transition-opacity"
+              style={{ transform: `scale(${scale})` }}
             >
-              {chip}
+              <ProjectLogo
+                slug={repo.slug}
+                name={repo.name}
+                size={baseSize}
+                className="rounded-2xl transition-transform duration-300 hover:scale-105"
+              />
             </a>
           ) : (
-            <span key={`${repo.slug}-${i}`} className={`${itemClass} opacity-70`}>
-              {chip}
+            <span
+              key={repo.slug}
+              className="inline-flex shrink-0 opacity-70"
+              style={{ transform: `scale(${scale})` }}
+            >
+              <ProjectLogo
+                slug={repo.slug}
+                name={repo.name}
+                size={baseSize}
+                className="rounded-2xl"
+              />
             </span>
           );
         })}
