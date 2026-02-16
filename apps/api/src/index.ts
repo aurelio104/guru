@@ -1268,8 +1268,30 @@ app.get("/api/admin/audit-logs", async (request, reply) => {
   return reply.status(200).send({ ok: true, logs });
 });
 
+const startTime = Date.now();
+const API_VERSION = "1.0.0";
 app.get("/api/health", async (_, reply) => {
-  return reply.send({ ok: true, service: "aplat-api" });
+  return reply.send({
+    ok: true,
+    service: "aplat-api",
+    version: API_VERSION,
+    uptime_seconds: Math.floor((Date.now() - startTime) / 1000),
+    env: process.env.NODE_ENV ?? "development",
+  });
+});
+
+// Estado de la plataforma (conteos y sugerencias) — rol master
+app.get("/api/platform/status", async (request, reply) => {
+  const user = await requireRole(request, reply, "master");
+  if (!user) return;
+  try {
+    const { getPlatformStatus } = await import("./platform-status.js");
+    const status = await getPlatformStatus();
+    return reply.status(200).send(status);
+  } catch (err) {
+    request.log.warn(err);
+    return reply.status(500).send({ ok: false, error: "Error al obtener estado de la plataforma." });
+  }
 });
 
 // Catálogo de servicios (ecosistema B2B: paquetes y membresías)

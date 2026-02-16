@@ -3,6 +3,8 @@
 **Propósito:** Documento de referencia para el equipo. Qué está hecho y qué falta por implementar.  
 **Última actualización:** Febrero 2026
 
+> **Plataforma inteligente / autocurable:** Ver [PLATAFORMA-INTELIGENTE.md](./PLATAFORMA-INTELIGENTE.md) para la visión de auto-desarrollo, health enriquecido, estado de plataforma y error boundaries.
+
 ---
 
 ## Resumen

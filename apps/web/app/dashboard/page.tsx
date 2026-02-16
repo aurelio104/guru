@@ -1,17 +1,31 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence } from "framer-motion";
+import { MapPin, Package, ShieldAlert, FileCheck, AlertTriangle, Calendar, FileText, ShoppingCart, ChevronRight } from "lucide-react";
 import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
 import { DashboardMetricPanel } from "@/components/dashboard/DashboardMetricPanel";
 import { DashboardWidgetSubscriptions } from "@/components/dashboard/DashboardWidgetSubscriptions";
 import { DashboardWidgetConnections } from "@/components/dashboard/DashboardWidgetConnections";
 import { DashboardWidgetPush } from "@/components/dashboard/DashboardWidgetPush";
+import { DashboardWidgetPlatformStatus } from "@/components/dashboard/DashboardWidgetPlatformStatus";
 import { ClientDashboard } from "@/components/dashboard/ClientDashboard";
 import { useDashboardUser } from "@/contexts/DashboardUserContext";
 import type { MetricsData, MetricPanelKey } from "@/components/dashboard/DashboardMetrics";
 import type { ProjectEntry } from "@/components/dashboard/DashboardWidgetSubscriptions";
 import portfolioUrls from "@/data/portfolio-production-urls.json";
+
+const QUICK_LINKS = [
+  { href: "/dashboard/presence", label: "Presence", desc: "Check-ins, zonas, beacons, portal WiFi", icon: MapPin, color: "bg-aplat-cyan/15 text-aplat-cyan" },
+  { href: "/dashboard/assets", label: "Activos", desc: "Tracking BLE de activos", icon: Package, color: "bg-aplat-cyan/15 text-aplat-cyan" },
+  { href: "/dashboard/security", label: "Security", desc: "Vulnerabilidades y escaneos", icon: ShieldAlert, color: "bg-amber-500/15 text-amber-400" },
+  { href: "/dashboard/gdpr", label: "GDPR / LOPD", desc: "Checklist de cumplimiento", icon: FileCheck, color: "bg-emerald-500/15 text-emerald-400" },
+  { href: "/dashboard/incidents", label: "Incidentes", desc: "Registro y playbooks", icon: AlertTriangle, color: "bg-orange-500/15 text-orange-400" },
+  { href: "/dashboard/slots", label: "Slots", desc: "Disponibilidad y reservas", icon: Calendar, color: "bg-aplat-violet/15 text-aplat-violet" },
+  { href: "/dashboard/reports", label: "Reportes", desc: "Informes y análisis", icon: FileText, color: "bg-aplat-violet/15 text-aplat-violet" },
+  { href: "/dashboard/commerce", label: "Commerce", desc: "Pedidos y productos", icon: ShoppingCart, color: "bg-aplat-emerald/15 text-aplat-emerald" },
+] as const;
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
@@ -101,6 +115,8 @@ export default function DashboardPage() {
         onCardClick={(key) => setOpenPanel(key)}
       />
 
+      {user?.role === "master" && <DashboardWidgetPlatformStatus />}
+
       <AnimatePresence>
         {openPanel && (
           <DashboardMetricPanel
@@ -117,6 +133,35 @@ export default function DashboardPage() {
         <DashboardWidgetSubscriptions projects={projects} />
         <DashboardWidgetConnections />
       </section>
+
+      <section className="mt-6">
+        <h2 className="text-lg font-semibold text-aplat-text mb-3">Accesos rápidos</h2>
+        <p className="text-aplat-muted text-sm mb-4">
+          Módulos del panel: presencia, seguridad, cumplimiento, incidentes y más.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {QUICK_LINKS.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/10 hover:border-white/20 transition-colors group"
+              >
+                <div className={`rounded-lg p-2 ${link.color}`}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-aplat-text group-hover:text-aplat-cyan">{link.label}</p>
+                  <p className="text-xs text-aplat-muted truncate">{link.desc}</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-aplat-muted shrink-0" />
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
       <section className="mt-6">
         <DashboardWidgetPush />
       </section>
