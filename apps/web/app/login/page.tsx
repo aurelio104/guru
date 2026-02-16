@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   KeyRound,
-  Fingerprint,
   Lock,
   Loader2,
   Shield,
@@ -24,17 +23,17 @@ function getAuthHeaders(): Record<string, string> {
   return { Authorization: `Bearer ${token}` };
 }
 
-type AuthMethod = "passkey" | "biometric" | "traditional";
+type AuthMethod = "passkey" | "traditional";
 
 function LoginForm() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect")?.replace(/[^a-zA-Z0-9/_-]/g, "") || "/dashboard";
+  const [passkeySupported, setPasskeySupported] = useState<boolean | null>(null);
   const [authMethod, setAuthMethod] = useState<AuthMethod>("traditional");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const [passkeySupported, setPasskeySupported] = useState<boolean | null>(null);
   const [showPasskeyPrompt, setShowPasskeyPrompt] = useState(false);
   const [passkeyRegistering, setPasskeyRegistering] = useState(false);
 
@@ -45,6 +44,7 @@ function LoginForm() {
       typeof window.PublicKeyCredential !== "undefined" &&
       typeof navigator?.credentials?.get === "function";
     setPasskeySupported(ok);
+    if (ok) setAuthMethod("passkey");
   }, []);
 
   async function handlePasskeyLogin() {
@@ -284,14 +284,13 @@ function LoginForm() {
               Acceso seguro
             </h1>
             <p className="text-aplat-muted text-sm">
-              Passkey, biométrico o email/contraseña
+              Passkey o email/contraseña (como Omac)
             </p>
           </div>
 
           <div className="flex gap-2 mb-6 rounded-xl bg-white/5 p-1">
             {[
               { id: "passkey" as const, icon: KeyRound, label: "Passkey" },
-              { id: "biometric" as const, icon: Fingerprint, label: "Biométrico" },
               { id: "traditional" as const, icon: Lock, label: "Email/Password" },
             ].map(({ id, icon: Icon, label }) => (
               <button
@@ -310,7 +309,7 @@ function LoginForm() {
             ))}
           </div>
 
-          {(authMethod === "passkey" || authMethod === "biometric") && (
+          {authMethod === "passkey" && (
             <div className="space-y-4">
               {message && (
                 <div
