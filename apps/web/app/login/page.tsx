@@ -310,9 +310,39 @@ function LoginForm() {
           </div>
 
           {(authMethod === "passkey" || authMethod === "biometric") && (
-            <div className="rounded-xl bg-aplat-cyan/5 border border-aplat-cyan/20 p-4 text-center text-aplat-muted text-sm">
-              Próximamente: autenticación con llave de acceso y biométrico (WebAuthn).
-              Usa Email/Password por ahora.
+            <div className="space-y-4">
+              {message && (
+                <div
+                  className={`rounded-xl px-4 py-3 text-sm ${
+                    message.type === "success"
+                      ? "bg-aplat-emerald/10 text-aplat-emerald border border-aplat-emerald/20"
+                      : "bg-red-500/10 text-red-400 border border-red-500/20"
+                  }`}
+                >
+                  {message.text}
+                </div>
+              )}
+              <p className="text-aplat-muted text-sm text-center">
+                Inicia sesión con tu Passkey (Face ID, Touch ID, llave de seguridad o smartphone vía QR).
+              </p>
+              <button
+                type="button"
+                onClick={handlePasskeyLogin}
+                disabled={loading}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Comprobando Passkey...
+                  </>
+                ) : (
+                  <>
+                    <KeyRound className="w-4 h-4" />
+                    Iniciar sesión con Passkey
+                  </>
+                )}
+              </button>
             </div>
           )}
 
@@ -432,7 +462,7 @@ function LoginForm() {
                   Registrar Passkey
                 </h3>
                 <p className="text-aplat-muted text-sm mb-5">
-                  Registra una Passkey para iniciar sesión sin contraseña la próxima vez (como en Omac).
+                  Registra una Passkey para iniciar sesión sin contraseña. Podrás guardarla en este dispositivo o escanear el QR para guardarla en tu smartphone.
                 </p>
                 {message && showPasskeyPrompt && (
                   <div

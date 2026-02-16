@@ -106,7 +106,7 @@ export function DashboardWidgetPasskey() {
         <h2 className="text-lg font-semibold text-aplat-text">Passkey</h2>
       </div>
       <p className="text-aplat-muted text-sm mb-4">
-        Registra una llave de acceso (Face ID, Touch ID o dispositivo de seguridad) para iniciar sesión sin contraseña, como en Omac.
+        Registra una Passkey para iniciar sesión sin contraseña. El navegador mostrará la opción de guardarla en este dispositivo o de escanear un QR para guardarla en tu smartphone.
       </p>
       {message && (
         <div
@@ -133,7 +133,7 @@ export function DashboardWidgetPasskey() {
         ) : (
           <>
             <KeyRound className="w-4 h-4" />
-            Registrar Passkey en este dispositivo
+            Registrar Passkey (este dispositivo o smartphone vía QR)
           </>
         )}
       </button>

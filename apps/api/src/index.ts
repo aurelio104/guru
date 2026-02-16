@@ -1152,7 +1152,7 @@ app.post<{ Body: { deviceName?: string } }>("/api/auth/webauthn/register/begin",
       { alg: -257, type: "public-key" as const },
     ],
     authenticatorSelection: {
-      authenticatorAttachment: "platform" as const,
+      // Sin authenticatorAttachment para permitir "otro dispositivo" → QR y guardar Passkey en el smartphone
       userVerification: "required" as const,
       requireResidentKey: false,
     },
