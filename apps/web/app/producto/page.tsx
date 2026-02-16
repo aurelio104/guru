@@ -55,22 +55,22 @@ export default function ProductoPage() {
           transition={{ delay: 0.2 }}
           className="rounded-2xl border border-aplat-cyan/30 bg-aplat-cyan/5 p-8 mb-12"
         >
-          <h2 className="text-xl font-semibold text-aplat-text mb-4">Precios y paquetes</h2>
+          <h2 className="text-xl font-semibold text-aplat-text mb-4">Paquetes y membresías</h2>
           <ul className="space-y-2 text-aplat-muted mb-6">
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-aplat-emerald" />
-              Costo único por activación (opcional) y membresía mensual por servicio
+              Servicios del ecosistema APlat: elige solo lo que necesitas
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-aplat-emerald" />
-              Elige solo los servicios que necesitas y obtén un total único + mensual al instante
+              Precios a convenir; contáctanos para cotización
             </li>
           </ul>
           <Link
             href="/servicios"
             className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan text-aplat-deep font-semibold px-5 py-2.5 hover:bg-aplat-cyan/90 transition-colors"
           >
-            Ver precios y armar paquete
+            Ver servicios y armar paquete
             <ArrowRight className="w-4 h-4" />
           </Link>
         </motion.section>

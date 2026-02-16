@@ -84,7 +84,7 @@ export default function ServiciosPage() {
             Paquetes y membresías
           </h1>
           <p className="text-aplat-muted">
-            Selecciona los servicios del ecosistema APlat. Verás el costo único y la suscripción mensual total.
+            Selecciona los servicios del ecosistema APlat que te interesan. Precios a convenir.
           </p>
         </motion.div>
 
@@ -126,14 +126,7 @@ export default function ServiciosPage() {
                       <p className="font-semibold text-aplat-text">{svc.name}</p>
                       <p className="text-sm text-aplat-muted mt-0.5">{svc.description}</p>
                       <p className="text-xs text-aplat-muted mt-2">
-                        {svc.priceOneTime > 0 && (
-                          <span className="text-aplat-emerald">Costo único: ${svc.priceOneTime}</span>
-                        )}
-                        {svc.priceOneTime > 0 && svc.priceMonthly > 0 && " · "}
-                        {svc.priceMonthly > 0 && (
-                          <span>Mensual: ${svc.priceMonthly}/mes</span>
-                        )}
-                        {svc.priceOneTime === 0 && svc.priceMonthly === 0 && " Precio a consultar"}
+                        Precio a convenir
                       </p>
                     </div>
                   </div>
@@ -155,20 +148,12 @@ export default function ServiciosPage() {
                   {quote.items.map((item) => (
                     <li key={item.id} className="flex justify-between text-sm">
                       <span className="text-aplat-muted">{item.name}</span>
-                      <span>
-                        {item.priceOneTime > 0 && `$${item.priceOneTime} + `}
-                        {item.priceMonthly > 0 && `$${item.priceMonthly}/mes`}
-                      </span>
                     </li>
                   ))}
                 </ul>
                 <div className="border-t border-white/10 pt-4 flex justify-between font-semibold">
-                  <span>Costo único total</span>
-                  <span className="text-aplat-emerald">${quote.totalOneTime}</span>
-                </div>
-                <div className="flex justify-between font-semibold mt-1">
-                  <span>Suscripción mensual total</span>
-                  <span className="text-aplat-cyan">${quote.totalMonthly}/mes</span>
+                  <span>Total</span>
+                  <span className="text-aplat-cyan">A convenir</span>
                 </div>
               </motion.div>
             )}
