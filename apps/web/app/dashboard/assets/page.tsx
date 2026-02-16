@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Package, Plus, Trash2, Loader2, ArrowLeft } from "lucide-react";
@@ -24,15 +24,21 @@ type Asset = {
   updatedAt: string;
 };
 
+type Site = { id: string; name: string };
+type Beacon = { id: string; name: string; uuid: string; major: number; minor: number; zone_id: string };
+
 export default function DashboardAssetsPage() {
   const [assets, setAssets] = useState<Asset[]>([]);
+  const [sites, setSites] = useState<Site[]>([]);
+  const [beacons, setBeacons] = useState<Beacon[]>([]);
   const [loading, setLoading] = useState(true);
+  const [beaconsLoading, setBeaconsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", description: "", beaconId: "", siteId: "" });
 
-  const fetchAssets = () => {
+  const fetchAssets = useCallback(() => {
     if (!BASE) return;
     setLoading(true);
     setError(null);
@@ -44,16 +50,43 @@ export default function DashboardAssetsPage() {
       })
       .catch(() => setError("Error de conexión"))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
   useEffect(() => {
     fetchAssets();
+  }, [fetchAssets]);
+
+  useEffect(() => {
+    if (!BASE || !getAuthHeaders().Authorization) return;
+    fetch(`${BASE}/api/presence/admin/sites`, { headers: getAuthHeaders() })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && Array.isArray(d.sites)) setSites(d.sites);
+      })
+      .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!BASE || !form.siteId) {
+      setBeacons([]);
+      return;
+    }
+    setBeaconsLoading(true);
+    fetch(`${BASE}/api/presence/admin/beacons?site_id=${encodeURIComponent(form.siteId)}`, { headers: getAuthHeaders() })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && Array.isArray(d.beacons)) setBeacons(d.beacons);
+        else setBeacons([]);
+      })
+      .catch(() => setBeacons([]))
+      .finally(() => setBeaconsLoading(false));
+  }, [form.siteId]);
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!BASE || !form.name.trim() || !form.beaconId.trim() || !form.siteId.trim()) return;
     setSubmitting(true);
+    setError(null);
     fetch(`${BASE}/api/assets`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
@@ -83,6 +116,8 @@ export default function DashboardAssetsPage() {
         if (d.ok) fetchAssets();
       });
   };
+
+  const canCreate = sites.length > 0 && (form.siteId ? beacons.length > 0 : true);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
@@ -128,43 +163,87 @@ export default function DashboardAssetsPage() {
           className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-6"
         >
           <h2 className="text-lg font-semibold text-aplat-text mb-3">Nuevo activo</h2>
-          <div className="grid gap-3">
-            <input
-              type="text"
-              placeholder="Nombre"
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Descripción (opcional)"
-              value={form.description}
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
-            />
-            <input
-              type="text"
-              placeholder="ID del beacon"
-              value={form.beaconId}
-              onChange={(e) => setForm((f) => ({ ...f, beaconId: e.target.value }))}
-              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
-              required
-            />
-            <input
-              type="text"
-              placeholder="ID del sitio"
-              value={form.siteId}
-              onChange={(e) => setForm((f) => ({ ...f, siteId: e.target.value }))}
-              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
-              required
-            />
-          </div>
+          <p className="text-aplat-muted text-sm mb-3">
+            Asocie un beacon BLE de Presence a un activo (equipo, mochila, etc.) para hacer tracking.
+          </p>
+          {sites.length === 0 ? (
+            <p className="text-amber-400/90 text-sm py-2">
+              No hay sedes en Presence. Cree una en Dashboard → Presence para poder elegir sede y beacon.
+            </p>
+          ) : (
+            <div className="grid gap-3">
+              <div>
+                <label className="block text-sm font-medium text-aplat-muted mb-1">Sede</label>
+                <select
+                  value={form.siteId}
+                  onChange={(e) => setForm((f) => ({ ...f, siteId: e.target.value, beaconId: "" }))}
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                  required
+                >
+                  <option value="">Seleccionar sede...</option>
+                  {sites.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {form.siteId && (
+                <div>
+                  <label className="block text-sm font-medium text-aplat-muted mb-1">Beacon</label>
+                  {beaconsLoading ? (
+                    <div className="flex items-center gap-2 text-aplat-muted text-sm py-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Cargando beacons...
+                    </div>
+                  ) : beacons.length === 0 ? (
+                    <p className="text-amber-400/90 text-sm py-2">
+                      No hay beacons en esta sede. Añada uno en Dashboard → Presence (sección Beacons BLE).
+                    </p>
+                  ) : (
+                    <select
+                      value={form.beaconId}
+                      onChange={(e) => setForm((f) => ({ ...f, beaconId: e.target.value }))}
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                      required
+                    >
+                      <option value="">Seleccionar beacon...</option>
+                      {beacons.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          {b.name} ({b.uuid.slice(0, 8)}… {b.major}:{b.minor})
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-aplat-muted mb-1">Nombre del activo</label>
+                <input
+                  type="text"
+                  placeholder="Ej. Mochila oficina, Laptop sala 2"
+                  value={form.name}
+                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-aplat-muted mb-1">Descripción (opcional)</label>
+                <input
+                  type="text"
+                  placeholder="Detalles adicionales"
+                  value={form.description}
+                  onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+                />
+              </div>
+            </div>
+          )}
           <div className="flex gap-2 mt-3">
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !canCreate || !form.name.trim() || !form.beaconId.trim() || !form.siteId.trim()}
               className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm font-medium disabled:opacity-60"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
@@ -188,7 +267,25 @@ export default function DashboardAssetsPage() {
         </div>
       )}
       {!loading && assets.length === 0 && !showForm && (
-        <p className="text-aplat-muted py-8">No hay activos. Añade uno con «Nuevo activo».</p>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center"
+        >
+          <Package className="w-12 h-12 text-aplat-muted/70 mx-auto mb-4" />
+          <h2 className="text-lg font-semibold text-aplat-text mb-2">No hay activos registrados</h2>
+          <p className="text-aplat-muted text-sm max-w-md mx-auto mb-5">
+            Cree un activo para asociar un beacon BLE (de Presence) a un elemento físico y hacer tracking — por ejemplo equipos, mochilas o dispositivos.
+          </p>
+          <button
+            type="button"
+            onClick={() => setShowForm(true)}
+            className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2.5 text-sm font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            Crear primer activo
+          </button>
+        </motion.div>
       )}
       {!loading && assets.length > 0 && (
         <ul className="space-y-3">

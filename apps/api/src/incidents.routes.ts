@@ -11,6 +11,7 @@ import {
   getAllPlaybooks,
   getPlaybookById,
   initIncidentsStore,
+  seedMissingPlaybooks,
 } from "./incidents-store.js";
 import type { IncidentSeverity, IncidentStatus } from "./incidents-store.js";
 
@@ -46,6 +47,13 @@ export async function registerIncidentsRoutes(app: FastifyInstance): Promise<voi
     if (!user) return;
     const list = getAllPlaybooks();
     return reply.status(200).send({ ok: true, playbooks: list });
+  });
+
+  app.post("/api/incidents/playbooks/seed", async (request, reply) => {
+    const user = await requireAuth(request, reply);
+    if (!user) return;
+    const added = seedMissingPlaybooks();
+    return reply.status(200).send({ ok: true, added: added.length, playbooks: getAllPlaybooks() });
   });
 
   app.get("/api/incidents/playbooks/:id", async (request, reply) => {

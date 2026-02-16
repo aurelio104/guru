@@ -122,11 +122,14 @@ export function NfcTagAdmin({ siteId }: { siteId: string }) {
             onChange={(e) => setForm((f) => ({ ...f, tag_id: e.target.value }))}
             className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm font-mono"
           />
+          <label className="block text-xs text-aplat-muted mb-0.5">Zona</label>
           <select
             value={form.zone_id}
             onChange={(e) => setForm((f) => ({ ...f, zone_id: e.target.value }))}
             className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+            aria-label="Zona"
           >
+            <option value="">Seleccionar zona...</option>
             {zones.map((z) => (
               <option key={z.id} value={z.id}>
                 {z.name}
@@ -149,7 +152,12 @@ export function NfcTagAdmin({ siteId }: { siteId: string }) {
         </form>
       )}
 
-      {tags.length === 0 && !showForm && (
+      {zones.length === 0 && (
+        <p className="text-aplat-muted text-sm">
+          No hay zonas en esta sede. Cree al menos una en la sección «Zonas» más arriba para poder añadir tags NFC.
+        </p>
+      )}
+      {tags.length === 0 && !showForm && zones.length > 0 && (
         <p className="text-aplat-muted text-sm">No hay tags NFC. Añada uno para check-in por NFC (Chrome Android).</p>
       )}
       {tags.length > 0 && (

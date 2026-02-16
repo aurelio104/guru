@@ -171,11 +171,14 @@ export function BeaconAdmin({ siteId }: { siteId: string }) {
               </div>
             </>
           )}
+          <label className="block text-xs text-aplat-muted mb-0.5">Zona</label>
           <select
             value={form.zone_id}
             onChange={(e) => setForm((f) => ({ ...f, zone_id: e.target.value }))}
             className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+            aria-label="Zona"
           >
+            <option value="">Seleccionar zona...</option>
             {zones.map((z) => (
               <option key={z.id} value={z.id}>
                 {z.name}
@@ -198,7 +201,12 @@ export function BeaconAdmin({ siteId }: { siteId: string }) {
         </form>
       )}
 
-      {beacons.length === 0 && !showForm && (
+      {zones.length === 0 && (
+        <p className="text-aplat-muted text-sm">
+          No hay zonas en esta sede. Cree al menos una en la sección «Zonas» más arriba para poder añadir beacons.
+        </p>
+      )}
+      {beacons.length === 0 && !showForm && zones.length > 0 && (
         <p className="text-aplat-muted text-sm">No hay beacons registrados. Añada uno para check-in por proximidad BLE.</p>
       )}
       {beacons.length > 0 && (

@@ -3,7 +3,7 @@
  */
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { jwtVerify } from "jose";
-import { getGdprChecklist, updateGdprItem, initGdprStore } from "./gdpr-store.js";
+import { getGdprChecklist, updateGdprItem, initGdprStore, seedMissingDefaults } from "./gdpr-store.js";
 import type { GdprItemStatus } from "./gdpr-store.js";
 
 type AuthPayload = { sub?: string; email?: string; role?: string };
@@ -48,5 +48,12 @@ export async function registerGdprRoutes(app: FastifyInstance): Promise<void> {
     const item = updateGdprItem(id, { status: body.status, notes: body.notes });
     if (!item) return reply.status(404).send({ ok: false, error: "Ítem no encontrado." });
     return reply.status(200).send({ ok: true, item });
+  });
+
+  app.post("/api/gdpr/checklist/seed", async (request, reply) => {
+    const user = await requireAuth(request, reply);
+    if (!user) return;
+    const added = seedMissingDefaults();
+    return reply.status(200).send({ ok: true, added: added.length, items: getGdprChecklist() });
   });
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FileText, ArrowLeft, Plus, Loader2, RefreshCw, Upload } from "lucide-react";
+import { FileText, ArrowLeft, Plus, Loader2, RefreshCw, Upload, Trash2 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
@@ -14,14 +14,35 @@ function getAuthHeaders(): Record<string, string> {
   return { Authorization: `Bearer ${token}` };
 }
 
-type Report = { id: string; title: string; description?: string; type: string; status: string; createdAt: string };
+type Report = { id: string; title: string; description?: string; type: string; status: string; createdAt: string; updatedAt?: string };
 type ExcelResult = { reportId: string; columns: string[]; rows: Record<string, string | number>[]; totalRows: number };
+
+const TYPE_LABEL: Record<string, string> = {
+  manual: "Manual",
+  scheduled: "Programado",
+  export: "Exportación",
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  draft: "Borrador",
+  generating: "Generando",
+  ready: "Listo",
+  failed: "Fallido",
+};
+
+const STATUS_COLOR: Record<string, string> = {
+  draft: "bg-aplat-muted/20 text-aplat-muted",
+  generating: "bg-aplat-cyan/20 text-aplat-cyan",
+  ready: "bg-emerald-500/20 text-emerald-400",
+  failed: "bg-red-500/20 text-red-400",
+};
 
 export default function DashboardReportsPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [formTitle, setFormTitle] = useState("");
+  const [form, setForm] = useState({ title: "", description: "", type: "manual" as string });
   const [excelResult, setExcelResult] = useState<ExcelResult | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -29,11 +50,14 @@ export default function DashboardReportsPage() {
   const fetchReports = () => {
     if (!BASE) return;
     setLoading(true);
+    setError(null);
     fetch(`${BASE}/api/reports`, { headers: getAuthHeaders() })
       .then((r) => r.json())
       .then((d) => {
         if (d.ok && Array.isArray(d.reports)) setReports(d.reports);
+        else setError(d.error || "Error al cargar");
       })
+      .catch(() => setError("Error de conexión"))
       .finally(() => setLoading(false));
   };
 
@@ -69,21 +93,36 @@ export default function DashboardReportsPage() {
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!BASE || !formTitle.trim()) return;
+    if (!BASE || !form.title.trim()) return;
+    setError(null);
     fetch(`${BASE}/api/reports`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-      body: JSON.stringify({ title: formTitle.trim() }),
+      body: JSON.stringify({
+        title: form.title.trim(),
+        description: form.description.trim() || undefined,
+        type: form.type,
+      }),
     })
       .then((r) => r.json())
       .then((d) => {
         if (d.ok) {
-          setFormTitle("");
+          setForm({ title: "", description: "", type: "manual" });
           setShowForm(false);
           fetchReports();
-        }
+        } else setError(d.error || "Error al crear");
       });
   };
+
+  const deleteReport = (id: string) => {
+    if (!BASE || !confirm("¿Eliminar este reporte?")) return;
+    fetch(`${BASE}/api/reports/${id}`, { method: "DELETE", headers: getAuthHeaders() })
+      .then((r) => r.json())
+      .then((d) => d.ok && fetchReports());
+  };
+
+  const readyCount = reports.filter((r) => r.status === "ready").length;
+  const draftCount = reports.filter((r) => r.status === "draft").length;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
@@ -96,30 +135,57 @@ export default function DashboardReportsPage() {
           <div className="rounded-xl p-2 bg-aplat-cyan/15 text-aplat-cyan">
             <FileText className="w-5 h-5" />
           </div>
-          <h1 className="text-2xl font-bold text-aplat-text">Reportes</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-aplat-text">Reportes</h1>
+            <p className="text-aplat-muted text-sm">Crear reportes, subir Excel y consultar datos importados</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
+          <label className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2 text-sm font-medium cursor-pointer hover:bg-aplat-cyan/30">
+            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+            Subir Excel
+            <input type="file" accept=".xlsx,.xls,.csv" onChange={handleExcelUpload} disabled={uploading} className="hidden" />
+          </label>
           <button
             type="button"
-            onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2 text-sm font-medium"
+            onClick={() => { setShowForm(!showForm); setError(null); }}
+            className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-4 py-2 text-sm font-medium text-aplat-text"
           >
             <Plus className="w-4 h-4" />
             Nuevo reporte
           </button>
-          <button type="button" onClick={fetchReports} className="p-2 rounded-xl border border-white/20 hover:bg-white/5 text-aplat-muted hover:text-aplat-text">
+          <button type="button" onClick={fetchReports} className="p-2 rounded-xl border border-white/20 hover:bg-white/5 text-aplat-muted hover:text-aplat-text" title="Actualizar">
             <RefreshCw className="w-4 h-4" />
           </button>
         </div>
       </motion.div>
-      <div className="mb-6 flex flex-wrap items-center gap-2">
-        <label className="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/15 text-aplat-text px-4 py-2 text-sm font-medium cursor-pointer">
-          {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-          Subir Excel
-          <input type="file" accept=".xlsx,.xls,.csv" onChange={handleExcelUpload} disabled={uploading} className="hidden" />
-        </label>
-        {uploadError && <span className="text-sm text-red-400">{uploadError}</span>}
-      </div>
+
+      {(error || uploadError) && (
+        <div className="rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 mb-4">
+          {error || uploadError}
+        </div>
+      )}
+
+      {!loading && reports.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <p className="text-aplat-muted text-xs uppercase tracking-wider">Total</p>
+            <p className="text-xl font-bold text-aplat-text">{reports.length}</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <p className="text-aplat-muted text-xs uppercase tracking-wider">Listos</p>
+            <p className="text-xl font-bold text-emerald-400">{readyCount}</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <p className="text-aplat-muted text-xs uppercase tracking-wider">Borradores</p>
+            <p className="text-xl font-bold text-aplat-muted">{draftCount}</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <p className="text-aplat-muted text-xs uppercase tracking-wider">Importaciones</p>
+            <p className="text-xl font-bold text-aplat-cyan">{reports.filter((r) => r.type === "manual" && r.description?.includes("columnas")).length}</p>
+          </div>
+        </div>
+      )}
 
       {excelResult && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
@@ -157,40 +223,116 @@ export default function DashboardReportsPage() {
       )}
 
       {showForm && (
-        <form onSubmit={handleCreate} className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-6">
-          <input
-            type="text"
-            placeholder="Título del reporte"
-            value={formTitle}
-            onChange={(e) => setFormTitle(e.target.value)}
-            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted w-full"
-            required
-          />
-          <div className="flex gap-2 mt-2">
+        <motion.form
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          onSubmit={handleCreate}
+          className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-6"
+        >
+          <h2 className="text-lg font-semibold text-aplat-text mb-3">Nuevo reporte</h2>
+          <div className="grid gap-3">
+            <div>
+              <label className="block text-sm font-medium text-aplat-muted mb-1">Título *</label>
+              <input
+                type="text"
+                placeholder="Ej. Ventas Q1, Asistencia mensual"
+                value={form.title}
+                onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted w-full"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-aplat-muted mb-1">Descripción (opcional)</label>
+              <textarea
+                placeholder="Detalle o alcance del reporte"
+                value={form.description}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted w-full min-h-[60px]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-aplat-muted mb-1">Tipo</label>
+              <select
+                value={form.type}
+                onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
+                className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text w-full"
+              >
+                <option value="manual">Manual</option>
+                <option value="scheduled">Programado</option>
+                <option value="export">Exportación</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
             <button type="submit" className="rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm font-medium">
               Crear
             </button>
-            <button type="button" onClick={() => setShowForm(false)} className="rounded-xl border border-white/20 px-4 py-2 text-sm text-aplat-muted">
+            <button type="button" onClick={() => setShowForm(false)} className="rounded-xl border border-white/20 px-4 py-2 text-sm text-aplat-muted hover:text-aplat-text">
               Cancelar
             </button>
           </div>
-        </form>
+        </motion.form>
       )}
+
       {loading && reports.length === 0 ? (
         <div className="flex items-center gap-2 text-aplat-muted py-8">
           <Loader2 className="w-5 h-5 animate-spin" />
           Cargando...
         </div>
       ) : reports.length === 0 ? (
-        <p className="text-aplat-muted py-8">No hay reportes.</p>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center"
+        >
+          <FileText className="w-12 h-12 text-aplat-muted/70 mx-auto mb-4" />
+          <h2 className="text-lg font-semibold text-aplat-text mb-2">No hay reportes</h2>
+          <p className="text-aplat-muted text-sm max-w-md mx-auto mb-5">
+            Cree un reporte manual o suba un archivo Excel (.xlsx, .xls, .csv) para importar datos y visualizarlos en tabla.
+          </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            <label className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2.5 text-sm font-medium cursor-pointer hover:bg-aplat-cyan/30">
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+              Subir Excel
+              <input type="file" accept=".xlsx,.xls,.csv" onChange={handleExcelUpload} disabled={uploading} className="hidden" />
+            </label>
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-4 py-2.5 text-sm text-aplat-muted hover:bg-white/5 hover:text-aplat-text"
+            >
+              <Plus className="w-4 h-4" />
+              Nuevo reporte
+            </button>
+          </div>
+        </motion.div>
       ) : (
         <ul className="space-y-2">
           {reports.map((r) => (
-            <li key={r.id} className="rounded-xl border border-white/10 bg-white/5 p-3 flex items-center justify-between">
-              <div>
+            <li
+              key={r.id}
+              className="rounded-xl border border-white/10 bg-white/5 p-3 flex items-start justify-between gap-2"
+            >
+              <div className="min-w-0 flex-1">
                 <p className="font-medium text-aplat-text">{r.title}</p>
-                <p className="text-xs text-aplat-muted">{r.status} · {r.type}</p>
+                {r.description && <p className="text-sm text-aplat-muted mt-0.5 line-clamp-1">{r.description}</p>}
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <span className={`inline-block px-2 py-0.5 rounded text-xs ${STATUS_COLOR[r.status] ?? ""}`}>
+                    {STATUS_LABEL[r.status] ?? r.status}
+                  </span>
+                  <span className="text-aplat-muted text-xs">{TYPE_LABEL[r.type] ?? r.type}</span>
+                  <span className="text-aplat-muted text-xs">{new Date(r.createdAt).toLocaleString("es")}</span>
+                </div>
               </div>
+              <button
+                type="button"
+                onClick={() => deleteReport(r.id)}
+                className="p-2 rounded-lg text-red-400 hover:bg-red-500/20 shrink-0"
+                title="Eliminar"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </li>
           ))}
         </ul>

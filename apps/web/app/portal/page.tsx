@@ -3,7 +3,10 @@
 /**
  * APlat Presence — Captive Portal
  * Página pública para check-in cuando el usuario se conecta al WiFi.
- * Redirigir aquí desde el router CUDY AP1200 u otro captive portal.
+ * Redirigir aquí desde el router (CUDY AP1200, UniFi, etc.):
+ *   /portal?site_id=ID_SEDE&ssid=NOMBRE_RED_WIFI
+ * El router pasa site_id y ssid para identificar sede y red; así el sistema
+ * asocia el check-in a la red correcta y el usuario obtiene acceso a internet.
  */
 import { useState, useEffect, Suspense } from "react";
 import { motion } from "framer-motion";
@@ -12,18 +15,21 @@ import { OcrCedulaCapture } from "@/components/portal/OcrCedulaCapture";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
 
-function useSiteIdFromQuery(): string | null {
+/** Parámetros que el router/captive portal puede pasar al redirigir: site_id, ssid (nombre de la red WiFi). */
+function usePortalQuery(): { siteId: string | null; ssid: string | null } {
   const [siteId, setSiteId] = useState<string | null>(null);
+  const [ssid, setSsid] = useState<string | null>(null);
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     setSiteId(params.get("site_id") || params.get("site") || null);
+    setSsid(params.get("ssid") || params.get("wifi") || params.get("network") || null);
   }, []);
-  return siteId;
+  return { siteId, ssid };
 }
 
 function PortalForm() {
-  const siteIdFromQuery = useSiteIdFromQuery();
+  const { siteId: siteIdFromQuery, ssid: ssidFromQuery } = usePortalQuery();
   const [siteId, setSiteId] = useState<string>(siteIdFromQuery || "");
   const [name, setName] = useState("");
   const [document, setDocument] = useState("");
@@ -72,6 +78,7 @@ function PortalForm() {
           document: document.trim() || undefined,
           visiting: visiting.trim() || undefined,
           email: email.trim() || undefined,
+          metadata: ssidFromQuery ? { ssid: ssidFromQuery } : undefined,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -120,7 +127,11 @@ function PortalForm() {
         </div>
         <div>
           <h1 className="text-xl font-semibold text-aplat-text">Check-in WiFi</h1>
-          <p className="text-aplat-muted text-sm">Complete el formulario para continuar</p>
+          <p className="text-aplat-muted text-sm">
+            {ssidFromQuery
+              ? `Red: ${ssidFromQuery}. Complete el formulario para acceder a internet.`
+              : "Complete el formulario para continuar y acceder a la red."}
+          </p>
         </div>
       </div>
 

@@ -289,7 +289,7 @@ export default function CheckInPage() {
 
   async function doCheckIn(useQr = false, useBle = false, useNfc = false, useSmart = false) {
     if (!useBle && !useNfc && (!siteId || !zoneId)) {
-      setMessage("Seleccione sede y zona.");
+      setMessage("Seleccione sede y zona arriba para poder registrar su llegada.");
       setStatus("error");
       return;
     }
@@ -483,7 +483,13 @@ export default function CheckInPage() {
           </div>
         )}
 
-        {sites.length > 1 && (
+        {token && sites.length === 0 && (
+          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-sm">
+            No hay sedes configuradas. Cree una en el panel de Presence (Dashboard → Presence).
+          </div>
+        )}
+
+        {sites.length >= 1 && (
           <div>
             <label className="block text-sm font-medium text-aplat-muted mb-1">Sede</label>
             <select
@@ -494,7 +500,7 @@ export default function CheckInPage() {
               }}
               className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text"
             >
-              <option value="">Seleccionar...</option>
+              <option value="">Seleccionar sede...</option>
               {sites.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -504,21 +510,27 @@ export default function CheckInPage() {
           </div>
         )}
 
-        {zones.length > 1 && (
+        {siteId && (
           <div>
             <label className="block text-sm font-medium text-aplat-muted mb-1">Zona</label>
-            <select
-              value={zoneId}
-              onChange={(e) => setZoneId(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text"
-            >
-              <option value="">Seleccionar...</option>
-              {zones.map((z) => (
-                <option key={z.id} value={z.id}>
-                  {z.name}
-                </option>
-              ))}
-            </select>
+            {zones.length >= 1 ? (
+              <select
+                value={zoneId}
+                onChange={(e) => setZoneId(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text"
+              >
+                <option value="">Seleccionar zona...</option>
+                {zones.map((z) => (
+                  <option key={z.id} value={z.id}>
+                    {z.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <p className="text-aplat-muted text-sm py-2">
+                No hay zonas en esta sede. Cree al menos una en el panel de Presence.
+              </p>
+            )}
           </div>
         )}
 
@@ -689,6 +701,7 @@ export default function CheckInPage() {
             disabled={
               status === "checking" ||
               status === "locating" ||
+              (!siteId || !zoneId) ||
               (mode === "geolocation" && !coords) ||
               (mode === "ble" && !bleBeacon) ||
               (mode === "nfc" && !nfcTagId)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -13,6 +13,9 @@ import {
   Play,
   Trash2,
   RefreshCw,
+  Pencil,
+  Download,
+  X,
 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
@@ -32,6 +35,7 @@ type Vulnerability = {
   cve?: string;
   status: string;
   asset?: string;
+  remediation?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -47,12 +51,63 @@ type Scan = {
   createdAt: string;
 };
 
+const SEVERITY_LABEL: Record<string, string> = {
+  low: "Baja",
+  medium: "Media",
+  high: "Alta",
+  critical: "Crítica",
+};
+
 const SEVERITY_COLOR: Record<string, string> = {
   low: "text-emerald-400 bg-emerald-500/20",
   medium: "text-amber-400 bg-amber-500/20",
   high: "text-orange-400 bg-orange-500/20",
   critical: "text-red-400 bg-red-500/20",
 };
+
+const STATUS_LABEL: Record<string, string> = {
+  open: "Abierta",
+  mitigated: "Mitigada",
+  closed: "Cerrada",
+};
+
+const STATUS_COLOR: Record<string, string> = {
+  open: "bg-amber-500/20 text-amber-400",
+  mitigated: "bg-blue-500/20 text-blue-400",
+  closed: "bg-emerald-500/20 text-emerald-400",
+};
+
+function formatDate(iso: string): string {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString("es", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  } catch {
+    return iso;
+  }
+}
+
+function scanDuration(started: string, completed?: string): string | null {
+  if (!completed) return null;
+  try {
+    const a = new Date(started).getTime();
+    const b = new Date(completed).getTime();
+    const s = Math.round((b - a) / 1000);
+    if (s < 60) return `${s}s`;
+    return `${Math.floor(s / 60)}m ${s % 60}s`;
+  } catch {
+    return null;
+  }
+}
+
+const emptyVulnForm = () => ({
+  title: "",
+  severity: "medium" as string,
+  description: "",
+  cve: "",
+  asset: "",
+  status: "open" as string,
+  remediation: "",
+});
 
 export default function DashboardSecurityPage() {
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
@@ -61,14 +116,12 @@ export default function DashboardSecurityPage() {
   const [error, setError] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    title: "",
-    severity: "medium" as string,
-    description: "",
-    cve: "",
-  });
+  const [form, setForm] = useState(emptyVulnForm());
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState(emptyVulnForm());
+  const [submitting, setSubmitting] = useState(false);
 
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     if (!BASE) return;
     setLoading(true);
     setError(null);
@@ -83,17 +136,18 @@ export default function DashboardSecurityPage() {
       })
       .catch(() => setError("Error de conexión"))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-    const t = setInterval(fetchData, 5000);
+    const t = setInterval(fetchData, 10000);
     return () => clearInterval(t);
-  }, []);
+  }, [fetchData]);
 
   const runScan = () => {
     if (!BASE) return;
     setScanning(true);
+    setError(null);
     fetch(`${BASE}/api/security/scan`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
@@ -110,6 +164,8 @@ export default function DashboardSecurityPage() {
   const handleCreateVuln = (e: React.FormEvent) => {
     e.preventDefault();
     if (!BASE || !form.title.trim() || !form.description.trim()) return;
+    setSubmitting(true);
+    setError(null);
     fetch(`${BASE}/api/security/vulnerabilities`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
@@ -118,16 +174,61 @@ export default function DashboardSecurityPage() {
         severity: form.severity,
         description: form.description.trim(),
         cve: form.cve.trim() || undefined,
+        asset: form.asset.trim() || undefined,
+        status: form.status,
+        remediation: form.remediation.trim() || undefined,
       }),
     })
       .then((r) => r.json())
       .then((d) => {
         if (d.ok) {
-          setForm({ title: "", severity: "medium", description: "", cve: "" });
+          setForm(emptyVulnForm());
           setShowForm(false);
           fetchData();
         } else setError(d.error || "Error al crear");
-      });
+      })
+      .finally(() => setSubmitting(false));
+  };
+
+  const openEdit = (v: Vulnerability) => {
+    setEditingId(v.id);
+    setEditForm({
+      title: v.title,
+      severity: v.severity,
+      description: v.description,
+      cve: v.cve || "",
+      asset: v.asset || "",
+      status: v.status,
+      remediation: v.remediation || "",
+    });
+  };
+
+  const handleUpdateVuln = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!BASE || !editingId || !editForm.title.trim() || !editForm.description.trim()) return;
+    setSubmitting(true);
+    setError(null);
+    fetch(`${BASE}/api/security/vulnerabilities/${editingId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+      body: JSON.stringify({
+        title: editForm.title.trim(),
+        severity: editForm.severity,
+        description: editForm.description.trim(),
+        cve: editForm.cve.trim() || undefined,
+        asset: editForm.asset.trim() || undefined,
+        status: editForm.status,
+        remediation: editForm.remediation.trim() || undefined,
+      }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok) {
+          setEditingId(null);
+          fetchData();
+        } else setError(d.error || "Error al actualizar");
+      })
+      .finally(() => setSubmitting(false));
   };
 
   const deleteVuln = (id: string) => {
@@ -136,6 +237,32 @@ export default function DashboardSecurityPage() {
       .then((r) => r.json())
       .then((d) => d.ok && fetchData());
   };
+
+  const exportJson = () => {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      total: vulnerabilities.length,
+      bySeverity: { critical: 0, high: 0, medium: 0, low: 0 },
+      byStatus: { open: 0, mitigated: 0, closed: 0 },
+      vulnerabilities,
+    };
+    vulnerabilities.forEach((v) => {
+      if (payload.bySeverity[v.severity as keyof typeof payload.bySeverity] !== undefined)
+        payload.bySeverity[v.severity as keyof typeof payload.bySeverity]++;
+      if (payload.byStatus[v.status as keyof typeof payload.byStatus] !== undefined)
+        payload.byStatus[v.status as keyof typeof payload.byStatus]++;
+    });
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `security-vulnerabilities-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  const openCount = vulnerabilities.filter((v) => v.status === "open").length;
+  const criticalHigh = vulnerabilities.filter((v) => v.severity === "critical" || v.severity === "high").length;
+  const lastScan = scans[0];
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
@@ -155,7 +282,10 @@ export default function DashboardSecurityPage() {
           <div className="rounded-xl p-2 bg-amber-500/15 text-amber-400">
             <Shield className="w-5 h-5" />
           </div>
-          <h1 className="text-2xl font-bold text-aplat-text">APlat Security</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-aplat-text">APlat Security</h1>
+            <p className="text-aplat-muted text-sm">Vulnerabilidades, escaneos y estado de seguridad</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -169,11 +299,19 @@ export default function DashboardSecurityPage() {
           </button>
           <button
             type="button"
-            onClick={() => setShowForm(!showForm)}
+            onClick={() => { setShowForm(!showForm); setError(null); }}
             className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-4 py-2 text-sm font-medium text-aplat-text"
           >
             <Plus className="w-4 h-4" />
             Nueva vulnerabilidad
+          </button>
+          <button
+            type="button"
+            onClick={exportJson}
+            className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-4 py-2 text-sm text-aplat-muted hover:text-aplat-text"
+          >
+            <Download className="w-4 h-4" />
+            Exportar JSON
           </button>
         </div>
       </motion.div>
@@ -185,6 +323,43 @@ export default function DashboardSecurityPage() {
         </div>
       )}
 
+      {/* Resumen */}
+      {!loading && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6"
+        >
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            <p className="text-aplat-muted text-xs uppercase tracking-wider mb-1">Total</p>
+            <p className="text-2xl font-bold text-aplat-text">{vulnerabilities.length}</p>
+            <p className="text-aplat-muted text-xs">vulnerabilidades</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            <p className="text-aplat-muted text-xs uppercase tracking-wider mb-1">Críticas / Altas</p>
+            <p className="text-2xl font-bold text-orange-400">{criticalHigh}</p>
+            <p className="text-aplat-muted text-xs">prioridad</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            <p className="text-aplat-muted text-xs uppercase tracking-wider mb-1">Abiertas</p>
+            <p className="text-2xl font-bold text-amber-400">{openCount}</p>
+            <p className="text-aplat-muted text-xs">pendientes</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            <p className="text-aplat-muted text-xs uppercase tracking-wider mb-1">Último escaneo</p>
+            {lastScan ? (
+              <>
+                <p className="text-lg font-semibold text-aplat-text">{lastScan.status === "completed" ? lastScan.findingsCount ?? 0 : "—"}</p>
+                <p className="text-aplat-muted text-xs">{lastScan.status} · {formatDate(lastScan.startedAt)}</p>
+              </>
+            ) : (
+              <p className="text-aplat-muted text-sm">Sin escaneos</p>
+            )}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Form nueva vulnerabilidad */}
       {showForm && (
         <motion.form
           initial={{ opacity: 0 }}
@@ -192,46 +367,94 @@ export default function DashboardSecurityPage() {
           onSubmit={handleCreateVuln}
           className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-6"
         >
-          <h2 className="text-lg font-semibold text-aplat-text mb-3">Nueva vulnerabilidad</h2>
-          <div className="grid gap-3">
-            <input
-              type="text"
-              placeholder="Título"
-              value={form.title}
-              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
-              required
-            />
-            <select
-              value={form.severity}
-              onChange={(e) => setForm((f) => ({ ...f, severity: e.target.value }))}
-              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
-            >
-              <option value="low">Baja</option>
-              <option value="medium">Media</option>
-              <option value="high">Alta</option>
-              <option value="critical">Crítica</option>
-            </select>
-            <textarea
-              placeholder="Descripción"
-              value={form.description}
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted min-h-[80px]"
-              required
-            />
-            <input
-              type="text"
-              placeholder="CVE (opcional)"
-              value={form.cve}
-              onChange={(e) => setForm((f) => ({ ...f, cve: e.target.value }))}
-              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
-            />
+          <h2 className="text-lg font-semibold text-aplat-text mb-2">Nueva vulnerabilidad</h2>
+          <p className="text-aplat-muted text-sm mb-3">
+            Registre un hallazgo manual o resultado de auditoría (OWASP, pentest). Incluya CVE si aplica y remediación recomendada.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-aplat-muted mb-1">Título *</label>
+              <input
+                type="text"
+                placeholder="Ej. XSS en formulario de contacto"
+                value={form.title}
+                onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-aplat-muted mb-1">Severidad *</label>
+              <select
+                value={form.severity}
+                onChange={(e) => setForm((f) => ({ ...f, severity: e.target.value }))}
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+              >
+                <option value="low">Baja</option>
+                <option value="medium">Media</option>
+                <option value="high">Alta</option>
+                <option value="critical">Crítica</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-aplat-muted mb-1">Estado</label>
+              <select
+                value={form.status}
+                onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+              >
+                <option value="open">Abierta</option>
+                <option value="mitigated">Mitigada</option>
+                <option value="closed">Cerrada</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-aplat-muted mb-1">CVE (opcional)</label>
+              <input
+                type="text"
+                placeholder="CVE-2024-XXXX"
+                value={form.cve}
+                onChange={(e) => setForm((f) => ({ ...f, cve: e.target.value }))}
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-aplat-muted mb-1">Activo / componente (opcional)</label>
+              <input
+                type="text"
+                placeholder="Ej. API pública, panel admin"
+                value={form.asset}
+                onChange={(e) => setForm((f) => ({ ...f, asset: e.target.value }))}
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-aplat-muted mb-1">Descripción *</label>
+              <textarea
+                placeholder="Detalle técnico del hallazgo, pasos para reproducir, impacto."
+                value={form.description}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted min-h-[80px]"
+                required
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-aplat-muted mb-1">Remediación (opcional)</label>
+              <textarea
+                placeholder="Acciones recomendadas para corregir o mitigar."
+                value={form.remediation}
+                onChange={(e) => setForm((f) => ({ ...f, remediation: e.target.value }))}
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted min-h-[60px]"
+              />
+            </div>
           </div>
           <div className="flex gap-2 mt-3">
             <button
               type="submit"
-              className="rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm font-medium"
+              disabled={submitting}
+              className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm font-medium disabled:opacity-60"
             >
+              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               Crear
             </button>
             <button
@@ -246,6 +469,7 @@ export default function DashboardSecurityPage() {
       )}
 
       <div className="grid md:grid-cols-2 gap-6">
+        {/* Vulnerabilidades */}
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-aplat-text">Vulnerabilidades</h2>
@@ -264,64 +488,258 @@ export default function DashboardSecurityPage() {
               Cargando...
             </div>
           ) : vulnerabilities.length === 0 ? (
-            <p className="text-aplat-muted py-6">No hay vulnerabilidades registradas.</p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center"
+            >
+              <Shield className="w-10 h-10 text-aplat-muted/70 mx-auto mb-3" />
+              <p className="text-aplat-text font-medium mb-1">No hay vulnerabilidades registradas</p>
+              <p className="text-aplat-muted text-sm mb-4 max-w-sm mx-auto">
+                Registre hallazgos manualmente o ejecute un escaneo para evaluar el estado de seguridad (OWASP, pentest, auditoría).
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowForm(true)}
+                  className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/40 px-3 py-2 text-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  Registrar primera vulnerabilidad
+                </button>
+                <button
+                  type="button"
+                  onClick={runScan}
+                  disabled={scanning}
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-3 py-2 text-sm text-aplat-muted hover:text-aplat-text disabled:opacity-60"
+                >
+                  {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                  Ejecutar escaneo
+                </button>
+              </div>
+            </motion.div>
           ) : (
-            <ul className="space-y-2 max-h-[400px] overflow-y-auto">
+            <ul className="space-y-2 max-h-[420px] overflow-y-auto">
               {vulnerabilities.map((v) => (
                 <li
                   key={v.id}
                   className="rounded-xl border border-white/10 bg-white/5 p-3 flex items-start justify-between gap-2"
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="font-medium text-aplat-text truncate">{v.title}</p>
-                    <span
-                      className={`inline-block mt-1 px-2 py-0.5 rounded text-xs ${SEVERITY_COLOR[v.severity] ?? "text-aplat-muted"}`}
-                    >
-                      {v.severity}
-                    </span>
-                    {v.cve && <span className="ml-2 text-xs text-aplat-muted">{v.cve}</span>}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs ${SEVERITY_COLOR[v.severity] ?? "text-aplat-muted"}`}>
+                        {SEVERITY_LABEL[v.severity] ?? v.severity}
+                      </span>
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs ${STATUS_COLOR[v.status] ?? "bg-white/10 text-aplat-muted"}`}>
+                        {STATUS_LABEL[v.status] ?? v.status}
+                      </span>
+                      {v.asset && <span className="text-xs text-aplat-muted">{v.asset}</span>}
+                      {v.cve && (
+                        <a
+                          href={`https://nvd.nist.gov/vuln/detail/${v.cve}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-aplat-cyan hover:underline"
+                        >
+                          {v.cve}
+                        </a>
+                      )}
+                    </div>
+                    {v.description && (
+                      <p className="text-aplat-muted text-xs mt-1 line-clamp-2">{v.description}</p>
+                    )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => deleteVuln(v.id)}
-                    className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/20 shrink-0"
-                    title="Eliminar"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => openEdit(v)}
+                      className="p-1.5 rounded-lg text-aplat-muted hover:bg-white/10 hover:text-aplat-cyan"
+                      title="Editar"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteVuln(v.id)}
+                      className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/20"
+                      title="Eliminar"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
           )}
         </section>
+
+        {/* Últimos escaneos */}
         <section>
           <h2 className="text-lg font-semibold text-aplat-text mb-3">Últimos escaneos</h2>
           {scans.length === 0 ? (
-            <p className="text-aplat-muted py-6">No hay escaneos aún.</p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center"
+            >
+              <Play className="w-10 h-10 text-aplat-muted/70 mx-auto mb-3" />
+              <p className="text-aplat-text font-medium mb-1">No hay escaneos aún</p>
+              <p className="text-aplat-muted text-sm mb-4">Ejecute un escaneo para evaluar el estado de seguridad.</p>
+              <button
+                type="button"
+                onClick={runScan}
+                disabled={scanning}
+                className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2 text-sm disabled:opacity-60"
+              >
+                {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                Ejecutar primer escaneo
+              </button>
+            </motion.div>
           ) : (
             <ul className="space-y-2">
-              {scans.slice(0, 10).map((s) => (
-                <li
-                  key={s.id}
-                  className="rounded-xl border border-white/10 bg-white/5 p-3 flex items-center justify-between gap-2"
-                >
-                  <div className="flex items-center gap-2">
-                    {s.status === "completed" && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
-                    {s.status === "running" && <Loader2 className="w-4 h-4 animate-spin text-aplat-cyan" />}
-                    {s.status === "pending" && <RefreshCw className="w-4 h-4 text-aplat-muted" />}
-                    {s.status === "failed" && <AlertTriangle className="w-4 h-4 text-red-400" />}
-                    <span className="text-aplat-text text-sm">{s.type}</span>
-                    <span className="text-aplat-muted text-xs">{s.status}</span>
-                  </div>
-                  {s.findingsCount != null && (
-                    <span className="text-aplat-muted text-sm">{s.findingsCount} hallazgos</span>
-                  )}
-                </li>
-              ))}
+              {scans.slice(0, 10).map((s) => {
+                const dur = scanDuration(s.startedAt, s.completedAt);
+                return (
+                  <li
+                    key={s.id}
+                    className="rounded-xl border border-white/10 bg-white/5 p-3 flex items-center justify-between gap-2 flex-wrap"
+                  >
+                    <div className="flex items-center gap-2">
+                      {s.status === "completed" && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+                      {s.status === "running" && <Loader2 className="w-4 h-4 animate-spin text-aplat-cyan shrink-0" />}
+                      {s.status === "pending" && <RefreshCw className="w-4 h-4 text-aplat-muted shrink-0" />}
+                      {s.status === "failed" && <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />}
+                      <span className="text-aplat-text text-sm font-medium">{s.type === "manual" ? "Manual" : "Programado"}</span>
+                      <span className="text-aplat-muted text-xs">{s.status}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-aplat-muted">
+                      {s.findingsCount != null && (
+                        <span>{s.findingsCount} hallazgos</span>
+                      )}
+                      {dur && <span>{dur}</span>}
+                      <span className="text-xs">{formatDate(s.startedAt)}</span>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>
       </div>
+
+      {/* Modal editar vulnerabilidad */}
+      {editingId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={() => setEditingId(null)}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="rounded-2xl border border-white/10 bg-aplat-deep p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-aplat-text">Editar vulnerabilidad</h2>
+              <button
+                type="button"
+                onClick={() => setEditingId(null)}
+                className="p-2 rounded-lg text-aplat-muted hover:bg-white/10 hover:text-aplat-text"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateVuln} className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-aplat-muted mb-1">Título *</label>
+                <input
+                  type="text"
+                  value={editForm.title}
+                  onChange={(e) => setEditForm((f) => ({ ...f, title: e.target.value }))}
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-sm font-medium text-aplat-muted mb-1">Severidad</label>
+                  <select
+                    value={editForm.severity}
+                    onChange={(e) => setEditForm((f) => ({ ...f, severity: e.target.value }))}
+                    className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                  >
+                    <option value="low">Baja</option>
+                    <option value="medium">Media</option>
+                    <option value="high">Alta</option>
+                    <option value="critical">Crítica</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-aplat-muted mb-1">Estado</label>
+                  <select
+                    value={editForm.status}
+                    onChange={(e) => setEditForm((f) => ({ ...f, status: e.target.value }))}
+                    className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                  >
+                    <option value="open">Abierta</option>
+                    <option value="mitigated">Mitigada</option>
+                    <option value="closed">Cerrada</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-aplat-muted mb-1">CVE</label>
+                <input
+                  type="text"
+                  value={editForm.cve}
+                  onChange={(e) => setEditForm((f) => ({ ...f, cve: e.target.value }))}
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-aplat-muted mb-1">Activo / componente</label>
+                <input
+                  type="text"
+                  value={editForm.asset}
+                  onChange={(e) => setEditForm((f) => ({ ...f, asset: e.target.value }))}
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-aplat-muted mb-1">Descripción *</label>
+                <textarea
+                  value={editForm.description}
+                  onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text min-h-[80px]"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-aplat-muted mb-1">Remediación</label>
+                <textarea
+                  value={editForm.remediation}
+                  onChange={(e) => setEditForm((f) => ({ ...f, remediation: e.target.value }))}
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text min-h-[60px]"
+                />
+              </div>
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm font-medium disabled:opacity-60"
+                >
+                  {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingId(null)}
+                  className="rounded-xl border border-white/20 px-4 py-2 text-sm text-aplat-muted hover:text-aplat-text"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

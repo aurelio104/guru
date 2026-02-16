@@ -123,6 +123,9 @@ export default function PresenceDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [alertsSending, setAlertsSending] = useState(false);
+  const [zoneForm, setZoneForm] = useState({ name: "", lat: "10.5", lng: "-66.9" });
+  const [zoneSubmitting, setZoneSubmitting] = useState(false);
+  const [zoneError, setZoneError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     const headers = getAuthHeaders();
@@ -193,6 +196,37 @@ export default function PresenceDashboardPage() {
     if (selectedSiteId) fetchAnalytics();
   }, [selectedSiteId, fetchAnalytics]);
 
+  async function createZoneSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selectedSiteId || !zoneForm.name.trim()) {
+      setZoneError("Nombre de zona es requerido.");
+      return;
+    }
+    setZoneSubmitting(true);
+    setZoneError(null);
+    try {
+      const lat = parseFloat(zoneForm.lat) || 10.5;
+      const lng = parseFloat(zoneForm.lng) || -66.9;
+      const polygon_geojson = JSON.stringify({ type: "Point", coordinates: [lng, lat] });
+      const res = await fetch(`${BASE}/api/presence/admin/zones`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify({ site_id: selectedSiteId, name: zoneForm.name.trim(), polygon_geojson }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (data.ok) {
+        setZoneForm({ name: "", lat: "10.5", lng: "-66.9" });
+        fetchAnalytics();
+      } else {
+        setZoneError(data.error || "Error al crear la zona.");
+      }
+    } catch {
+      setZoneError("Error de conexión.");
+    } finally {
+      setZoneSubmitting(false);
+    }
+  }
+
   if (user?.role !== "master") {
     return (
       <div className="rounded-xl glass p-6 text-center">
@@ -243,11 +277,12 @@ export default function PresenceDashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {sites.length > 1 && (
+          {sites.length >= 1 && (
             <select
               value={selectedSiteId}
               onChange={(e) => setSelectedSiteId(e.target.value)}
               className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-aplat-text"
+              aria-label="Sede"
             >
               {sites.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -558,6 +593,85 @@ export default function PresenceDashboardPage() {
               </ul>
             </motion.div>
           )}
+
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.33 }}
+            className="glass-neon rounded-xl p-6"
+          >
+            <h3 className="font-semibold text-aplat-text mb-4 flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-aplat-cyan" />
+              Zonas
+            </h3>
+            {zones.length === 0 ? (
+              <div className="space-y-3">
+                <p className="text-aplat-muted text-sm">
+                  No hay zonas en esta sede. Cree al menos una para habilitar check-in por ubicación, QR, BLE y NFC.
+                </p>
+                <form onSubmit={createZoneSubmit} className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3 max-w-sm">
+                  <input
+                    type="text"
+                    placeholder="Nombre de la zona (ej. Recepción)"
+                    value={zoneForm.name}
+                    onChange={(e) => setZoneForm((f) => ({ ...f, name: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Lat"
+                      value={zoneForm.lat}
+                      onChange={(e) => setZoneForm((f) => ({ ...f, lat: e.target.value }))}
+                      className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Lng"
+                      value={zoneForm.lng}
+                      onChange={(e) => setZoneForm((f) => ({ ...f, lng: e.target.value }))}
+                      className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+                    />
+                  </div>
+                  {zoneError && <p className="text-red-400 text-sm">{zoneError}</p>}
+                  <button
+                    type="submit"
+                    disabled={zoneSubmitting}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-aplat-cyan text-aplat-deep font-medium text-sm disabled:opacity-60"
+                  >
+                    {zoneSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                    Crear zona
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <ul className="space-y-1 text-sm text-aplat-muted">
+                  {zones.map((z) => (
+                    <li key={z.id} className="flex items-center gap-2">
+                      <span className="text-aplat-text font-medium">{z.name}</span>
+                      <span className="text-aplat-muted text-xs">({z.id})</span>
+                    </li>
+                  ))}
+                </ul>
+                <form onSubmit={createZoneSubmit} className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-2 flex flex-wrap items-end gap-2">
+                  <input
+                    type="text"
+                    placeholder="Nueva zona"
+                    value={zoneForm.name}
+                    onChange={(e) => setZoneForm((f) => ({ ...f, name: e.target.value }))}
+                    className="w-32 min-w-0 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+                  />
+                  <input type="text" placeholder="Lat" value={zoneForm.lat} onChange={(e) => setZoneForm((f) => ({ ...f, lat: e.target.value }))} className="w-20 px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-xs" />
+                  <input type="text" placeholder="Lng" value={zoneForm.lng} onChange={(e) => setZoneForm((f) => ({ ...f, lng: e.target.value }))} className="w-20 px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-xs" />
+                  <button type="submit" disabled={zoneSubmitting} className="px-3 py-1.5 rounded-lg bg-aplat-cyan/20 text-aplat-cyan text-sm font-medium disabled:opacity-60">
+                    {zoneSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Añadir zona"}
+                  </button>
+                </form>
+                {zoneError && <p className="text-red-400 text-sm">{zoneError}</p>}
+              </div>
+            )}
+          </motion.div>
 
           {zones.length > 0 && (
             <motion.div

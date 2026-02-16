@@ -80,6 +80,7 @@ export async function registerSecurityRoutes(app: FastifyInstance): Promise<void
       cve?: string;
       status?: VulnerabilityStatus;
       asset?: string;
+      remediation?: string;
     };
     if (!body.title || !body.severity || !body.description) {
       return reply.status(400).send({ ok: false, error: "Faltan title, severity o description." });
@@ -91,6 +92,7 @@ export async function registerSecurityRoutes(app: FastifyInstance): Promise<void
       cve: body.cve,
       status: body.status,
       asset: body.asset,
+      remediation: body.remediation,
     });
     return reply.status(201).send({ ok: true, vulnerability: v });
   });
@@ -106,6 +108,7 @@ export async function registerSecurityRoutes(app: FastifyInstance): Promise<void
       cve: string;
       status: VulnerabilityStatus;
       asset: string;
+      remediation: string;
     }>;
     const v = updateVulnerability(id, body);
     if (!v) return reply.status(404).send({ ok: false, error: "Vulnerabilidad no encontrada." });

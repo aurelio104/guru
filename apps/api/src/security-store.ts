@@ -20,6 +20,7 @@ export type Vulnerability = {
   cve?: string;
   status: VulnerabilityStatus;
   asset?: string;
+  remediation?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -108,6 +109,7 @@ export function createVulnerability(
     cve?: string;
     status?: VulnerabilityStatus;
     asset?: string;
+    remediation?: string;
   }
 ): Vulnerability {
   if (vulnerabilities.length === 0) vulnerabilities = loadVulnerabilities();
@@ -121,6 +123,7 @@ export function createVulnerability(
     cve: opts.cve,
     status: opts.status ?? "open",
     asset: opts.asset,
+    remediation: opts.remediation,
     createdAt: now,
     updatedAt: now,
   };
@@ -131,7 +134,7 @@ export function createVulnerability(
 
 export function updateVulnerability(
   id: string,
-  updates: Partial<Pick<Vulnerability, "title" | "severity" | "description" | "cve" | "status" | "asset">>
+  updates: Partial<Pick<Vulnerability, "title" | "severity" | "description" | "cve" | "status" | "asset" | "remediation">>
 ): Vulnerability | undefined {
   if (vulnerabilities.length === 0) vulnerabilities = loadVulnerabilities();
   const idx = vulnerabilities.findIndex((v) => v.id === id);

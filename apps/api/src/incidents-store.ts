@@ -37,6 +37,16 @@ export type Playbook = {
 let incidents: Incident[] = [];
 let playbooks: Playbook[] = [];
 
+const DEFAULT_PLAYBOOKS: Omit<Playbook, "id" | "createdAt" | "updatedAt">[] = [
+  { name: "Brecha de datos", description: "Procedimiento ante posible filtración de datos personales", steps: ["Contener acceso", "Evaluar alcance", "Notificar DPA en 72h si aplica", "Documentar y cerrar"] },
+  { name: "Malware / ransomware", description: "Respuesta ante detección de malware o ransomware", steps: ["Aislar sistemas afectados", "Identificar vector", "Eliminar y recuperar", "Post-mortem"] },
+  { name: "Phishing / suplantación", description: "Respuesta ante campaña de phishing o suplantación de identidad", steps: ["Identificar y bloquear correos/URLs", "Avisar a afectados", "Cambiar credenciales comprometidas", "Registrar y reportar"] },
+  { name: "DDoS / denegación de servicio", description: "Respuesta ante ataque de denegación de servicio", steps: ["Detectar y clasificar tráfico", "Activar mitigación (CDN/firewall)", "Comunicar a usuarios si hay indisponibilidad", "Post-incidente con proveedor"] },
+  { name: "Acceso no autorizado / intrusión", description: "Respuesta ante acceso no autorizado a sistemas o datos", steps: ["Contener sesión y aislar sistemas", "Preservar evidencias (logs)", "Identificar alcance y datos afectados", "Notificar si aplica y cerrar brecha"] },
+  { name: "Pérdida o robo de dispositivo", description: "Procedimiento ante pérdida o robo de equipo con datos corporativos", steps: ["Bloquear acceso remoto y revocar credenciales", "Evaluar datos en el dispositivo", "Notificar brecha si hay datos personales", "Documentar y reforzar políticas"] },
+  { name: "Exposición accidental de datos", description: "Datos expuestos por error de configuración, envío erróneo o publicación indebida", steps: ["Retirar o restringir acceso de inmediato", "Evaluar alcance y afectados", "Notificar a autoridad e interesados si procede", "Corregir proceso y documentar"] },
+];
+
 function loadIncidents(): Incident[] {
   try {
     if (fs.existsSync(INCIDENTS_FILE)) {
@@ -86,24 +96,12 @@ export function initIncidentsStore(): void {
   playbooks = loadPlaybooks();
   if (playbooks.length === 0) {
     const now = new Date().toISOString();
-    playbooks = [
-      {
-        id: "pb-1",
-        name: "Brecha de datos",
-        description: "Procedimiento ante posible filtración de datos personales",
-        steps: ["Contener acceso", "Evaluar alcance", "Notificar DPA en 72h si aplica", "Documentar y cerrar"],
-        createdAt: now,
-        updatedAt: now,
-      },
-      {
-        id: "pb-2",
-        name: "Malware / ransomware",
-        description: "Respuesta ante detección de malware o ransomware",
-        steps: ["Aislar sistemas afectados", "Identificar vector", "Eliminar y recuperar", "Post-mortem"],
-        createdAt: now,
-        updatedAt: now,
-      },
-    ];
+    playbooks = DEFAULT_PLAYBOOKS.map((d, i) => ({
+      ...d,
+      id: `pb-${i + 1}`,
+      createdAt: now,
+      updatedAt: now,
+    }));
     savePlaybooks();
   }
   console.log("[incidents-store] Cargado:", incidents.length, "incidentes,", playbooks.length, "playbooks");
@@ -164,4 +162,22 @@ export function getAllPlaybooks(): Playbook[] {
 export function getPlaybookById(id: string): Playbook | undefined {
   if (playbooks.length === 0) playbooks = loadPlaybooks();
   return playbooks.find((p) => p.id === id);
+}
+
+/** Añade los playbooks por defecto que no existan (por nombre). */
+export function seedMissingPlaybooks(): Playbook[] {
+  if (playbooks.length === 0) playbooks = loadPlaybooks();
+  const existingNames = new Set(playbooks.map((p) => p.name));
+  const now = new Date().toISOString();
+  const added: Playbook[] = [];
+  DEFAULT_PLAYBOOKS.forEach((d, i) => {
+    if (existingNames.has(d.name)) return;
+    const id = `pb-${Date.now()}-${i}-${Math.random().toString(36).slice(2, 7)}`;
+    const p: Playbook = { ...d, id, createdAt: now, updatedAt: now };
+    playbooks.push(p);
+    added.push(p);
+    existingNames.add(d.name);
+  });
+  if (added.length > 0) savePlaybooks();
+  return added;
 }

@@ -188,6 +188,7 @@ export async function registerPresenceRoutes(app: FastifyInstance): Promise<void
       metadata.email = body.email;
       metadata.document = body.document;
       metadata.visiting = body.visiting;
+      if (body.metadata?.ssid) metadata.ssid = body.metadata.ssid;
     } else if (channel === "qr") {
       metadata.qr_code = body.qr_code || `site:${siteId}:zone:${zoneId}`;
       if (!zoneId) {
