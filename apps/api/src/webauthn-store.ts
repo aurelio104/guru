@@ -7,7 +7,8 @@ import fs from "fs";
 import path from "path";
 import { logAudit } from "./audit-store.js";
 
-const STORE_FILE = process.env.APLAT_WEBAUTHN_STORE_PATH || path.join(process.cwd(), ".webauthn-store.json");
+const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
+const STORE_FILE = process.env.APLAT_WEBAUTHN_STORE_PATH || path.join(DATA_DIR, "webauthn-store.json");
 
 export type StoredCredential = {
   userId: number;
@@ -47,6 +48,8 @@ function loadStore(): Store {
 
 function saveStore(store: Store): void {
   try {
+    const dir = path.dirname(STORE_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(STORE_FILE, JSON.stringify(store, null, 0), "utf-8");
   } catch (err) {
     console.warn("[webauthn-store] No se pudo persistir:", err);
