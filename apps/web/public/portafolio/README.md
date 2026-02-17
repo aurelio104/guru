@@ -1,6 +1,6 @@
 # Logos del portafolio
 
-Logos para la sección Portafolio del sitio APlat. El componente busca `/portafolio/{slug}.png` (y opcionalmente `.svg`). Si no existe, muestra la inicial del nombre.
+Logos para la sección Portafolio del sitio GURU. El componente busca `/portafolio/{slug}.png` (y opcionalmente `.svg`). Si no existe, muestra la inicial del nombre.
 
 ## Organización en el front
 

@@ -1,17 +1,17 @@
 {
-  "name": "aplat",
+  "name": "guru",
   "version": "1.0.0",
   "private": true,
-  "description": "APlat · Servicios digitales de última generación",
+  "description": "GURU · Servicios digitales de última generación",
   "scripts": {
-    "dev": "pnpm --filter aplat-web dev",
+    "dev": "pnpm --filter guru-web dev",
     "sync:vercel": "node scripts/sync-vercel-domains.mjs",
-    "dev:api": "pnpm --filter aplat-api dev",
-    "build": "pnpm --filter aplat-web build",
-    "build:api": "pnpm --filter aplat-api build",
-    "start": "pnpm --filter aplat-web start",
-    "start:api": "pnpm --filter aplat-api start",
-    "lint": "pnpm --filter aplat-web lint"
+    "dev:api": "pnpm --filter guru-api dev",
+    "build": "pnpm --filter guru-web build",
+    "build:api": "pnpm --filter guru-api build",
+    "start": "pnpm --filter guru-web start",
+    "start:api": "pnpm --filter guru-api start",
+    "lint": "pnpm --filter guru-web lint"
   },
   "packageManager": "pnpm@10.28.2"
 }

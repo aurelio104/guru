@@ -30,7 +30,7 @@ export function GlobalScaleBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
       {/* Base con tinte emerald suave (distinto al cyan de Cómo funciona) */}
-      <div className="absolute inset-0 bg-aplat-surface/55" />
+      <div className="absolute inset-0 bg-guru-surface/55" />
       <div
         className="absolute inset-0 opacity-30"
         style={{

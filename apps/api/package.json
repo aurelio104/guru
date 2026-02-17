@@ -1,5 +1,5 @@
 {
-  "name": "aplat-api",
+  "name": "guru-api",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -8,7 +8,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "eslint src/",
-    "test:persist": "APLAT_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase1 && APLAT_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase2"
+    "test:persist": "GURU_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase1 && GURU_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase2"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",

@@ -1,19 +1,19 @@
 # Análisis exhaustivo: Ciberseguridad — Lo que tenemos, componentes descritos y costos en el mercado
 
-**Paquete:** Ciberseguridad — APlat Security, GDPR/LOPD, incidentes, verificación firma, Jcloud.  
-**Precio en catálogo APlat:** Costo único $150 · Mensual $79/mes.
+**Paquete:** Ciberseguridad — GURU Security, GDPR/LOPD, incidentes, verificación firma, Jcloud.  
+**Precio en catálogo GURU:** Costo único $150 · Mensual $79/mes.
 
-Este documento inventaría **lo que está implementado en la plataforma APlat**, describe **los tres componentes adicionales** que definiste (análisis de red en tiempo real, gestión de red, ejecutable de auditoría con IA) y sitúa **costos de mercado** para el segmento completo.
+Este documento inventaría **lo que está implementado en la plataforma GURU**, describe **los tres componentes adicionales** que definiste (análisis de red en tiempo real, gestión de red, ejecutable de auditoría con IA) y sitúa **costos de mercado** para el segmento completo.
 
 ---
 
-## 1. Inventario: lo que tiene la plataforma APlat hoy (en el repo)
+## 1. Inventario: lo que tiene la plataforma GURU hoy (en el repo)
 
-### 1.1 APlat Security (vulnerabilidades y escaneos)
+### 1.1 GURU Security (vulnerabilidades y escaneos)
 
 | Funcionalidad | Implementado | Descripción |
 |---------------|--------------|-------------|
-| **Vulnerabilidades** | Sí | CRUD: título, severidad (low/medium/high/critical), descripción, CVE opcional, estado (open/mitigated/closed), asset, remediación. Persistencia JSON en `APLAT_DATA_PATH`. |
+| **Vulnerabilidades** | Sí | CRUD: título, severidad (low/medium/high/critical), descripción, CVE opcional, estado (open/mitigated/closed), asset, remediación. Persistencia JSON en `GURU_DATA_PATH`. |
 | **Escaneos** | Sí | Crear escaneo manual o programado; estado pending → running → completed/failed; `findingsCount`, `error`. La ejecución real es simulada (setTimeout); en producción se conectaría a un job/worker o a un escáner externo. |
 | **API** | Sí | `GET/POST/PATCH/DELETE /api/security/vulnerabilities`, `GET /api/security/vulnerabilities/:id`, `GET/POST /api/security/scans`, `GET /api/security/scans/:id`, `POST /api/security/scan`. |
 | **UI** | Sí | `/dashboard/security`: listado vulnerabilidades, crear/editar/eliminar, listado escaneos, botón "Ejecutar escaneo", export JSON. |
@@ -56,7 +56,7 @@ Este documento inventaría **lo que está implementado en la plataforma APlat**,
 
 | Funcionalidad | Implementado | Descripción |
 |---------------|--------------|-------------|
-| **Logs** | Sí | SQLite `aplat-audit.db`: acción (CREATE, UPDATE, DELETE, LOGIN, LOGIN_FAIL, VERIFY, PROCESS), entidad, entity_id, user_id, user_email, ip, details (JSON). Persistencia en `APLAT_DATA_PATH`. |
+| **Logs** | Sí | SQLite `guru-audit.db`: acción (CREATE, UPDATE, DELETE, LOGIN, LOGIN_FAIL, VERIFY, PROCESS), entidad, entity_id, user_id, user_email, ip, details (JSON). Persistencia en `GURU_DATA_PATH`. |
 | **Consulta** | Sí | `GET /api/admin/audit-logs` (master): filtros entity, entity_id, user_id, action, limit. |
 
 **Ubicación:** `apps/api/src/audit-store.ts`, rutas admin en `index.ts`. Documentación: `docs/SEGURIDAD-APLAT.md`.
@@ -71,7 +71,7 @@ Este documento inventaría **lo que está implementado en la plataforma APlat**,
 
 ## 2. Los tres componentes que describes (visión de producto)
 
-Has definido **tres bloques funcionales** que complementan lo anterior y que no están hoy en el repo APlat como tal:
+Has definido **tres bloques funcionales** que complementan lo anterior y que no están hoy en el repo GURU como tal:
 
 ### 2.1 Análisis de red en tiempo real (instalable)
 
@@ -94,15 +94,15 @@ Has definido **tres bloques funcionales** que complementan lo anterior y que no 
   - Genera un **desglose absoluto** de la situación y de **vulnerabilidades**.
   - Usa **IA** para el análisis y para **recomendaciones**.
 - **Encaje en el mercado:** Equivalente a **pentest automatizado + informe ejecutivo y técnico** con IA (OWASP Top 10, OWASP LLM, etc.), entregado como herramienta ejecutable o servicio bajo demanda.
-- **Relación con lo existente:** Es exactamente el pilar **Auditoría Ciberseguridad** descrito en `docs/CIBERSEGURIDAD-APLAT-ANALISIS.md` y `ANALISIS-CARPETA-ALBATROS.md`: pentest avanzado con IA, informes por dominio (RESUMEN-EJECUTIVO, INFORME-TECNICO, PROPUESTA-VALOR-CLIENTE, etc.). Hoy es un sistema independiente (no en el repo APlat); el “ejecutable” sería la forma de empaquetarlo o exponerlo como producto (ejecutable local o job en la nube que devuelve el mismo tipo de salida).
+- **Relación con lo existente:** Es exactamente el pilar **Auditoría Ciberseguridad** descrito en `docs/CIBERSEGURIDAD-APLAT-ANALISIS.md` y `ANALISIS-CARPETA-ALBATROS.md`: pentest avanzado con IA, informes por dominio (RESUMEN-EJECUTIVO, INFORME-TECNICO, PROPUESTA-VALOR-CLIENTE, etc.). Hoy es un sistema independiente (no en el repo GURU); el “ejecutable” sería la forma de empaquetarlo o exponerlo como producto (ejecutable local o job en la nube que devuelve el mismo tipo de salida).
 
 ---
 
 ## 3. Resumen: qué tenemos vs qué describes
 
-| Bloque | En repo APlat | Componente que describes | Relación con pilares (Auditoría, Ciber, Hack) |
+| Bloque | En repo GURU | Componente que describes | Relación con pilares (Auditoría, Ciber, Hack) |
 |--------|----------------|---------------------------|-----------------------------------------------|
-| **APlat Security** | Sí (vulnerabilidades + escaneos) | Base para registrar hallazgos; el “escaneo” real puede alimentarse del ejecutable de auditoría o de NDR. | — |
+| **GURU Security** | Sí (vulnerabilidades + escaneos) | Base para registrar hallazgos; el “escaneo” real puede alimentarse del ejecutable de auditoría o de NDR. | — |
 | **GDPR/LOPD** | Sí (checklist) | Incluido en el paquete. | — |
 | **Incidentes** | Sí (incidentes + playbooks) | Incluido en el paquete. | Hack (respuesta a incidentes) |
 | **Verificación firma** | Sí (hash SHA256/384/512) | Incluido en el paquete. | — |
@@ -124,7 +124,7 @@ Has definido **tres bloques funcionales** que complementan lo anterior y que no 
 | Mid (ROPA, evaluaciones) | ~€197–529/mes (Sypher) | Checklist y registro de actividades. |
 | Enterprise | Custom (OneTrust, Transcend) | Por contacto. |
 
-Un **checklist GDPR/LOPD** como el de APlat se sitúa en el rango **bajo–medio** si se compara con suites completas; como módulo dentro de un paquete mayor tiene valor de **$20–80/mes** en equivalente.
+Un **checklist GDPR/LOPD** como el de GURU se sitúa en el rango **bajo–medio** si se compara con suites completas; como módulo dentro de un paquete mayor tiene valor de **$20–80/mes** en equivalente.
 
 ### 4.2 Gestión de vulnerabilidades y escaneos
 
@@ -134,7 +134,7 @@ Un **checklist GDPR/LOPD** como el de APlat se sitúa en el rango **bajo–medio
 | Por tier (Attaxion) | $129/mes (40 activos) – $949/mes (360 activos) |
 | Custom (CyCognito, Nucleus) | Presupuesto según activos/IPs/apps |
 
-APlat Security hoy es **registro + escaneos (simulados)**; el valor “completo” se acerca cuando se integre con el **ejecutable de auditoría** o con escáneres externos. Equivalente de mercado para un VM básico: **$50–150/mes** en segmento SMB.
+GURU Security hoy es **registro + escaneos (simulados)**; el valor “completo” se acerca cuando se integre con el **ejecutable de auditoría** o con escáneres externos. Equivalente de mercado para un VM básico: **$50–150/mes** en segmento SMB.
 
 ### 4.3 Respuesta a incidentes y playbooks (SOAR light)
 
@@ -148,7 +148,7 @@ Un módulo de **incidentes + playbooks** sin automatización SOAR completa se pu
 ### 4.4 Verificación de firma / integridad (hash)
 
 - APIs de verificación de firma/hash: desde **€0.001 por request** (verificación simple) hasta precios por firma electrónica cualificada.
-- Un endpoint **hash (SHA256/384/512)** como el de APlat es un commodity; en paquete se considera **valor añadido**, no un ítem de precio independiente grande (**$5–15/mes** en equivalente si se facturara solo).
+- Un endpoint **hash (SHA256/384/512)** como el de GURU es un commodity; en paquete se considera **valor añadido**, no un ítem de precio independiente grande (**$5–15/mes** en equivalente si se facturara solo).
 
 ### 4.5 NDR / análisis de red con IA y bloqueo
 
@@ -176,7 +176,7 @@ El **“análisis de red en tiempo real instalable con IA y bloqueo”** encaja 
 ## 5. Encaje del precio actual del paquete
 
 - **Catálogo actual:** Costo único **$150** + **$79/mes** (Ciberseguridad).
-- **Lo que cubre hoy en repo:** APlat Security (vulnerabilidades + escaneos), GDPR/LOPD (checklist), incidentes + playbooks, verificación de firma (hash), auditoría (logs). **Jcloud** por definir.
+- **Lo que cubre hoy en repo:** GURU Security (vulnerabilidades + escaneos), GDPR/LOPD (checklist), incidentes + playbooks, verificación de firma (hash), auditoría (logs). **Jcloud** por definir.
 - **Lo que añadirías:** (1) Análisis de red en tiempo real instalable (IA + bloqueo), (2) Gestión de red (archivos + tráfico + bloqueo), (3) Ejecutable de auditoría de plataforma con IA y recomendaciones.
 
 **Conclusión:**

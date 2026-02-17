@@ -69,7 +69,7 @@ let isReconnectScheduled = false; // Flag para indicar que ya hay una reconexió
 let reconnectTimeoutId: NodeJS.Timeout | null = null; // ID del timeout programado para cancelarlo si es necesario
 
 // ============================================================================
-// DETECCIÓN DE ENTORNO (APlat API: siempre backend, nunca Vercel)
+// DETECCIÓN DE ENTORNO (GURU API: siempre backend, nunca Vercel)
 // ============================================================================
 
 function isBuildTime(): boolean {
@@ -86,11 +86,11 @@ function detectKoyeb(): boolean {
 }
 
 function detectVercel(): boolean {
-  return false; // API APlat corre en Koyeb, nunca en Vercel
+  return false; // API GURU corre en Koyeb, nunca en Vercel
 }
 
 function getWhatsAppAuthDir(): string {
-  const explicit = process.env.APLAT_WHATSAPP_AUTH_PATH || process.env.KOYEB_WHATSAPP_AUTH_PATH;
+  const explicit = process.env.GURU_WHATSAPP_AUTH_PATH || process.env.KOYEB_WHATSAPP_AUTH_PATH;
   if (explicit) return explicit;
   const isKoyeb = detectKoyeb();
   const isProduction = process.env.NODE_ENV === "production";

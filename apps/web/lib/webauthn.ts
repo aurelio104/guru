@@ -3,14 +3,14 @@
  * rpId debe ser el hostname del sitio (donde corre el front).
  */
 export function getWebAuthnRpId(hostname?: string): string {
-  if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_APLAT_WEBAUTHN_RP_ID) {
-    return process.env.NEXT_PUBLIC_APLAT_WEBAUTHN_RP_ID.trim();
+  if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_GURU_WEBAUTHN_RP_ID) {
+    return process.env.NEXT_PUBLIC_GURU_WEBAUTHN_RP_ID.trim();
   }
   const current = hostname ?? (typeof window !== "undefined" ? window.location.hostname : "");
   const h = current.split(":")[0] || "";
   if (h === "localhost" || h === "127.0.0.1") return "localhost";
   if (h.includes("vercel.app")) return h;
-  if (h.includes("aplat")) return h.replace(/^www\./, "");
+  if (h.includes("guru")) return h.replace(/^www\./, "");
   return h || "localhost";
 }
 

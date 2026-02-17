@@ -1,5 +1,5 @@
 /**
- * APlat — Estado de la plataforma (conteos y sugerencias).
+ * GURU — Estado de la plataforma (conteos y sugerencias).
  * Sirve para dashboards "inteligentes" que muestran qué falta o qué requiere atención.
  */
 import { getSites } from "./presence-store.js";

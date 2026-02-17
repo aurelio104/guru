@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 import { Wifi, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { OcrCedulaCapture } from "@/components/portal/OcrCedulaCapture";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 
 /** Parámetros que el router/captive portal puede pasar al redirigir: site_id, ssid (nombre de la red WiFi). */
 function usePortalQuery(): { siteId: string | null; ssid: string | null } {
@@ -105,9 +105,9 @@ function PortalForm() {
         animate={{ opacity: 1, scale: 1 }}
         className="glass-neon rounded-2xl p-8 text-center"
       >
-        <CheckCircle2 className="w-16 h-16 text-aplat-emerald mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-aplat-text mb-2">¡Bienvenido!</h2>
-        <p className="text-aplat-muted text-sm">
+        <CheckCircle2 className="w-16 h-16 text-guru-emerald mx-auto mb-4" />
+        <h2 className="text-xl font-semibold text-guru-text mb-2">¡Bienvenido!</h2>
+        <p className="text-guru-muted text-sm">
           Registro completado. Ya puede navegar por internet.
         </p>
       </motion.div>
@@ -122,12 +122,12 @@ function PortalForm() {
       className="glass-neon rounded-2xl p-6 sm:p-8 space-y-4"
     >
       <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 rounded-xl bg-aplat-cyan/10">
-          <Wifi className="w-6 h-6 text-aplat-cyan" />
+        <div className="p-2 rounded-xl bg-guru-cyan/10">
+          <Wifi className="w-6 h-6 text-guru-cyan" />
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-aplat-text">Check-in WiFi</h1>
-          <p className="text-aplat-muted text-sm">
+          <h1 className="text-xl font-semibold text-guru-text">Check-in WiFi</h1>
+          <p className="text-guru-muted text-sm">
             {ssidFromQuery
               ? `Red: ${ssidFromQuery}. Complete el formulario para acceder a internet.`
               : "Complete el formulario para continuar y acceder a la red."}
@@ -137,38 +137,38 @@ function PortalForm() {
 
       {!siteIdFromQuery && (
         <div>
-          <label className="block text-sm font-medium text-aplat-muted mb-1">ID de sede</label>
+          <label className="block text-sm font-medium text-guru-muted mb-1">ID de sede</label>
           <input
             type="text"
             value={siteId}
             onChange={(e) => setSiteId(e.target.value)}
             placeholder="Identificador de la sede"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text placeholder-aplat-muted/60 focus:outline-none focus:ring-2 focus:ring-aplat-cyan/40"
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-guru-text placeholder-guru-muted/60 focus:outline-none focus:ring-2 focus:ring-guru-cyan/40"
           />
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-aplat-muted mb-1">Nombre *</label>
+        <label className="block text-sm font-medium text-guru-muted mb-1">Nombre *</label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Su nombre completo"
           required
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text placeholder-aplat-muted/60 focus:outline-none focus:ring-2 focus:ring-aplat-cyan/40"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-guru-text placeholder-guru-muted/60 focus:outline-none focus:ring-2 focus:ring-guru-cyan/40"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-aplat-muted mb-1">Documento / Cédula</label>
+        <label className="block text-sm font-medium text-guru-muted mb-1">Documento / Cédula</label>
         <div className="flex flex-col gap-2">
           <input
             type="text"
             value={document}
             onChange={(e) => setDocument(e.target.value)}
             placeholder="V-12345678"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text placeholder-aplat-muted/60 focus:outline-none focus:ring-2 focus:ring-aplat-cyan/40"
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-guru-text placeholder-guru-muted/60 focus:outline-none focus:ring-2 focus:ring-guru-cyan/40"
           />
           <OcrCedulaCapture
             onExtract={(_, docNum) => {
@@ -180,24 +180,24 @@ function PortalForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-aplat-muted mb-1">¿A quién visita?</label>
+        <label className="block text-sm font-medium text-guru-muted mb-1">¿A quién visita?</label>
         <input
           type="text"
           value={visiting}
           onChange={(e) => setVisiting(e.target.value)}
           placeholder="Departamento o persona"
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text placeholder-aplat-muted/60 focus:outline-none focus:ring-2 focus:ring-aplat-cyan/40"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-guru-text placeholder-guru-muted/60 focus:outline-none focus:ring-2 focus:ring-guru-cyan/40"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-aplat-muted mb-1">Email</label>
+        <label className="block text-sm font-medium text-guru-muted mb-1">Email</label>
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="correo@ejemplo.com"
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text placeholder-aplat-muted/60 focus:outline-none focus:ring-2 focus:ring-aplat-cyan/40"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-guru-text placeholder-guru-muted/60 focus:outline-none focus:ring-2 focus:ring-guru-cyan/40"
         />
       </div>
 
@@ -211,7 +211,7 @@ function PortalForm() {
       <button
         type="submit"
         disabled={status === "loading"}
-        className="w-full py-3 px-4 rounded-xl bg-aplat-cyan text-aplat-deep font-semibold hover:bg-aplat-cyan/90 focus:outline-none focus:ring-2 focus:ring-aplat-cyan/50 disabled:opacity-60 flex items-center justify-center gap-2"
+        className="w-full py-3 px-4 rounded-xl bg-guru-cyan text-guru-deep font-semibold hover:bg-guru-cyan/90 focus:outline-none focus:ring-2 focus:ring-guru-cyan/50 disabled:opacity-60 flex items-center justify-center gap-2"
       >
         {status === "loading" ? (
           <>
@@ -228,18 +228,18 @@ function PortalForm() {
 
 export default function PortalPage() {
   return (
-    <div className="min-h-screen bg-aplat-deep flex flex-col items-center justify-center p-4 bg-grid-perspective">
+    <div className="min-h-screen bg-guru-deep flex flex-col items-center justify-center p-4 bg-grid-perspective">
       <Suspense
         fallback={
           <div className="glass-neon rounded-2xl p-8 flex items-center gap-3">
-            <Loader2 className="w-6 h-6 animate-spin text-aplat-cyan" />
-            <span className="text-aplat-muted">Cargando...</span>
+            <Loader2 className="w-6 h-6 animate-spin text-guru-cyan" />
+            <span className="text-guru-muted">Cargando...</span>
           </div>
         }
       >
         <PortalForm />
       </Suspense>
-      <p className="mt-6 text-aplat-muted/60 text-xs text-center">
+      <p className="mt-6 text-guru-muted/60 text-xs text-center">
         GURU Presence · Check-in automático
       </p>
     </div>

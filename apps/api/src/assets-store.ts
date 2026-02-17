@@ -1,12 +1,12 @@
 /**
- * APlat Assets — Tracking de activos con beacons BLE.
- * Persistencia en JSON (APLAT_DATA_PATH).
+ * GURU Assets — Tracking de activos con beacons BLE.
+ * Persistencia en JSON (GURU_DATA_PATH).
  */
 import fs from "fs";
 import path from "path";
 import { logAudit } from "./audit-store.js";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
 const ASSETS_FILE = path.join(DATA_DIR, "assets.json");
 const SIGHTINGS_FILE = path.join(DATA_DIR, "asset-sightings.json");
 

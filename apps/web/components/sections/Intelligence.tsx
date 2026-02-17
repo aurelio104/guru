@@ -35,9 +35,9 @@ const TECH_STRIP = [
 ];
 
 const colorMap = {
-  cyan: "border-aplat-cyan/25 text-aplat-cyan [--glow:rgba(34,211,238,0.15)]",
-  violet: "border-aplat-violet/25 text-aplat-violet [--glow:rgba(167,139,250,0.15)]",
-  emerald: "border-aplat-emerald/25 text-aplat-emerald [--glow:rgba(52,211,153,0.15)]",
+  cyan: "border-guru-cyan/25 text-guru-cyan [--glow:rgba(34,211,238,0.15)]",
+  violet: "border-guru-violet/25 text-guru-violet [--glow:rgba(167,139,250,0.15)]",
+  emerald: "border-guru-emerald/25 text-guru-emerald [--glow:rgba(52,211,153,0.15)]",
 };
 
 export function Intelligence() {
@@ -49,9 +49,9 @@ export function Intelligence() {
     >
       {/* Fondo */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-aplat-cyan/6 rounded-full blur-[200px] animate-neon-pulse" />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-aplat-violet/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-aplat-cyan/4 rounded-full blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-guru-cyan/6 rounded-full blur-[200px] animate-neon-pulse" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-guru-violet/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-guru-cyan/4 rounded-full blur-[100px]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.02)_1px,transparent_1px)] bg-[size:56px_56px] opacity-40" />
       </div>
 
@@ -64,7 +64,7 @@ export function Intelligence() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
         >
-          <span className="inline-flex items-center rounded-full border border-aplat-cyan/25 bg-aplat-cyan/5 px-4 py-1.5 text-xs font-medium text-aplat-cyan uppercase tracking-widest">
+          <span className="inline-flex items-center rounded-full border border-guru-cyan/25 bg-guru-cyan/5 px-4 py-1.5 text-xs font-medium text-guru-cyan uppercase tracking-widest">
             A nivel global
           </span>
         </motion.div>
@@ -79,7 +79,7 @@ export function Intelligence() {
           Construido para competir en cualquier escala.
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-20 transition-reveal"
+          className="text-guru-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-20 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -98,13 +98,13 @@ export function Intelligence() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
           >
-            <Card3D className="glass glass-strong rounded-3xl p-8 md:p-10 mirror-shine border border-white/10 h-full min-h-[280px] flex flex-col justify-center relative overflow-hidden group hover:border-aplat-cyan/20 transition-colors duration-300">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-aplat-cyan/5 rounded-full blur-[80px] group-hover:bg-aplat-cyan/8 transition-colors duration-500" />
-              <Activity className="w-12 h-12 text-aplat-cyan/80 mb-6" />
-              <h3 className="text-2xl md:text-3xl font-bold text-aplat-text mb-3 leading-tight">
+            <Card3D className="glass glass-strong rounded-3xl p-8 md:p-10 mirror-shine border border-white/10 h-full min-h-[280px] flex flex-col justify-center relative overflow-hidden group hover:border-guru-cyan/20 transition-colors duration-300">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-guru-cyan/5 rounded-full blur-[80px] group-hover:bg-guru-cyan/8 transition-colors duration-500" />
+              <Activity className="w-12 h-12 text-guru-cyan/80 mb-6" />
+              <h3 className="text-2xl md:text-3xl font-bold text-guru-text mb-3 leading-tight">
                 Inteligencia que trasciende fronteras.
               </h3>
-              <p className="text-aplat-muted text-base leading-relaxed max-w-md">
+              <p className="text-guru-muted text-base leading-relaxed max-w-md">
                 Cada solución se despliega con los mismos estándares que exigen las operaciones globales: rendimiento, observabilidad y evolución continua.
               </p>
             </Card3D>
@@ -126,10 +126,10 @@ export function Intelligence() {
                   <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/5 border border-inherit mb-4">
                     <pillar.icon className="w-5 h-5" />
                   </span>
-                  <h4 className="text-lg font-semibold text-aplat-text mb-2">
+                  <h4 className="text-lg font-semibold text-guru-text mb-2">
                     {pillar.title}
                   </h4>
-                  <p className="text-aplat-muted text-sm leading-relaxed">
+                  <p className="text-guru-muted text-sm leading-relaxed">
                     {pillar.text}
                   </p>
                 </Card3D>
@@ -149,7 +149,7 @@ export function Intelligence() {
           {TECH_STRIP.map((tech, i) => (
             <span
               key={tech}
-              className="px-4 py-2 rounded-full glass border border-white/10 text-aplat-muted text-sm font-medium hover:text-aplat-text hover:border-aplat-cyan/20 transition-colors duration-200"
+              className="px-4 py-2 rounded-full glass border border-white/10 text-guru-muted text-sm font-medium hover:text-guru-text hover:border-guru-cyan/20 transition-colors duration-200"
             >
               {tech}
             </span>

@@ -14,15 +14,15 @@ const FOOTER_LINKS = [
 export function Footer() {
   const { t } = useLocale();
   return (
-    <footer className="relative border-t border-white/10 py-12 bg-aplat-surface/30">
+    <footer className="relative border-t border-white/10 py-12 bg-guru-surface/30">
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <motion.a
             href="/"
-            className="text-xl font-bold text-aplat-text"
+            className="text-xl font-bold text-guru-text"
             whileHover={{ opacity: 0.8 }}
           >
-            GURU<span className="text-aplat-cyan">.</span>
+            GURU<span className="text-guru-cyan">.</span>
           </motion.a>
           <nav aria-label="Enlaces del pie">
             <ul className="flex flex-wrap justify-center gap-6">
@@ -30,7 +30,7 @@ export function Footer() {
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="text-aplat-muted hover:text-aplat-text text-sm transition-colors"
+                    className="text-guru-muted hover:text-guru-text text-sm transition-colors"
                   >
                     {t(link.labelKey)}
                   </a>
@@ -40,7 +40,7 @@ export function Footer() {
           </nav>
         </div>
         <div className="mt-8 pt-8 border-t border-white/5 text-center">
-          <p className="text-aplat-muted text-sm">
+          <p className="text-guru-muted text-sm">
             {t("footer.tagline")}
           </p>
         </div>

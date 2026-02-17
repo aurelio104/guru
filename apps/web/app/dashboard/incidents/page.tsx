@@ -12,11 +12,11 @@ import {
   BookOpen,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -136,7 +136,7 @@ export default function DashboardIncidentsPage() {
     <div className="max-w-5xl mx-auto px-4 py-6">
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-2 text-aplat-muted hover:text-aplat-text mb-6"
+        className="inline-flex items-center gap-2 text-guru-muted hover:text-guru-text mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         Volver al panel
@@ -151,15 +151,15 @@ export default function DashboardIncidentsPage() {
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-aplat-text">Incidentes</h1>
-            <p className="text-aplat-muted text-sm">Registro y respuesta ante incidentes de seguridad</p>
+            <h1 className="text-2xl font-bold text-guru-text">Incidentes</h1>
+            <p className="text-guru-muted text-sm">Registro y respuesta ante incidentes de seguridad</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2 text-sm font-medium"
+            className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan border border-guru-cyan/40 px-4 py-2 text-sm font-medium"
           >
             <Plus className="w-4 h-4" />
             Nuevo incidente
@@ -175,7 +175,7 @@ export default function DashboardIncidentsPage() {
           <button
             type="button"
             onClick={fetchData}
-            className="p-2 rounded-xl border border-white/20 hover:bg-white/5 text-aplat-muted hover:text-aplat-text"
+            className="p-2 rounded-xl border border-white/20 hover:bg-white/5 text-guru-muted hover:text-guru-text"
             title="Actualizar"
           >
             <RefreshCw className="w-4 h-4" />
@@ -192,19 +192,19 @@ export default function DashboardIncidentsPage() {
       {!loading && incidents.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider">Total</p>
-            <p className="text-xl font-bold text-aplat-text">{incidents.length}</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider">Total</p>
+            <p className="text-xl font-bold text-guru-text">{incidents.length}</p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider">Abiertos</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider">Abiertos</p>
             <p className="text-xl font-bold text-amber-400">{incidents.filter((i) => i.status === "open" || i.status === "investigating").length}</p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider">Críticos / Altos</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider">Críticos / Altos</p>
             <p className="text-xl font-bold text-orange-400">{incidents.filter((i) => i.severity === "critical" || i.severity === "high").length}</p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider">Resueltos / Cerrados</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider">Resueltos / Cerrados</p>
             <p className="text-xl font-bold text-emerald-400">{incidents.filter((i) => i.status === "resolved" || i.status === "closed").length}</p>
           </div>
         </div>
@@ -217,29 +217,29 @@ export default function DashboardIncidentsPage() {
           onSubmit={handleCreate}
           className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-6"
         >
-          <h2 className="text-lg font-semibold text-aplat-text mb-3">Nuevo incidente</h2>
+          <h2 className="text-lg font-semibold text-guru-text mb-3">Nuevo incidente</h2>
           <div className="grid gap-3">
             <input
               type="text"
               placeholder="Título"
               value={form.title}
               onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted"
               required
             />
             <textarea
               placeholder="Descripción"
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted min-h-[80px]"
+              className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted min-h-[80px]"
               required
             />
             <div>
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Severidad</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Severidad</label>
               <select
                 value={form.severity}
                 onChange={(e) => setForm((f) => ({ ...f, severity: e.target.value }))}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
               >
                 <option value="low">Baja</option>
                 <option value="medium">Media</option>
@@ -248,11 +248,11 @@ export default function DashboardIncidentsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Playbook (opcional)</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Playbook (opcional)</label>
               <select
                 value={form.playbookId}
                 onChange={(e) => setForm((f) => ({ ...f, playbookId: e.target.value }))}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
               >
                 <option value="">Sin playbook</option>
                 {playbooks.map((p) => (
@@ -264,13 +264,13 @@ export default function DashboardIncidentsPage() {
             </div>
           </div>
           <div className="flex gap-2 mt-3">
-            <button type="submit" className="rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm font-medium">
+            <button type="submit" className="rounded-xl bg-guru-cyan/20 text-guru-cyan px-4 py-2 text-sm font-medium">
               Crear
             </button>
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="rounded-xl border border-white/20 px-4 py-2 text-sm text-aplat-muted hover:text-aplat-text"
+              className="rounded-xl border border-white/20 px-4 py-2 text-sm text-guru-muted hover:text-guru-text"
             >
               Cancelar
             </button>
@@ -280,9 +280,9 @@ export default function DashboardIncidentsPage() {
 
       <div className="grid md:grid-cols-2 gap-6">
         <section>
-          <h2 className="text-lg font-semibold text-aplat-text mb-3">Incidentes</h2>
+          <h2 className="text-lg font-semibold text-guru-text mb-3">Incidentes</h2>
           {loading && incidents.length === 0 ? (
-            <div className="flex items-center gap-2 text-aplat-muted py-6">
+            <div className="flex items-center gap-2 text-guru-muted py-6">
               <Loader2 className="w-5 h-5 animate-spin" />
               Cargando...
             </div>
@@ -292,15 +292,15 @@ export default function DashboardIncidentsPage() {
               animate={{ opacity: 1 }}
               className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center"
             >
-              <AlertTriangle className="w-10 h-10 text-aplat-muted/70 mx-auto mb-3" />
-              <p className="text-aplat-text font-medium mb-1">No hay incidentes</p>
-              <p className="text-aplat-muted text-sm mb-4 max-w-sm mx-auto">
+              <AlertTriangle className="w-10 h-10 text-guru-muted/70 mx-auto mb-3" />
+              <p className="text-guru-text font-medium mb-1">No hay incidentes</p>
+              <p className="text-guru-muted text-sm mb-4 max-w-sm mx-auto">
                 Registre un incidente cuando detecte una brecha, malware, phishing o cualquier evento de seguridad que requiera seguimiento.
               </p>
               <button
                 type="button"
                 onClick={() => setShowForm(true)}
-                className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2 text-sm font-medium"
+                className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 text-guru-cyan border border-guru-cyan/40 px-4 py-2 text-sm font-medium"
               >
                 <Plus className="w-4 h-4" />
                 Registrar primer incidente
@@ -316,21 +316,21 @@ export default function DashboardIncidentsPage() {
                     className="rounded-xl border border-white/10 bg-white/5 p-3 flex items-start justify-between gap-2"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-aplat-text">{i.title}</p>
+                      <p className="font-medium text-guru-text">{i.title}</p>
                       <div className="flex flex-wrap items-center gap-1.5 mt-1">
                         <span className={`inline-block px-2 py-0.5 rounded text-xs ${SEV_COLOR[i.severity] ?? ""}`}>
                           {SEV_LABEL[i.severity] ?? i.severity}
                         </span>
-                        <span className="text-aplat-muted text-xs">{STATUS_LABEL[i.status] ?? i.status}</span>
-                        {playbook && <span className="text-xs text-aplat-cyan">{playbook.name}</span>}
+                        <span className="text-guru-muted text-xs">{STATUS_LABEL[i.status] ?? i.status}</span>
+                        {playbook && <span className="text-xs text-guru-cyan">{playbook.name}</span>}
                       </div>
-                      {i.description && <p className="text-aplat-muted text-xs mt-1 line-clamp-2">{i.description}</p>}
-                      <p className="text-aplat-muted text-xs mt-1">{new Date(i.reportedAt).toLocaleString("es")}</p>
+                      {i.description && <p className="text-guru-muted text-xs mt-1 line-clamp-2">{i.description}</p>}
+                      <p className="text-guru-muted text-xs mt-1">{new Date(i.reportedAt).toLocaleString("es")}</p>
                     </div>
                     <select
                       value={i.status}
                       onChange={(e) => updateStatus(i.id, e.target.value)}
-                      className="rounded-lg bg-white/5 border border-white/10 px-2 py-1 text-xs text-aplat-text shrink-0"
+                      className="rounded-lg bg-white/5 border border-white/10 px-2 py-1 text-xs text-guru-text shrink-0"
                     >
                       <option value="open">Abierto</option>
                       <option value="investigating">Investigando</option>
@@ -345,19 +345,19 @@ export default function DashboardIncidentsPage() {
           )}
         </section>
         <section>
-          <h2 className="text-lg font-semibold text-aplat-text mb-3 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-guru-text mb-3 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Playbooks
           </h2>
           {playbooks.length === 0 ? (
-            <p className="text-aplat-muted py-6">No hay playbooks. Use «Completar playbooks» para cargar los por defecto.</p>
+            <p className="text-guru-muted py-6">No hay playbooks. Use «Completar playbooks» para cargar los por defecto.</p>
           ) : (
             <ul className="space-y-2">
               {playbooks.map((p) => (
                 <li key={p.id} className="rounded-xl border border-white/10 bg-white/5 p-3">
-                  <p className="font-medium text-aplat-text">{p.name}</p>
-                  <p className="text-sm text-aplat-muted mt-1">{p.description}</p>
-                  <ol className="mt-2 list-decimal list-inside text-sm text-aplat-muted space-y-0.5">
+                  <p className="font-medium text-guru-text">{p.name}</p>
+                  <p className="text-sm text-guru-muted mt-1">{p.description}</p>
+                  <ol className="mt-2 list-decimal list-inside text-sm text-guru-muted space-y-0.5">
                     {p.steps.map((s, idx) => (
                       <li key={idx}>{s}</li>
                     ))}

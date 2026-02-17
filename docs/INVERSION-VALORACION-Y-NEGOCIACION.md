@@ -1,8 +1,8 @@
-# APlat e inversión: valoración, qué ofrecer y cuánto ceder
+# GURU e inversión: valoración, qué ofrecer y cuánto ceder
 
 Escenario: tú buscas un inversionista. Tienes el conocimiento, el equipo, la plataforma y desarrollas todo con tu equipo. Tres preguntas clave:
 
-1. ¿Qué valoración puede tener APlat (plataforma + capacidad)?
+1. ¿Qué valoración puede tener GURU (plataforma + capacidad)?
 2. ¿Qué pones en la mesa en la negociación y qué % representa?
 3. ¿Qué % ceder y cuánto dinero aspirar a recibir? (cuánto recibes por cuánto %)
 
@@ -37,7 +37,7 @@ Cifras mensuales reales a la fecha, para valoración y proyecciones.
 | Costos por servicios (50 %) | 150 |
 | Margen bruto | 150 |
 
-*Estos números sitúan a APlat en el escenario de “primeros ingresos recurrentes”, lo que refuerza una valoración en el rango 300k–600k USD (ver §1) y da base para proyecciones (subir clientes, bajar % de costos, etc.).*
+*Estos números sitúan a GURU en el escenario de “primeros ingresos recurrentes”, lo que refuerza una valoración en el rango 300k–600k USD (ver §1) y da base para proyecciones (subir clientes, bajar % de costos, etc.).*
 
 ### Valoración real de tu plataforma (con estos números)
 
@@ -96,7 +96,7 @@ La valoración es lo que “vale” la empresa **antes** de que entre el dinero 
 | **Portafolio en producción** | Proyectos ya desplegados (Omac, plataforma-albatros, rt-reportes, control-acceso, etc.) = activos reutilizables y prueba de ejecución. Equivalente a “costo de reemplazo”: cuánto costaría construir eso desde cero (desarrolladores × meses × tarifa). |
 | **Equipo técnico** | Conocimiento + capacidad de entregar. En LATAM, un equipo pequeño que ya entregó varias plataformas puede verse como “equipo de 2–4 FTE equivalentes” a tarifas de mercado (ej. 5k–15k USD/mes por senior). |
 | **Productos empaquetables** | Control de acceso, reportes desde Excel, centro de mando: bases listas para vender a más clientes. Se valora como “producto existente” con potencial de réplica. |
-| **Marca y sitio APlat** | Sitio, portafolio ordenado, propuesta de valor clara = menor riesgo percibido y más profesionalismo. |
+| **Marca y sitio GURU** | Sitio, portafolio ordenado, propuesta de valor clara = menor riesgo percibido y más profesionalismo. |
 | **Clientes o casos de referencia** | Si ya facturaste (Albatros, RT, etc.), eso es tracción: ingresos pasados o contratos dan base para proyecciones. |
 
 ### 1.2 Rangos de valoración orientativos (pre-money)
@@ -106,7 +106,7 @@ Son referencias para **empresas de servicios digitales / tech en etapa temprana*
 | Escenario | Descripción | Valoración pre-money orientativa (USD) |
 |-----------|-------------|----------------------------------------|
 | **Solo equipo + portafolio, sin ingresos recurrentes** | Tienes plataforma, sitio, proyectos en producción y equipo que lo construyó. Casi todo el valor es “capacidad + activos”. | 150.000 – 400.000 |
-| **Primeros ingresos o contratos firmes** | 1–3 clientes pagando (proyectos o mantenimiento), o cartas de intención. *APlat hoy: 3 clientes, MRR 300 USD, costos ~50 %.* | 300.000 – 600.000 |
+| **Primeros ingresos o contratos firmes** | 1–3 clientes pagando (proyectos o mantenimiento), o cartas de intención. *GURU hoy: 3 clientes, MRR 300 USD, costos ~50 %.* | 300.000 – 600.000 |
 | **Ingresos recurrentes demostrados** | Varios clientes, MRR o contratos anuales claros (ej. 5k–20k USD/mes). | 500.000 – 1.200.000+ |
 
 *Nota: en USA o Europa los números suelen ser 1,5x–3x más altos para el mismo perfil; en Venezuela o mercados más pequeños pueden ser algo menores. Depende del inversionista y del mercado donde operes.*
@@ -199,7 +199,7 @@ Interpretación:
 - **Post-money:** 350.000 USD.
 - **% que cedes:** 70.000 / 350.000 = **20%**.
 
-Tú recibes **70.000 USD** y el inversionista obtiene **20%** de APlat. Tú (y tu equipo/socios) conserváis **80%**.
+Tú recibes **70.000 USD** y el inversionista obtiene **20%** de GURU. Tú (y tu equipo/socios) conserváis **80%**.
 
 **Resumen pregunta 3:** Puedes **aspirar a recibir** del orden de **50.000 – 150.000 USD** en una primera ronda y **ceder** típicamente **15–28%**. La cantidad exacta depende de la valoración pre-money que acordéis. Fórmula: **% a ceder = Inversión / (Valoración pre-money + Inversión)**. Ejemplo: 70k USD por 20% implica una valoración pre-money de 280k USD.
 
@@ -232,7 +232,7 @@ Puedes presentar un desglose como este. Ajusta los % y los montos según la cant
 
 | Destino | % del total | Para qué (ejemplo con 80.000 USD) |
 |---------|-------------|------------------------------------|
-| **Runway / gastos personales** | 35 – 45 % | Cubrir gastos personales durante 12–18 meses para que puedas dedicarte full time a APlat sin depender de otros ingresos. (Ej.: 30.000 – 36.000 USD en 18 meses ≈ 1.700 – 2.000 USD/mes.) |
+| **Runway / gastos personales** | 35 – 45 % | Cubrir gastos personales durante 12–18 meses para que puedas dedicarte full time a GURU sin depender de otros ingresos. (Ej.: 30.000 – 36.000 USD en 18 meses ≈ 1.700 – 2.000 USD/mes.) |
 | **Movilidad** | 10 – 15 % | Transporte, reuniones con clientes e inversionistas, logística operativa. (Ej.: 8.000 – 12.000 USD.) |
 | **Equipos** | 15 – 20 % | Equipos nuevos o mejoras (laptop, monitores, herramientas, licencias, infra si aplica). (Ej.: 12.000 – 16.000 USD.) |
 | **Comercialización y producto** | 25 – 35 % | Marketing, ventas, mejoras de producto, soporte a clientes, eventual contratación o freelance. (Ej.: 20.000 – 28.000 USD.) |
@@ -259,4 +259,4 @@ Con esto puedes presentar la plataforma al inversionista de forma directa y orde
 
 ---
 
-*Documento de referencia para APlat. No sustituye asesoría legal ni financiera; conviene validar con abogado y/o asesor antes de firmar.*
+*Documento de referencia para GURU. No sustituye asesoría legal ni financiera; conviene validar con abogado y/o asesor antes de firmar.*

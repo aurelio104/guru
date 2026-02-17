@@ -10,7 +10,7 @@ import { parseBleAdvertisement, selectStrongestBeacon, type BleBeaconDetected } 
 import { motion } from "framer-motion";
 import { MapPin, Loader2, CheckCircle2, AlertCircle, Navigation, QrCode, Bluetooth, CreditCard } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const SITE_URL = typeof window !== "undefined" ? window.location.origin : "";
 
 type Zone = { id: string; name: string };
@@ -31,7 +31,7 @@ export default function CheckInPage() {
   const [queuedCount, setQueuedCount] = useState(0);
   const [online, setOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true);
 
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   const BASE = API_URL.replace(/\/$/, "");
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -436,34 +436,34 @@ export default function CheckInPage() {
 
   if (status === "success") {
     return (
-      <div className="min-h-screen bg-aplat-deep flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-guru-deep flex flex-col items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="glass-neon rounded-2xl p-8 text-center max-w-sm"
         >
-          <CheckCircle2 className="w-16 h-16 text-aplat-emerald mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-aplat-text mb-2">Check-in registrado</h2>
-          <p className="text-aplat-muted text-sm">¡Bienvenido! Su llegada ha sido registrada.</p>
+          <CheckCircle2 className="w-16 h-16 text-guru-emerald mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-guru-text mb-2">Check-in registrado</h2>
+          <p className="text-guru-muted text-sm">¡Bienvenido! Su llegada ha sido registrada.</p>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-aplat-deep flex flex-col items-center justify-center p-4 bg-grid-perspective">
+    <div className="min-h-screen bg-guru-deep flex flex-col items-center justify-center p-4 bg-grid-perspective">
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         className="glass-neon rounded-2xl p-6 sm:p-8 w-full max-w-md space-y-4"
       >
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 rounded-xl bg-aplat-cyan/10">
-            <MapPin className="w-6 h-6 text-aplat-cyan" />
+          <div className="p-2 rounded-xl bg-guru-cyan/10">
+            <MapPin className="w-6 h-6 text-guru-cyan" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-aplat-text">Check-in</h1>
-            <p className="text-aplat-muted text-sm">Registre su llegada</p>
+            <h1 className="text-xl font-semibold text-guru-text">Check-in</h1>
+            <p className="text-guru-muted text-sm">Registre su llegada</p>
           </div>
         </div>
 
@@ -475,9 +475,9 @@ export default function CheckInPage() {
         )}
 
         {!onboardingSeen && mode === "geolocation" && (
-          <div className="p-4 rounded-xl bg-aplat-cyan/10 border border-aplat-cyan/20 text-sm text-aplat-text">
+          <div className="p-4 rounded-xl bg-guru-cyan/10 border border-guru-cyan/20 text-sm text-guru-text">
             <p className="font-medium mb-1">Para check-in automático</p>
-            <p className="text-aplat-muted text-xs">
+            <p className="text-guru-muted text-xs">
               Necesitamos acceso a su ubicación para verificar que está en la zona. Solo se usa al registrar llegada.
             </p>
           </div>
@@ -491,14 +491,14 @@ export default function CheckInPage() {
 
         {sites.length >= 1 && (
           <div>
-            <label className="block text-sm font-medium text-aplat-muted mb-1">Sede</label>
+            <label className="block text-sm font-medium text-guru-muted mb-1">Sede</label>
             <select
               value={siteId}
               onChange={(e) => {
                 setSiteId(e.target.value);
                 setZoneId("");
               }}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text"
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-guru-text"
             >
               <option value="">Seleccionar sede...</option>
               {sites.map((s) => (
@@ -512,12 +512,12 @@ export default function CheckInPage() {
 
         {siteId && (
           <div>
-            <label className="block text-sm font-medium text-aplat-muted mb-1">Zona</label>
+            <label className="block text-sm font-medium text-guru-muted mb-1">Zona</label>
             {zones.length >= 1 ? (
               <select
                 value={zoneId}
                 onChange={(e) => setZoneId(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-guru-text"
               >
                 <option value="">Seleccionar zona...</option>
                 {zones.map((z) => (
@@ -527,7 +527,7 @@ export default function CheckInPage() {
                 ))}
               </select>
             ) : (
-              <p className="text-aplat-muted text-sm py-2">
+              <p className="text-guru-muted text-sm py-2">
                 No hay zonas en esta sede. Cree al menos una en el panel de Presence.
               </p>
             )}
@@ -540,7 +540,7 @@ export default function CheckInPage() {
               type="button"
               onClick={() => setMode("smart")}
               className={`flex-1 min-w-[100px] py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-medium transition-colors ${
-                mode === "smart" ? "bg-aplat-emerald/20 text-aplat-emerald" : "text-aplat-muted hover:text-aplat-text"
+                mode === "smart" ? "bg-guru-emerald/20 text-guru-emerald" : "text-guru-muted hover:text-guru-text"
               }`}
             >
               <Navigation className="w-4 h-4" />
@@ -550,7 +550,7 @@ export default function CheckInPage() {
               type="button"
               onClick={() => setMode("geolocation")}
               className={`flex-1 min-w-[100px] py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-medium transition-colors ${
-                mode === "geolocation" ? "bg-aplat-cyan/20 text-aplat-cyan" : "text-aplat-muted hover:text-aplat-text"
+                mode === "geolocation" ? "bg-guru-cyan/20 text-guru-cyan" : "text-guru-muted hover:text-guru-text"
               }`}
             >
               <MapPin className="w-4 h-4" />
@@ -560,7 +560,7 @@ export default function CheckInPage() {
               type="button"
               onClick={() => setMode("qr")}
               className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-medium transition-colors ${
-                mode === "qr" ? "bg-aplat-cyan/20 text-aplat-cyan" : "text-aplat-muted hover:text-aplat-text"
+                mode === "qr" ? "bg-guru-cyan/20 text-guru-cyan" : "text-guru-muted hover:text-guru-text"
               }`}
             >
               <QrCode className="w-4 h-4" />
@@ -570,7 +570,7 @@ export default function CheckInPage() {
               type="button"
               onClick={() => setMode("ble")}
               className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-medium transition-colors ${
-                mode === "ble" ? "bg-aplat-cyan/20 text-aplat-cyan" : "text-aplat-muted hover:text-aplat-text"
+                mode === "ble" ? "bg-guru-cyan/20 text-guru-cyan" : "text-guru-muted hover:text-guru-text"
               }`}
             >
               <Bluetooth className="w-4 h-4" />
@@ -580,7 +580,7 @@ export default function CheckInPage() {
               type="button"
               onClick={() => setMode("nfc")}
               className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-medium transition-colors ${
-                mode === "nfc" ? "bg-aplat-cyan/20 text-aplat-cyan" : "text-aplat-muted hover:text-aplat-text"
+                mode === "nfc" ? "bg-guru-cyan/20 text-guru-cyan" : "text-guru-muted hover:text-guru-text"
               }`}
             >
               <CreditCard className="w-4 h-4" />
@@ -590,13 +590,13 @@ export default function CheckInPage() {
         )}
 
         {mode === "smart" && (
-          <p className="text-aplat-muted text-xs">
+          <p className="text-guru-muted text-xs">
             Intenta BLE → Ubicación → fallback. Un toque para registrar.
           </p>
         )}
 
         {mode === "qr" && (
-          <p className="text-aplat-muted text-xs">
+          <p className="text-guru-muted text-xs">
             Escaneó el código QR. Un toque para registrar su llegada.
           </p>
         )}
@@ -608,7 +608,7 @@ export default function CheckInPage() {
                 type="button"
                 onClick={scanNfc}
                 disabled={nfcScanning}
-                className="w-full py-2 px-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text text-sm flex items-center justify-center gap-2"
+                className="w-full py-2 px-3 rounded-xl bg-white/5 border border-white/10 text-guru-text text-sm flex items-center justify-center gap-2"
               >
                 {nfcScanning ? (
                   <>
@@ -623,7 +623,7 @@ export default function CheckInPage() {
                 )}
               </button>
             ) : (
-              <p className="text-aplat-muted text-xs">Tag detectado: {nfcTagId.slice(0, 16)}...</p>
+              <p className="text-guru-muted text-xs">Tag detectado: {nfcTagId.slice(0, 16)}...</p>
             )}
           </div>
         )}
@@ -635,7 +635,7 @@ export default function CheckInPage() {
                 type="button"
                 onClick={scanForBeacon}
                 disabled={bleScanning}
-                className="w-full py-2 px-3 rounded-xl bg-white/5 border border-white/10 text-aplat-text text-sm flex items-center justify-center gap-2"
+                className="w-full py-2 px-3 rounded-xl bg-white/5 border border-white/10 text-guru-text text-sm flex items-center justify-center gap-2"
               >
                 {bleScanning ? (
                   <>
@@ -650,7 +650,7 @@ export default function CheckInPage() {
                 )}
               </button>
             ) : (
-              <p className="text-aplat-muted text-xs">
+              <p className="text-guru-muted text-xs">
                 Beacon detectado: {bleBeacon.uuid.slice(0, 8)}... {bleBeacon.major}:{bleBeacon.minor}
               </p>
             )}
@@ -658,7 +658,7 @@ export default function CheckInPage() {
         )}
 
         {coords && mode === "geolocation" && (
-          <p className="text-aplat-muted text-xs">
+          <p className="text-guru-muted text-xs">
             Ubicación: {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
           </p>
         )}
@@ -680,7 +680,7 @@ export default function CheckInPage() {
               type="button"
               onClick={requestLocation}
               disabled={status === "locating"}
-              className="w-full py-3 px-4 rounded-xl bg-white/5 border border-white/10 text-aplat-text font-medium hover:bg-white/10 flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 rounded-xl bg-white/5 border border-white/10 text-guru-text font-medium hover:bg-white/10 flex items-center justify-center gap-2"
             >
               {status === "locating" ? (
                 <>
@@ -706,7 +706,7 @@ export default function CheckInPage() {
               (mode === "ble" && !bleBeacon) ||
               (mode === "nfc" && !nfcTagId)
             }
-            className="w-full py-3 px-4 rounded-xl bg-aplat-cyan text-aplat-deep font-semibold hover:bg-aplat-cyan/90 flex items-center justify-center gap-2 disabled:opacity-60"
+            className="w-full py-3 px-4 rounded-xl bg-guru-cyan text-guru-deep font-semibold hover:bg-guru-cyan/90 flex items-center justify-center gap-2 disabled:opacity-60"
           >
             {status === "checking" ? (
               <>

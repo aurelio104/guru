@@ -29,7 +29,7 @@ export function CybersecurityBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
       {/* Base más oscura para marcar la sección */}
-      <div className="absolute inset-0 bg-aplat-surface/80" />
+      <div className="absolute inset-0 bg-guru-surface/80" />
 
       {/* Escudo en el fondo: 100% responsive, líneas desde centro, logo seguridad */}
       <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 0 }}>
@@ -214,7 +214,7 @@ export function CybersecurityBackground() {
       </div>
 
       {/* Orbe sutil: responsive con vmax */}
-      <div className="absolute bottom-0 right-0 w-[50vmax] h-[50vmax] max-w-[600px] max-h-[600px] bg-aplat-violet/10 rounded-full blur-[20vmin]" />
+      <div className="absolute bottom-0 right-0 w-[50vmax] h-[50vmax] max-w-[600px] max-h-[600px] bg-guru-violet/10 rounded-full blur-[20vmin]" />
 
       {/* Scanline tipo monitor seguro */}
       <div

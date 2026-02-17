@@ -3,18 +3,18 @@
 /* GURU · Futurista · IA · Glass · Última generación */
 @theme {
   /* Paleta futurista: cyan, violeta, blanco sobre oscuro */
-  --color-aplat-deep: #030306;
-  --color-aplat-surface: #08080f;
-  --color-aplat-card: #0c0c14;
-  --color-aplat-border: rgba(255, 255, 255, 0.06);
-  --color-aplat-glint: rgba(255, 255, 255, 0.12);
-  --color-aplat-cyan: #22d3ee;
-  --color-aplat-cyan-dim: rgba(34, 211, 238, 0.4);
-  --color-aplat-violet: #a78bfa;
-  --color-aplat-violet-dim: rgba(167, 139, 250, 0.4);
-  --color-aplat-emerald: #34d399;
-  --color-aplat-text: #f1f5f9;
-  --color-aplat-muted: #94a3b8;
+  --color-guru-deep: #030306;
+  --color-guru-surface: #08080f;
+  --color-guru-card: #0c0c14;
+  --color-guru-border: rgba(255, 255, 255, 0.06);
+  --color-guru-glint: rgba(255, 255, 255, 0.12);
+  --color-guru-cyan: #22d3ee;
+  --color-guru-cyan-dim: rgba(34, 211, 238, 0.4);
+  --color-guru-violet: #a78bfa;
+  --color-guru-violet-dim: rgba(167, 139, 250, 0.4);
+  --color-guru-emerald: #34d399;
+  --color-guru-text: #f1f5f9;
+  --color-guru-muted: #94a3b8;
   --font-sans: "SF Pro Display", "Inter", system-ui, sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", monospace;
   /* Glass futurista */
@@ -30,7 +30,7 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply antialiased text-aplat-text bg-aplat-deep;
+    @apply antialiased text-guru-text bg-guru-deep;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -442,7 +442,7 @@
     radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 211, 238, 0.15), transparent),
     radial-gradient(ellipse 60% 40% at 80% 50%, rgba(167, 139, 250, 0.12), transparent),
     radial-gradient(ellipse 50% 30% at 20% 80%, rgba(34, 211, 238, 0.08), transparent),
-    var(--color-aplat-deep);
+    var(--color-guru-deep);
 }
 
 /* Grid infinito (muy sutil para body) */

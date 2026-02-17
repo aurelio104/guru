@@ -1,8 +1,8 @@
 /**
- * APlat Presence — Cola offline para check-ins.
+ * GURU Presence — Cola offline para check-ins.
  * Cuando falla la conexión, los check-ins se encolan y se reintentan al recuperar red.
  */
-const STORAGE_KEY = "aplat_presence_offline_queue";
+const STORAGE_KEY = "guru_presence_offline_queue";
 
 type QueuedCheckIn = {
   url: string;

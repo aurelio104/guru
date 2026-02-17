@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "GURU Platform · Servicios digitales de última generación",
   description:
     "Plataforma inteligente: análisis, contexto, aprendizaje. Desarrollamos soluciones digitales con tecnología de vanguardia.",
-  metadataBase: new URL("https://aplat.vercel.app"),
+  metadataBase: new URL("https://guru.vercel.app"),
   openGraph: {
     title: "GURU Platform",
     description: "Plataforma inteligente: análisis, contexto, aprendizaje.",
@@ -47,7 +47,7 @@ export default async function RootLayout({
   }
   return (
     <html lang={locale} className="dark" suppressHydrationWarning>
-      <body className="min-h-screen bg-aplat-deep text-aplat-text font-sans bg-grid-perspective">
+      <body className="min-h-screen bg-guru-deep text-guru-text font-sans bg-grid-perspective">
         <LocaleProvider locale={locale}>
           <VisitTracker />
           <div className="relative min-h-screen">{children}</div>

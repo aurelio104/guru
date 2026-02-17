@@ -1,4 +1,4 @@
-# APlat — Plan de acción: ecosistema completo para venta B2B
+# GURU — Plan de acción: ecosistema completo para venta B2B
 
 **Objetivo:** Completar la plataforma como **ecosistema listo para ofrecer a otras empresas**: catálogo de servicios, paquetes, membresías mensuales, costo único + suscripción por servicio, y todos los módulos (Presence, Ciberseguridad + Jcloud, Reportes, Commerce, etc.) operativos.
 
@@ -24,7 +24,7 @@
 | ID | Servicio | Descripción breve | Hoy |
 |----|----------|-------------------|-----|
 | 1 | **Presence** | Check-in BLE/NFC, zonas, portal, ocupación, alertas WhatsApp, export, (futuro: assets, PWA completa) | Parcial |
-| 2 | **Ciberseguridad** | APlat Security (vulnerabilidades, escaneos), GDPR/LOPD, incidentes, verificación firma, **Jcloud** | Por hacer |
+| 2 | **Ciberseguridad** | GURU Security (vulnerabilidades, escaneos), GDPR/LOPD, incidentes, verificación firma, **Jcloud** | Por hacer |
 | 3 | **Reportes** | Subida Excel, análisis, gráficos, dashboard reportes | Por hacer |
 | 4 | **Commerce** | Catálogo, pedidos, (futuro: bot WhatsApp pedidos) | Por hacer |
 | 5 | **Slots** | Reserva de recursos y slots, disponibilidad | Por hacer |
@@ -71,13 +71,13 @@
 
 ---
 
-### Fase 2 — Ciberseguridad (APlat Security + Jcloud)
+### Fase 2 — Ciberseguridad (GURU Security + Jcloud)
 
 **Objetivo:** Módulo Ciberseguridad listo para vender: vulnerabilidades, escaneos, cumplimiento, incidentes, verificación firma e **integración Jcloud**.
 
 | # | Tarea | Entregable | Est. |
 |---|--------|------------|------|
-| 2.1 | **APlat Security** | `security-store.ts`, `security.routes.ts`, `/api/security/vulnerabilities`, `/api/security/scans`, `POST /api/security/scan`; UI `/dashboard/security` | 3–4 sem |
+| 2.1 | **GURU Security** | `security-store.ts`, `security.routes.ts`, `/api/security/vulnerabilities`, `/api/security/scans`, `POST /api/security/scan`; UI `/dashboard/security` | 3–4 sem |
 | 2.2 | **GDPR/LOPD** | `gdpr-store.ts`, `gdpr.routes.ts`, checklist cumplimiento; UI `/dashboard/gdpr` | 2 sem |
 | 2.3 | **Verificación firma digital** | `verify-signature.routes.ts`, `POST /api/verify-signature` (validar hash/integridad) | 1–2 sem |
 | 2.4 | **Respuesta a incidentes** | `incidents-store.ts`, `incidents.routes.ts`, playbooks, registro de incidentes; UI `/dashboard/incidents` | 2–3 sem |
@@ -96,7 +96,7 @@
 | 3.1 | **Reportes (base)** | `reports-store.ts`, `reports.routes.ts`, `/api/reports`, UI `/dashboard/reports` | 2–3 sem |
 | 3.2 | **Reportes: Excel + IA** | UI subida Excel, análisis columnas, clasificación IA, gráficos | 4–6 sem |
 | 3.3 | **Slots** | `slots-store.ts`, `slots.routes.ts`, recursos, slots, disponibilidad; UI `/dashboard/slots` | 3–4 sem |
-| 3.4 | **APlat Commerce** | `commerce-store.ts`, `commerce.routes.ts`, catálogo, pedidos; UI `/dashboard/commerce` | 4–6 sem |
+| 3.4 | **GURU Commerce** | `commerce-store.ts`, `commerce.routes.ts`, catálogo, pedidos; UI `/dashboard/commerce` | 4–6 sem |
 | 3.5 | **Commerce: bot WhatsApp** | Pedidos vía chat con Baileys | 2–4 sem |
 | 3.6 | **Geofencing** | `geofencing.routes.ts`, `GET /api/geofencing/validate?lat=&lng=&target_lat=&target_lng=&radius_m=` | 1–2 sem |
 | 3.7 | **Geofencing Omac** | Integración órdenes de trabajo (validación llegada a punto) | 3–4 sem |
@@ -114,7 +114,7 @@
 | 4.1 | **Cierre comercial Presence** | Documentación, demo, precios, firma producto Presence | 1–2 sem |
 | 4.2 | **Precios y paquetes por servicio** | Definir y cargar en catálogo: price_one_time y price_monthly por cada servicio (Presence, Ciberseguridad, etc.) | 0,5 sem |
 | 4.3 | **Flujo de alta de empresa/cliente** | Alta de “empresa” que contrata N servicios → creación de suscripciones mensuales acorde al catálogo | 1–2 sem |
-| 4.4 | **Pentest / seguridad** | Pentest real (OWASP + LLM), integración con APlat Security; opcional integración Fortinet/SOC a largo plazo | 6–8 sem (paralelo) |
+| 4.4 | **Pentest / seguridad** | Pentest real (OWASP + LLM), integración con GURU Security; opcional integración Fortinet/SOC a largo plazo | 6–8 sem (paralelo) |
 
 **Resultado Fase 4:** Ecosistema vendible con precios claros, flujo “selecciono 1, 2, 4 → total + mensual” y proceso de contratación.
 

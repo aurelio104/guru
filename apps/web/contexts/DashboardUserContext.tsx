@@ -15,13 +15,13 @@ const DashboardUserContext = createContext<{
   refetch: () => Promise<boolean>;
 }>({ user: null, setUser: () => {}, refetch: () => Promise.resolve(false) });
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 
 export function DashboardUserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<DashboardUser>(null);
 
   const refetch = useCallback(async (): Promise<boolean> => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+    const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
     if (!token || !API_URL) return false;
     try {
       const r = await fetch(`${API_URL.replace(/\/$/, "")}/api/auth/me`, {

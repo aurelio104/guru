@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { KeyRound, Loader2 } from "lucide-react";
 import { getWebAuthnRpId } from "@/lib/webauthn";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -22,7 +22,7 @@ export function DashboardWidgetPasskey() {
       setMessage({ type: "error", text: "API no configurada." });
       return;
     }
-    const token = localStorage.getItem("aplat_token");
+    const token = localStorage.getItem("guru_token");
     if (!token) {
       setMessage({ type: "error", text: "Inicia sesión primero." });
       return;
@@ -100,19 +100,19 @@ export function DashboardWidgetPasskey() {
       className="glass glass-strong rounded-2xl p-5 border border-white/10 mirror-shine"
     >
       <div className="flex items-center gap-2 mb-4">
-        <div className="rounded-xl p-2 bg-aplat-violet/15 text-aplat-violet">
+        <div className="rounded-xl p-2 bg-guru-violet/15 text-guru-violet">
           <KeyRound className="w-5 h-5" />
         </div>
-        <h2 className="text-lg font-semibold text-aplat-text">Passkey</h2>
+        <h2 className="text-lg font-semibold text-guru-text">Passkey</h2>
       </div>
-      <p className="text-aplat-muted text-sm mb-4">
+      <p className="text-guru-muted text-sm mb-4">
         Registra una Passkey para iniciar sesión sin contraseña. El navegador mostrará la opción de guardarla en este dispositivo o de escanear un QR para guardarla en tu smartphone.
       </p>
       {message && (
         <div
           className={`rounded-xl px-4 py-3 text-sm mb-4 ${
             message.type === "success"
-              ? "bg-aplat-emerald/10 text-aplat-emerald border border-aplat-emerald/20"
+              ? "bg-guru-emerald/10 text-guru-emerald border border-guru-emerald/20"
               : "bg-red-500/10 text-red-400 border border-red-500/20"
           }`}
         >
@@ -123,7 +123,7 @@ export function DashboardWidgetPasskey() {
         type="button"
         onClick={handleRegisterPasskey}
         disabled={loading}
-        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-aplat-violet/20 hover:bg-aplat-violet/30 text-aplat-violet border border-aplat-violet/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
+        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-guru-violet/20 hover:bg-guru-violet/30 text-guru-violet border border-guru-violet/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
       >
         {loading ? (
           <>

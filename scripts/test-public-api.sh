@@ -27,7 +27,7 @@ r=$(curl -s -w "\n%{http_code}" "$API/api/health")
 code=$(echo "$r" | tail -1)
 body=$(echo "$r" | sed '$d')
 check "health 200" "200" "$code"
-check "health body" "aplat-api" "$body"
+check "health body" "guru-api" "$body"
 echo ""
 
 echo "2. POST /api/analytics/visit"

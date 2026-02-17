@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { Lock, Loader2, ShieldCheck } from "lucide-react";
 import { useDashboardUser } from "@/contexts/DashboardUserContext";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -72,12 +72,12 @@ export function ChangePasswordForm() {
     >
       <div className="glass glass-strong rounded-2xl p-6 border border-white/10 mirror-shine">
         <div className="flex items-center gap-3 mb-4">
-          <div className="rounded-xl p-2 bg-aplat-cyan/15 text-aplat-cyan">
+          <div className="rounded-xl p-2 bg-guru-cyan/15 text-guru-cyan">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-aplat-text">Cambiar contraseña</h1>
-            <p className="text-aplat-muted text-sm">
+            <h1 className="text-xl font-bold text-guru-text">Cambiar contraseña</h1>
+            <p className="text-guru-muted text-sm">
               Usa la contraseña temporal que recibiste y elige una contraseña segura para continuar.
             </p>
           </div>
@@ -87,7 +87,7 @@ export function ChangePasswordForm() {
             <div
               className={`rounded-xl px-4 py-3 text-sm ${
                 message.type === "success"
-                  ? "bg-aplat-emerald/10 text-aplat-emerald border border-aplat-emerald/20"
+                  ? "bg-guru-emerald/10 text-guru-emerald border border-guru-emerald/20"
                   : "bg-red-500/10 text-red-400 border border-red-500/20"
               }`}
             >
@@ -95,7 +95,7 @@ export function ChangePasswordForm() {
             </div>
           )}
           <label className="block">
-            <span className="text-aplat-muted text-sm mb-1 block">Contraseña temporal (la que recibiste)</span>
+            <span className="text-guru-muted text-sm mb-1 block">Contraseña temporal (la que recibiste)</span>
             <input
               type="password"
               value={currentPassword}
@@ -103,11 +103,11 @@ export function ChangePasswordForm() {
               placeholder="••••••••"
               required
               disabled={loading}
-              className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none disabled:opacity-60"
+              className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-guru-text placeholder:text-guru-muted/60 focus:border-guru-cyan/50 focus:outline-none disabled:opacity-60"
             />
           </label>
           <label className="block">
-            <span className="text-aplat-muted text-sm mb-1 block">Nueva contraseña (mín. 8 caracteres)</span>
+            <span className="text-guru-muted text-sm mb-1 block">Nueva contraseña (mín. 8 caracteres)</span>
             <input
               type="password"
               value={newPassword}
@@ -116,11 +116,11 @@ export function ChangePasswordForm() {
               required
               minLength={8}
               disabled={loading}
-              className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none disabled:opacity-60"
+              className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-guru-text placeholder:text-guru-muted/60 focus:border-guru-cyan/50 focus:outline-none disabled:opacity-60"
             />
           </label>
           <label className="block">
-            <span className="text-aplat-muted text-sm mb-1 block">Confirmar nueva contraseña</span>
+            <span className="text-guru-muted text-sm mb-1 block">Confirmar nueva contraseña</span>
             <input
               type="password"
               value={confirmPassword}
@@ -128,13 +128,13 @@ export function ChangePasswordForm() {
               placeholder="••••••••"
               required
               disabled={loading}
-              className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none disabled:opacity-60"
+              className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-guru-text placeholder:text-guru-muted/60 focus:border-guru-cyan/50 focus:outline-none disabled:opacity-60"
             />
           </label>
           <button
             type="submit"
             disabled={loading}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan border border-guru-cyan/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
           >
             {loading ? (
               <>

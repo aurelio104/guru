@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Check, Loader2, ShoppingCart } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 
 type CatalogService = {
   id: string;
@@ -31,7 +31,7 @@ export default function ServiciosPage() {
 
   useEffect(() => {
     if (!API_URL) {
-      setError("API no configurada (NEXT_PUBLIC_APLAT_API_URL).");
+      setError("API no configurada (NEXT_PUBLIC_GURU_API_URL).");
       setLoading(false);
       return;
     }
@@ -68,11 +68,11 @@ export default function ServiciosPage() {
   };
 
   return (
-    <div className="min-h-screen bg-aplat-deep text-aplat-text">
+    <div className="min-h-screen bg-guru-deep text-guru-text">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-aplat-muted hover:text-aplat-text mb-8"
+          className="inline-flex items-center gap-2 text-guru-muted hover:text-guru-text mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver
@@ -82,16 +82,16 @@ export default function ServiciosPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-aplat-text mb-2">
+          <h1 className="text-3xl font-bold text-guru-text mb-2">
             {t("servicios.title")}
           </h1>
-          <p className="text-aplat-muted">
+          <p className="text-guru-muted">
             {t("servicios.subtitle")}
           </p>
         </motion.div>
 
         {loading && (
-          <div className="flex items-center gap-2 text-aplat-muted py-8">
+          <div className="flex items-center gap-2 text-guru-muted py-8">
             <Loader2 className="w-5 h-5 animate-spin" />
             Cargando catálogo...
           </div>
@@ -112,22 +112,22 @@ export default function ServiciosPage() {
                   onClick={() => toggle(svc.id)}
                   className={`w-full text-left rounded-xl border p-4 transition-colors ${
                     selectedIds.has(svc.id)
-                      ? "border-aplat-cyan/50 bg-aplat-cyan/10"
+                      ? "border-guru-cyan/50 bg-guru-cyan/10"
                       : "border-white/10 hover:border-white/20 bg-white/5"
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <div
                       className={`shrink-0 w-6 h-6 rounded-md border-2 flex items-center justify-center ${
-                        selectedIds.has(svc.id) ? "border-aplat-cyan bg-aplat-cyan/20" : "border-white/30"
+                        selectedIds.has(svc.id) ? "border-guru-cyan bg-guru-cyan/20" : "border-white/30"
                       }`}
                     >
-                      {selectedIds.has(svc.id) && <Check className="w-4 h-4 text-aplat-cyan" />}
+                      {selectedIds.has(svc.id) && <Check className="w-4 h-4 text-guru-cyan" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-aplat-text">{svc.name}</p>
-                      <p className="text-sm text-aplat-muted mt-0.5">{svc.description}</p>
-                      <p className="text-xs text-aplat-muted mt-2">
+                      <p className="font-semibold text-guru-text">{svc.name}</p>
+                      <p className="text-sm text-guru-muted mt-0.5">{svc.description}</p>
+                      <p className="text-xs text-guru-muted mt-2">
                         {t("servicios.priceLabel")}
                       </p>
                     </div>
@@ -140,22 +140,22 @@ export default function ServiciosPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="rounded-2xl border border-aplat-cyan/30 bg-aplat-cyan/5 p-6"
+                className="rounded-2xl border border-guru-cyan/30 bg-guru-cyan/5 p-6"
               >
-                <h2 className="text-lg font-semibold text-aplat-text mb-4 flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-guru-text mb-4 flex items-center gap-2">
                   <ShoppingCart className="w-5 h-5" />
                   {t("servicios.resumen")}
                 </h2>
                 <ul className="space-y-2 mb-4">
                   {quote.items.map((item) => (
                     <li key={item.id} className="flex justify-between text-sm">
-                      <span className="text-aplat-muted">{item.name}</span>
+                      <span className="text-guru-muted">{item.name}</span>
                     </li>
                   ))}
                 </ul>
                 <div className="border-t border-white/10 pt-4 flex justify-between font-semibold">
                   <span>Total</span>
-                  <span className="text-aplat-cyan">{t("servicios.total")}</span>
+                  <span className="text-guru-cyan">{t("servicios.total")}</span>
                 </div>
               </motion.div>
             )}

@@ -1,5 +1,5 @@
 /**
- * APlat Security — API de vulnerabilidades y escaneos.
+ * GURU Security — API de vulnerabilidades y escaneos.
  */
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { jwtVerify } from "jose";
@@ -20,7 +20,7 @@ import type { VulnerabilitySeverity, VulnerabilityStatus } from "./security-stor
 type AuthPayload = { sub?: string; email?: string; role?: string };
 
 async function getJwtSecret(): Promise<Uint8Array> {
-  const secret = process.env.APLAT_JWT_SECRET || "dev-aplat-secret-SOLO-DESARROLLO-CAMBIAR";
+  const secret = process.env.GURU_JWT_SECRET || "dev-guru-secret-SOLO-DESARROLLO-CAMBIAR";
   return new TextEncoder().encode(secret);
 }
 

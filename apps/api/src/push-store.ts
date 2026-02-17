@@ -1,11 +1,11 @@
 /**
- * APlat Web Push — Suscripciones guardadas.
- * Persistencia en JSON (APLAT_DATA_PATH).
+ * GURU Web Push — Suscripciones guardadas.
+ * Persistencia en JSON (GURU_DATA_PATH).
  */
 import fs from "fs";
 import path from "path";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
 const PUSH_FILE = path.join(DATA_DIR, "push-subscriptions.json");
 
 export type PushSubscriptionRecord = {

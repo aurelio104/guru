@@ -61,7 +61,7 @@ export function HowItWorks() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
         >
-          <span className="inline-flex items-center rounded-full border border-aplat-violet/25 bg-aplat-violet/5 px-4 py-1.5 text-xs font-semibold text-aplat-violet uppercase tracking-widest">
+          <span className="inline-flex items-center rounded-full border border-guru-violet/25 bg-guru-violet/5 px-4 py-1.5 text-xs font-semibold text-guru-violet uppercase tracking-widest">
             Cómo funciona
           </span>
         </motion.div>
@@ -76,7 +76,7 @@ export function HowItWorks() {
           Proceso inteligente
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-12 sm:mb-16 transition-reveal"
+          className="text-guru-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-12 sm:mb-16 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -149,7 +149,7 @@ export function HowItWorks() {
                     x={x}
                     y={y + 5}
                     textAnchor="middle"
-                    className="fill-aplat-cyan text-xs font-mono font-semibold"
+                    className="fill-guru-cyan text-xs font-mono font-semibold"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
@@ -172,17 +172,17 @@ export function HowItWorks() {
               viewport={{ once: true, margin: "-30px" }}
               transition={{ duration: 0.5, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
             >
-              <Card3D className="glass glass-strong rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 mirror-shine border border-white/10 hover:border-aplat-cyan/30 h-full min-w-0">
+              <Card3D className="glass glass-strong rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 mirror-shine border border-white/10 hover:border-guru-cyan/30 h-full min-w-0">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-aplat-cyan/10 border border-aplat-cyan/20 text-aplat-cyan">
+                  <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-guru-cyan/10 border border-guru-cyan/20 text-guru-cyan">
                     <step.Icon className="w-5 h-5" />
                   </span>
-                  <span className="text-xs font-mono text-aplat-muted">{step.num}</span>
+                  <span className="text-xs font-mono text-guru-muted">{step.num}</span>
                 </div>
-                <h3 className="text-xl font-semibold text-aplat-text mb-2">
+                <h3 className="text-xl font-semibold text-guru-text mb-2">
                   {step.title}
                 </h3>
-                <p className="text-aplat-muted text-sm leading-relaxed">
+                <p className="text-guru-muted text-sm leading-relaxed">
                   {step.desc}
                 </p>
               </Card3D>

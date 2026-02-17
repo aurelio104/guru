@@ -1,4 +1,4 @@
-# Portafolio APlat — Listado de proyectos
+# Portafolio GURU — Listado de proyectos
 
 Proyectos del ecosistema GitHub (aurelio104) clasificados para presentación y venta de servicios.
 
@@ -14,7 +14,7 @@ Proyectos del ecosistema GitHub (aurelio104) clasificados para presentación y v
 
 ## Resto del portafolio
 
-| Proyecto | Descripción (inferida) | Uso en APlat |
+| Proyecto | Descripción (inferida) | Uso en GURU |
 |----------|------------------------|--------------|
 | JCavalier | *(en portafolio estrella)* | — |
 | control-acceso-albatros | *(ya en estrella)* | — |
@@ -43,5 +43,5 @@ Proyectos del ecosistema GitHub (aurelio104) clasificados para presentación y v
 ## Cómo usar esta tabla
 
 - **Para el pitch:** Usa solo los 4 proyectos estrella con 1–2 líneas cada uno.
-- **Para el sitio APlat:** Crea una tarjeta por proyecto estrella; el resto puede ir en “Otros proyectos” o lista colapsable.
+- **Para el sitio GURU:** Crea una tarjeta por proyecto estrella; el resto puede ir en “Otros proyectos” o lista colapsable.
 - **Para cotizaciones:** Los proyectos estrella son la base para “productos empaquetados” (control de acceso, reportes Excel, centro de mando, venta de boletos).

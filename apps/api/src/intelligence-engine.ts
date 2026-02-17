@@ -1,5 +1,5 @@
 /**
- * APlat Presence — Módulo de Análisis, Comprensión, Inteligencia, Contexto y Cálculos.
+ * GURU Presence — Módulo de Análisis, Comprensión, Inteligencia, Contexto y Cálculos.
  * Motor que interpreta patrones, genera insights y calcula métricas humanamente significativas.
  */
 import type { CheckIn, Zone } from "./presence-store.js";

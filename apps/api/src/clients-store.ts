@@ -8,8 +8,8 @@ import path from "path";
 import initSqlJs, { type Database } from "sql.js";
 import { logAudit } from "./audit-store.js";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
-const DB_PATH = path.join(DATA_DIR, "aplat.db");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
+const DB_PATH = path.join(DATA_DIR, "guru.db");
 const DB_TMP_PATH = `${DB_PATH}.tmp`;
 
 let dbInstance: Database | null = null;
@@ -27,7 +27,7 @@ export async function initStoreDb(): Promise<void> {
     data = new Uint8Array(fs.readFileSync(DB_PATH));
     console.log("[clients-store] Base de datos existente cargada, tamaño:", data.length, "bytes");
   } else {
-    console.log("[clients-store] Base de datos nueva (archivo no existía). En producción usa un volumen persistente (APLAT_DATA_PATH).");
+    console.log("[clients-store] Base de datos nueva (archivo no existía). En producción usa un volumen persistente (GURU_DATA_PATH).");
   }
   dbInstance = new SQL.Database(data);
   initSchema(dbInstance);

@@ -111,7 +111,7 @@ function ProjectLogo({
   if (attempt === "failed" || (attempt === "external" && !externalUrl)) {
     return (
       <span
-        className={`inline-flex items-center justify-center rounded-lg bg-white/10 text-aplat-cyan font-semibold shrink-0 ${className}`}
+        className={`inline-flex items-center justify-center rounded-lg bg-white/10 text-guru-cyan font-semibold shrink-0 ${className}`}
         style={{ width: size, height: size }}
       >
         {initial}
@@ -291,7 +291,7 @@ function PortfolioGrid({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
     >
-      <h3 className="text-xl font-semibold text-aplat-text mb-4 pl-1 border-l-2 border-aplat-cyan/50">
+      <h3 className="text-xl font-semibold text-guru-text mb-4 pl-1 border-l-2 border-guru-cyan/50">
         {title}
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -304,19 +304,19 @@ function PortfolioGrid({
                 <div className="flex items-center gap-3 min-w-0">
                   <ProjectLogo slug={repo.slug} name={repo.name} size={44} className="rounded-xl" />
                   <div className="min-w-0">
-                    <h3 className="text-lg font-semibold text-aplat-text group-hover:text-aplat-violet transition-colors truncate">
+                    <h3 className="text-lg font-semibold text-guru-text group-hover:text-guru-violet transition-colors truncate">
                       {repo.name}
                     </h3>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   {url && (
-                    <span className="inline-flex rounded-full bg-aplat-emerald/15 border border-aplat-emerald/25 px-2 py-0.5 text-[10px] font-semibold text-aplat-emerald uppercase tracking-wider">
+                    <span className="inline-flex rounded-full bg-guru-emerald/15 border border-guru-emerald/25 px-2 py-0.5 text-[10px] font-semibold text-guru-emerald uppercase tracking-wider">
                       En producción
                     </span>
                   )}
                   {url ? (
-                    <ExternalLink className="w-4 h-4 text-aplat-muted group-hover:text-aplat-violet transition-colors mt-0.5" />
+                    <ExternalLink className="w-4 h-4 text-guru-muted group-hover:text-guru-violet transition-colors mt-0.5" />
                   ) : (
                     <span className="w-4 h-4 mt-0.5 opacity-30" aria-hidden />
                   )}
@@ -325,9 +325,9 @@ function PortfolioGrid({
               <div className="mt-2">
                 {detail && (
                   <>
-                    <p className="text-aplat-muted text-sm mb-1">{detail.tagline}</p>
-                    <p className="text-aplat-cyan/80 text-xs font-mono mb-1">{detail.stack}</p>
-                    <p className="text-aplat-emerald/90 text-xs font-medium">{detail.result}</p>
+                    <p className="text-guru-muted text-sm mb-1">{detail.tagline}</p>
+                    <p className="text-guru-cyan/80 text-xs font-mono mb-1">{detail.stack}</p>
+                    <p className="text-guru-emerald/90 text-xs font-medium">{detail.result}</p>
                   </>
                 )}
               </div>
@@ -341,7 +341,7 @@ function PortfolioGrid({
               viewport={{ once: true, margin: "-30px" }}
               transition={{ duration: 0.5, delay: Math.min(i * 0.03, 0.5), ease: [0.23, 1, 0.32, 1] }}
             >
-              <Card3D className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-aplat-violet/30 h-full group">
+              <Card3D className="glass glass-strong rounded-2xl p-6 mirror-shine border border-white/10 hover:border-guru-violet/30 h-full group">
                 {url ? (
                   <a
                     href={url}
@@ -473,7 +473,7 @@ export function Portfolio() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-aplat-violet/25 bg-aplat-violet/5 px-4 py-1.5 text-xs font-semibold text-aplat-violet uppercase tracking-widest">
+          <span className="inline-flex items-center gap-2 rounded-full border border-guru-violet/25 bg-guru-violet/5 px-4 py-1.5 text-xs font-semibold text-guru-violet uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5" />
             Portafolio
           </span>
@@ -489,7 +489,7 @@ export function Portfolio() {
           Lo que construimos
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-14 sm:mb-16 transition-reveal"
+          className="text-guru-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-14 sm:mb-16 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -515,23 +515,23 @@ export function Portfolio() {
                   <div className="flex items-start justify-between gap-3 mb-4">
                     <ProjectLogo slug={repo.slug} name={repo.name} size={52} className="rounded-2xl" />
                     {url && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-aplat-emerald/15 border border-aplat-emerald/30 px-2.5 py-1 text-[10px] font-semibold text-aplat-emerald uppercase tracking-wider">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-guru-emerald/15 border border-guru-emerald/30 px-2.5 py-1 text-[10px] font-semibold text-guru-emerald uppercase tracking-wider">
                         En producción
                       </span>
                     )}
                   </div>
-                  <h3 className="text-xl font-semibold text-aplat-text mb-2 group-hover:text-aplat-violet transition-colors">
+                  <h3 className="text-xl font-semibold text-guru-text mb-2 group-hover:text-guru-violet transition-colors">
                     {repo.name}
                   </h3>
                   {detail && (
                     <>
-                      <p className="text-aplat-muted text-sm mb-2">{detail.tagline}</p>
-                      <p className="text-aplat-violet/80 text-xs font-mono mb-2">{detail.stack}</p>
-                      <p className="text-aplat-emerald/90 text-sm font-medium">{detail.result}</p>
+                      <p className="text-guru-muted text-sm mb-2">{detail.tagline}</p>
+                      <p className="text-guru-violet/80 text-xs font-mono mb-2">{detail.stack}</p>
+                      <p className="text-guru-emerald/90 text-sm font-medium">{detail.result}</p>
                     </>
                   )}
                   {url && (
-                    <span className="inline-flex items-center gap-2 mt-4 text-sm font-medium text-aplat-violet group-hover:underline">
+                    <span className="inline-flex items-center gap-2 mt-4 text-sm font-medium text-guru-violet group-hover:underline">
                       Ver sitio
                       <ExternalLink className="w-4 h-4" />
                     </span>
@@ -546,7 +546,7 @@ export function Portfolio() {
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.5, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
                 >
-                  <Card3D className="glass glass-strong rounded-2xl sm:rounded-3xl p-6 sm:p-8 mirror-shine border border-white/10 hover:border-aplat-violet/30 h-full min-h-[260px] group">
+                  <Card3D className="glass glass-strong rounded-2xl sm:rounded-3xl p-6 sm:p-8 mirror-shine border border-white/10 hover:border-guru-violet/30 h-full min-h-[260px] group">
                     {url ? (
                       <a href={url} target="_blank" rel="noopener noreferrer" className="block h-full">
                         {content}
@@ -588,12 +588,12 @@ export function Portfolio() {
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
         >
-          <p className="text-aplat-muted text-lg mb-4">
+          <p className="text-guru-muted text-lg mb-4">
             ¿Un proyecto así para tu negocio?
           </p>
           <a
             href="#contacto"
-            className="inline-flex items-center rounded-xl bg-aplat-violet/20 hover:bg-aplat-violet/30 text-aplat-violet px-6 py-3 text-sm font-semibold border border-aplat-violet/30 transition-all"
+            className="inline-flex items-center rounded-xl bg-guru-violet/20 hover:bg-guru-violet/30 text-guru-violet px-6 py-3 text-sm font-semibold border border-guru-violet/30 transition-all"
           >
             Hablemos
           </a>

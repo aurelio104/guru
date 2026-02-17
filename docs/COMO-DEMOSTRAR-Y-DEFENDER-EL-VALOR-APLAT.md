@@ -1,4 +1,4 @@
-# Cómo demostrar y defender que APlat sí vale la valoración
+# Cómo demostrar y defender que GURU sí vale la valoración
 
 Guía para mostrar al inversionista que la plataforma, tu conocimiento, el tiempo dedicado y los frutos actuales (pocos pero reales) justifican la valoración de **400.000 USD pre-money** (100.000 USD por 20 %).
 
@@ -25,7 +25,7 @@ Si con **cero marketing** ya hay 3 clientes pagando 300 USD/mes, eso es **valida
 
 | Qué mostrar | Dónde / cómo |
 |-------------|----------------|
-| **Sitio APlat** | https://aplat.vercel.app (o tu dominio). Portafolio, servicios, contacto. |
+| **Sitio GURU** | https://guru.vercel.app (o tu dominio). Portafolio, servicios, contacto. |
 | **Omac en producción** | https://omac569.com — centro de mando en vivo, cliente real. |
 | **Otros proyectos con dominio** | Los que tengas en Vercel o con URL propia (JCavalier, Mundo deportivo, etc.). Lista en la sección Portafolio del sitio. |
 | **Repositorios (opcional)** | GitHub aurelio104: cantidad de repos, commits, stacks. No hace falta dar acceso total; basta con mostrar que el código existe y está organizado. |
@@ -62,7 +62,7 @@ Si con **cero marketing** ya hay 3 clientes pagando 300 USD/mes, eso es **valida
 
 | Qué mostrar | Cómo |
 |-------------|------|
-| **Historial de commits** | GitHub: actividad en los últimos 12–24 meses en los repos clave (Omac, plataforma-albatros, rt-reportes, control-acceso, APlat). |
+| **Historial de commits** | GitHub: actividad en los últimos 12–24 meses en los repos clave (Omac, plataforma-albatros, rt-reportes, control-acceso, GURU). |
 | **Cantidad de proyectos** | Lista cerrada: X proyectos en producción, Y repositorios, Z integraciones (Amadeus, KIU, Hikvision, etc.). |
 | **Documentación** | Si tienes docs en los repos (README, VISION, seguridad, ENV), mencionar que hay procesos y documentación, no solo código. |
 
@@ -104,13 +104,13 @@ Si con **cero marketing** ya hay 3 clientes pagando 300 USD/mes, eso es **valida
 
 ## 4. Checklist antes de la reunión
 
-- [ ] **Sitio APlat** actualizado y accesible (URL lista para compartir).
+- [ ] **Sitio GURU** actualizado y accesible (URL lista para compartir).
 - [ ] **Omac** (omac569.com) y los otros proyectos con dominio abiertos en el navegador o en el portafolio del sitio.
 - [ ] **Una hoja con números:** MRR 300 USD, 3 clientes, 50 % costos, margen bruto 150 USD. Opcional: comprobantes o capturas que respalden los ingresos.
 - [ ] **Uso de fondos:** tabla de los 100k (runway, movilidad, equipos, comercialización).
 - [ ] **Oferta clara:** “100.000 USD por 20 %; valoración pre-money 400.000 USD.”
 - [ ] **Plan Maestro o resumen** del portafolio (1–2 páginas) con categorías, stacks y productos reutilizables.
-- [ ] **GitHub** (aurelio104): si te piden ver actividad, tener claro qué repos enseñar (Omac, plataforma-albatros, APlat, etc.).
+- [ ] **GitHub** (aurelio104): si te piden ver actividad, tener claro qué repos enseñar (Omac, plataforma-albatros, GURU, etc.).
 
 ---
 

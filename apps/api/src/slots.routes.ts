@@ -1,5 +1,5 @@
 /**
- * APlat Slots — API recursos y reservas.
+ * GURU Slots — API recursos y reservas.
  */
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { jwtVerify } from "jose";
@@ -17,7 +17,7 @@ import {
 type AuthPayload = { sub?: string; email?: string; role?: string };
 
 async function getJwtSecret(): Promise<Uint8Array> {
-  const secret = process.env.APLAT_JWT_SECRET || "dev-aplat-secret-SOLO-DESARROLLO-CAMBIAR";
+  const secret = process.env.GURU_JWT_SECRET || "dev-guru-secret-SOLO-DESARROLLO-CAMBIAR";
   return new TextEncoder().encode(secret);
 }
 

@@ -1,6 +1,6 @@
 # Beacons BLE — Hardware y configuración
 
-Guía para usar beacons BLE con APlat Presence.
+Guía para usar beacons BLE con GURU Presence.
 
 ## Opciones de hardware
 
@@ -26,7 +26,7 @@ Los beacons usan el formato iBeacon de Apple:
 - **Major**: 2 bytes (0–65535)
 - **Minor**: 2 bytes (0–65535)
 
-## Registrar un beacon en APlat
+## Registrar un beacon en GURU
 
 1. Obtenga UUID, Major y Minor del beacon (app del fabricante o herramienta de escaneo).
 2. En Dashboard → Presence → Beacons BLE → Añadir.

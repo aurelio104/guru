@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2, UserPlus } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -49,7 +49,7 @@ export default function RegisterPage() {
         return;
       }
       if (data.token) {
-        typeof window !== "undefined" && localStorage.setItem("aplat_token", data.token);
+        typeof window !== "undefined" && localStorage.setItem("guru_token", data.token);
       }
       setMessage({ type: "success", text: "Cuenta creada. Redirigiendo al panel..." });
       setTimeout(() => router.replace("/dashboard"), 1000);
@@ -62,13 +62,13 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-aplat-cyan/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-aplat-violet/10 rounded-full blur-[120px]" />
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-guru-cyan/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-guru-violet/10 rounded-full blur-[120px]" />
       </div>
       <div className="absolute top-0 left-0 right-0 z-10 p-6">
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 text-aplat-muted hover:text-aplat-text transition-colors"
+          className="inline-flex items-center gap-2 text-guru-muted hover:text-guru-text transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver al inicio de sesión
@@ -83,8 +83,8 @@ export default function RegisterPage() {
       >
         <div className="glass glass-strong rounded-2xl p-8 mirror-shine border border-white/10">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-aplat-text mb-1">Crear cuenta</h1>
-            <p className="text-aplat-muted text-sm">Regístrate para acceder a tu panel de cliente.</p>
+            <h1 className="text-2xl font-bold text-guru-text mb-1">Crear cuenta</h1>
+            <p className="text-guru-muted text-sm">Regístrate para acceder a tu panel de cliente.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -92,7 +92,7 @@ export default function RegisterPage() {
               <div
                 className={`rounded-xl px-4 py-3 text-sm ${
                   message.type === "success"
-                    ? "bg-aplat-emerald/10 text-aplat-emerald border border-aplat-emerald/20"
+                    ? "bg-guru-emerald/10 text-guru-emerald border border-guru-emerald/20"
                     : "bg-red-500/10 text-red-400 border border-red-500/20"
                 }`}
               >
@@ -100,7 +100,7 @@ export default function RegisterPage() {
               </div>
             )}
             <label className="block">
-              <span className="text-aplat-muted text-sm mb-1 block">Correo electrónico</span>
+              <span className="text-guru-muted text-sm mb-1 block">Correo electrónico</span>
               <input
                 type="email"
                 value={email}
@@ -108,11 +108,11 @@ export default function RegisterPage() {
                 placeholder="tu@email.com"
                 required
                 disabled={loading}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none focus:ring-1 focus:ring-aplat-cyan/30 disabled:opacity-60"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-guru-text placeholder:text-guru-muted/60 focus:border-guru-cyan/50 focus:outline-none focus:ring-1 focus:ring-guru-cyan/30 disabled:opacity-60"
               />
             </label>
             <label className="block">
-              <span className="text-aplat-muted text-sm mb-1 block">Contraseña (mín. 8 caracteres)</span>
+              <span className="text-guru-muted text-sm mb-1 block">Contraseña (mín. 8 caracteres)</span>
               <input
                 type="password"
                 value={password}
@@ -121,11 +121,11 @@ export default function RegisterPage() {
                 required
                 minLength={8}
                 disabled={loading}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none focus:ring-1 focus:ring-aplat-cyan/30 disabled:opacity-60"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-guru-text placeholder:text-guru-muted/60 focus:border-guru-cyan/50 focus:outline-none focus:ring-1 focus:ring-guru-cyan/30 disabled:opacity-60"
               />
             </label>
             <label className="block">
-              <span className="text-aplat-muted text-sm mb-1 block">Confirmar contraseña</span>
+              <span className="text-guru-muted text-sm mb-1 block">Confirmar contraseña</span>
               <input
                 type="password"
                 value={confirmPassword}
@@ -133,13 +133,13 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 required
                 disabled={loading}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none focus:ring-1 focus:ring-aplat-cyan/30 disabled:opacity-60"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-guru-text placeholder:text-guru-muted/60 focus:border-guru-cyan/50 focus:outline-none focus:ring-1 focus:ring-guru-cyan/30 disabled:opacity-60"
               />
             </label>
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan border border-guru-cyan/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
             >
               {loading ? (
                 <>
@@ -155,9 +155,9 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-aplat-muted text-sm">
+          <p className="mt-6 text-center text-guru-muted text-sm">
             ¿Ya tienes cuenta?{" "}
-            <Link href="/login" className="text-aplat-cyan hover:underline">
+            <Link href="/login" className="text-guru-cyan hover:underline">
               Iniciar sesión
             </Link>
           </p>

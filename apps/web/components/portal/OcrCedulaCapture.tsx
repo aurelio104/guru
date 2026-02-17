@@ -48,7 +48,7 @@ export function OcrCedulaCapture({ onExtract, disabled }: OcrCedulaCaptureProps)
 
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-      <p className="text-xs text-aplat-muted mb-2">Escanear cédula (OCR)</p>
+      <p className="text-xs text-guru-muted mb-2">Escanear cédula (OCR)</p>
       <input
         ref={inputRef}
         type="file"
@@ -61,7 +61,7 @@ export function OcrCedulaCapture({ onExtract, disabled }: OcrCedulaCaptureProps)
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={disabled || loading}
-        className="inline-flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/15 text-aplat-text px-3 py-2 text-sm disabled:opacity-60"
+        className="inline-flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/15 text-guru-text px-3 py-2 text-sm disabled:opacity-60"
       >
         {loading ? (
           <Loader2 className="w-4 h-4 animate-spin" />

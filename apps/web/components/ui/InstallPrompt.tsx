@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, X } from "lucide-react";
 
-const STORAGE_KEY = "aplat-pwa-install-dismissed";
+const STORAGE_KEY = "guru-pwa-install-dismissed";
 
 export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -58,14 +58,14 @@ export function InstallPrompt() {
             {/* eslint-disable-next-line @next/next/no-img-element -- static icon */}
             <img src="/icon.svg" alt="" className="w-12 h-12 shrink-0" width={48} height={48} />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-aplat-text">Instalar GURU</p>
-              <p className="text-xs text-aplat-muted">Abrir como app y usar sin depender del navegador.</p>
+              <p className="text-sm font-semibold text-guru-text">Instalar GURU</p>
+              <p className="text-xs text-guru-muted">Abrir como app y usar sin depender del navegador.</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={handleInstall}
-                className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan px-4 py-2 text-sm font-semibold border border-aplat-cyan/30 transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan px-4 py-2 text-sm font-semibold border border-guru-cyan/30 transition-colors"
               >
                 <Download className="w-4 h-4" />
                 Instalar
@@ -73,7 +73,7 @@ export function InstallPrompt() {
               <button
                 type="button"
                 onClick={handleDismiss}
-                className="p-2 text-aplat-muted hover:text-aplat-text rounded-lg transition-colors"
+                className="p-2 text-guru-muted hover:text-guru-text rounded-lg transition-colors"
                 aria-label="Cerrar"
               >
                 <X className="w-4 h-4" />

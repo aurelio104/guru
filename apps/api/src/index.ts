@@ -109,18 +109,18 @@ app.addHook("onRequest", async (request, reply) => {
 });
 
 const JWT_SECRET = (() => {
-  const secret = process.env.APLAT_JWT_SECRET;
+  const secret = process.env.GURU_JWT_SECRET;
   const isProduction = process.env.NODE_ENV === "production";
   
   if (!secret && isProduction) {
-    throw new Error("❌ SEGURIDAD: APLAT_JWT_SECRET es obligatorio en producción. Generar con: openssl rand -hex 32");
+    throw new Error("❌ SEGURIDAD: GURU_JWT_SECRET es obligatorio en producción. Generar con: openssl rand -hex 32");
   }
   
   if (isProduction && secret && secret.length < 32) {
-    console.warn("⚠️  ADVERTENCIA: APLAT_JWT_SECRET debería tener al menos 32 caracteres");
+    console.warn("⚠️  ADVERTENCIA: GURU_JWT_SECRET debería tener al menos 32 caracteres");
   }
   
-  return new TextEncoder().encode(secret || "dev-aplat-secret-SOLO-DESARROLLO-CAMBIAR");
+  return new TextEncoder().encode(secret || "dev-guru-secret-SOLO-DESARROLLO-CAMBIAR");
 })();
 
 const SALT_LEN = 16;
@@ -227,20 +227,20 @@ app.post<{ Body: LoginBody }>("/api/auth/login", async (request, reply) => {
     return reply.status(400).send({ ok: false, error: "Datos inválidos." });
   }
 
-  const adminEmail = process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local";
+  const adminEmail = process.env.GURU_ADMIN_EMAIL || "admin@guru.local";
   const adminPassword = (() => {
-    const pass = process.env.APLAT_ADMIN_PASSWORD;
+    const pass = process.env.GURU_ADMIN_PASSWORD;
     const isProduction = process.env.NODE_ENV === "production";
     
     if (!pass && isProduction) {
-      throw new Error("❌ SEGURIDAD: APLAT_ADMIN_PASSWORD es obligatorio en producción");
+      throw new Error("❌ SEGURIDAD: GURU_ADMIN_PASSWORD es obligatorio en producción");
     }
     
     if (pass && pass.length < 12 && isProduction) {
-      console.warn("⚠️  ADVERTENCIA: APLAT_ADMIN_PASSWORD debería tener al menos 12 caracteres");
+      console.warn("⚠️  ADVERTENCIA: GURU_ADMIN_PASSWORD debería tener al menos 12 caracteres");
     }
     
-    return pass || "APlat2025!-SOLO-DESARROLLO";
+    return pass || "GURU2025!-SOLO-DESARROLLO";
   })();
   const emailNorm = sanitizeString(email.trim().toLowerCase(), MAX_EMAIL_LEN);
 
@@ -360,7 +360,7 @@ app.post<{ Body: RegisterBody }>("/api/auth/register", async (request, reply) =>
   if (!isValidEmail(emailNorm)) {
     return reply.status(400).send({ ok: false, error: "Email inválido." });
   }
-  const adminEmail = (process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local").toLowerCase();
+  const adminEmail = (process.env.GURU_ADMIN_EMAIL || "admin@guru.local").toLowerCase();
   if (emailNorm === adminEmail) {
     return reply.status(400).send({ ok: false, error: "Este correo está reservado." });
   }
@@ -703,7 +703,7 @@ app.post<{ Body: { phone?: string } }>("/api/auth/phone/send-code", async (reque
   if (wa) {
     const toSend = normalizePhone(phone);
     if (toSend.length >= 8) {
-      const result = await wa.sendWhatsAppMessage(toSend, `Tu código de verificación APlat: ${code}. Válido 10 minutos.`);
+      const result = await wa.sendWhatsAppMessage(toSend, `Tu código de verificación GURU: ${code}. Válido 10 minutos.`);
       jid = result.jid;
     }
   }
@@ -797,7 +797,7 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
     emailNorm = bodyEmail?.trim().toLowerCase();
   }
 
-  const adminEmail = (process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local").toLowerCase();
+  const adminEmail = (process.env.GURU_ADMIN_EMAIL || "admin@guru.local").toLowerCase();
   if (emailNorm && emailNorm === adminEmail) {
     return reply.status(400).send({ ok: false, error: "Ese correo está reservado para el administrador." });
   }
@@ -816,7 +816,7 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
   const reminder = new Date(nextCutoff);
   reminder.setDate(reminder.getDate() - 5);
   const reminderStr = reminder.toLocaleDateString("es-ES", { day: "numeric", month: "short" });
-  const baseUrl = (process.env.APLAT_APP_URL || process.env.CORS_ORIGIN || "https://aplat.vercel.app").replace(/\/$/, "");
+  const baseUrl = (process.env.GURU_APP_URL || process.env.CORS_ORIGIN || "https://guru.vercel.app").replace(/\/$/, "");
   const loginUrl = `${baseUrl}/login`;
 
   let clientCreated = false;
@@ -848,7 +848,7 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
   if (clientCreated && emailNorm && tempPassword) {
     const serviceLabel = String(serviceName).trim();
     message =
-      `*¡Bienvenido a APlat!* 🎉\n\n` +
+      `*¡Bienvenido a GURU!* 🎉\n\n` +
       `Tu suscripción está activa para *${serviceLabel}*.\n\n` +
       `Estos son tus datos de acceso:\n\n` +
       `📧 *Correo:* ${emailNorm}\n` +
@@ -859,7 +859,7 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
       `Después de entrar, completa tu perfil en el panel.`;
   } else {
     message =
-      `*APlat* – *${String(serviceName).trim()}*\n\n` +
+      `*GURU* – *${String(serviceName).trim()}*\n\n` +
       `Bienvenido/a. Tu suscripción está activa.\n\n` +
       `📅 Fecha de corte y pago: *${cutoffStr}*\n` +
       `⏰ Recordatorio: ${reminderStr}${amountStr}\n\n` +
@@ -883,9 +883,9 @@ app.post<{ Body: SendSubscriptionInviteBody }>("/api/admin/send-subscription-inv
   }
 });
 
-// Cron: ejecutar cortes automáticamente (ej. cada día a las 23:59). Requiere APLAT_CRON_SECRET.
+// Cron: ejecutar cortes automáticamente (ej. cada día a las 23:59). Requiere GURU_CRON_SECRET.
 app.post("/api/cron/process-cutoffs", async (request, reply) => {
-  const secret = process.env.APLAT_CRON_SECRET;
+  const secret = process.env.GURU_CRON_SECRET;
   const headerSecret = (request.headers["x-cron-secret"] as string) ?? "";
   const querySecret = (request.query as { secret?: string }).secret ?? "";
   const provided = headerSecret || querySecret;
@@ -902,9 +902,9 @@ app.post("/api/cron/process-cutoffs", async (request, reply) => {
   }
 });
 
-// Cron: alertas Presence por WhatsApp (pico ocupación, anomalías). Cada 5–15 min. Requiere APLAT_CRON_SECRET.
+// Cron: alertas Presence por WhatsApp (pico ocupación, anomalías). Cada 5–15 min. Requiere GURU_CRON_SECRET.
 app.post("/api/cron/presence-alerts", async (request, reply) => {
-  const secret = process.env.APLAT_CRON_SECRET;
+  const secret = process.env.GURU_CRON_SECRET;
   const headerSecret = (request.headers["x-cron-secret"] as string) ?? "";
   const querySecret = (request.query as { secret?: string }).secret ?? "";
   const provided = headerSecret || querySecret;
@@ -1062,8 +1062,8 @@ app.delete<{ Params: { id: string } }>("/api/admin/subscriptions/:id", async (re
 });
 
 // --- WebAuthn / Passkey (como Omac) ---
-const WEBAUTHN_RP_ID = process.env.APLAT_WEBAUTHN_RP_ID || "localhost";
-const APLAT_ADMIN_EMAIL = process.env.APLAT_ADMIN_EMAIL || "admin@aplat.local";
+const WEBAUTHN_RP_ID = process.env.GURU_WEBAUTHN_RP_ID || "localhost";
+const GURU_ADMIN_EMAIL = process.env.GURU_ADMIN_EMAIL || "admin@guru.local";
 const USER_ID = 1;
 
 // POST /api/auth/webauthn/challenge — público, para login con Passkey
@@ -1106,7 +1106,7 @@ app.post<{
   updateCredentialLastUsed(credentialIdStr);
   const token = await new SignJWT({
     sub: String(cred.userId),
-    email: APLAT_ADMIN_EMAIL,
+    email: GURU_ADMIN_EMAIL,
     role: "master",
   })
     .setProtectedHeader({ alg: "HS256" })
@@ -1116,7 +1116,7 @@ app.post<{
   return reply.status(200).send({
     ok: true,
     role: "master",
-    email: APLAT_ADMIN_EMAIL,
+    email: GURU_ADMIN_EMAIL,
     token,
   });
 });
@@ -1141,11 +1141,11 @@ app.post<{ Body: { deviceName?: string } }>("/api/auth/webauthn/register/begin",
   const userIdBytes = new TextEncoder().encode(String(USER_ID));
   const options = {
     challenge: Array.from(challengeUint8),
-    rp: { name: "APlat", id: WEBAUTHN_RP_ID },
+    rp: { name: "GURU", id: WEBAUTHN_RP_ID },
     user: {
       id: Array.from(userIdBytes),
-      name: APLAT_ADMIN_EMAIL,
-      displayName: APLAT_ADMIN_EMAIL.split("@")[0],
+      name: GURU_ADMIN_EMAIL,
+      displayName: GURU_ADMIN_EMAIL.split("@")[0],
     },
     pubKeyCredParams: [
       { alg: -7, type: "public-key" as const },
@@ -1204,7 +1204,7 @@ app.post<{
     credentialId: credentialIdStr,
     publicKey: JSON.stringify(body.publicKey),
     deviceName: body.deviceName || "Unknown",
-  }, { ip: getClientIp(request), userEmail: APLAT_ADMIN_EMAIL });
+  }, { ip: getClientIp(request), userEmail: GURU_ADMIN_EMAIL });
   return reply.status(200).send({
     ok: true,
     message: "Passkey registrada correctamente",
@@ -1273,7 +1273,7 @@ const API_VERSION = "1.0.0";
 app.get("/api/health", async (_, reply) => {
   return reply.send({
     ok: true,
-    service: "aplat-api",
+    service: "guru-api",
     version: API_VERSION,
     uptime_seconds: Math.floor((Date.now() - startTime) / 1000),
     env: process.env.NODE_ENV ?? "development",
@@ -1307,7 +1307,7 @@ app.get("/api/catalog/quote", async (request, reply) => {
   return reply.status(200).send(result);
 });
 
-// APlat Presence: check-in, zonas, inteligencia
+// GURU Presence: check-in, zonas, inteligencia
 await registerPresenceRoutes(app);
 await registerGeofencingRoutes(app);
 await registerVerifySignatureRoutes(app);
@@ -1404,7 +1404,7 @@ initCatalogStore();
 
 try {
   await app.listen({ port, host });
-  console.log(`APlat API listening on http://${host}:${port}`);
+  console.log(`GURU API listening on http://${host}:${port}`);
 } catch (err) {
   app.log.error(err);
   process.exit(1);

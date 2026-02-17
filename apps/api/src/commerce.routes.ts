@@ -1,6 +1,6 @@
 /**
- * APlat Commerce — API productos y pedidos.
- * Opcional: notificación WhatsApp al crear pedido (APLAT_COMMERCE_NOTIFY_PHONE).
+ * GURU Commerce — API productos y pedidos.
+ * Opcional: notificación WhatsApp al crear pedido (GURU_COMMERCE_NOTIFY_PHONE).
  */
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { jwtVerify } from "jose";
@@ -20,7 +20,7 @@ import type { OrderStatus } from "./commerce-store.js";
 type AuthPayload = { sub?: string; email?: string; role?: string };
 
 async function getJwtSecret(): Promise<Uint8Array> {
-  const secret = process.env.APLAT_JWT_SECRET || "dev-aplat-secret-SOLO-DESARROLLO-CAMBIAR";
+  const secret = process.env.GURU_JWT_SECRET || "dev-guru-secret-SOLO-DESARROLLO-CAMBIAR";
   return new TextEncoder().encode(secret);
 }
 
@@ -125,7 +125,7 @@ export async function registerCommerceRoutes(app: FastifyInstance): Promise<void
       customerName: body.customerName,
       notes: body.notes,
     });
-    const notifyPhone = process.env.APLAT_COMMERCE_NOTIFY_PHONE?.trim();
+    const notifyPhone = process.env.GURU_COMMERCE_NOTIFY_PHONE?.trim();
     if (notifyPhone) {
       try {
         const lines = [`Nuevo pedido ${o.id}`, `Total: ${o.total} ${o.currency}`, o.customerEmail ? `Cliente: ${o.customerEmail}` : ""].filter(Boolean);

@@ -1,11 +1,11 @@
 /**
- * Catálogo de servicios del ecosistema APlat (para paquetes y membresías B2B).
- * Persistencia en JSON; mismo directorio APLAT_DATA_PATH.
+ * Catálogo de servicios del ecosistema GURU (para paquetes y membresías B2B).
+ * Persistencia en JSON; mismo directorio GURU_DATA_PATH.
  */
 import fs from "fs";
 import path from "path";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
 const CATALOG_FILE = path.join(DATA_DIR, "service-catalog.json");
 
 export type CatalogService = {

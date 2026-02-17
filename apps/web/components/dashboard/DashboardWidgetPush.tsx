@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import { Bell, Loader2 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -90,7 +90,7 @@ export function DashboardWidgetPush() {
   if (status === "unsupported") {
     return (
       <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-        <p className="text-sm text-aplat-muted">Notificaciones push no soportadas en este navegador.</p>
+        <p className="text-sm text-guru-muted">Notificaciones push no soportadas en este navegador.</p>
       </div>
     );
   }
@@ -98,18 +98,18 @@ export function DashboardWidgetPush() {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4">
       <div className="flex items-center gap-2 mb-2">
-        <Bell className="w-4 h-4 text-aplat-cyan" />
-        <span className="font-medium text-aplat-text text-sm">Notificaciones push</span>
+        <Bell className="w-4 h-4 text-guru-cyan" />
+        <span className="font-medium text-guru-text text-sm">Notificaciones push</span>
       </div>
-      {message && <p className="text-xs text-aplat-muted mb-2">{message}</p>}
+      {message && <p className="text-xs text-guru-muted mb-2">{message}</p>}
       {status === "subscribed" ? (
-        <p className="text-sm text-aplat-emerald/80">Activadas</p>
+        <p className="text-sm text-guru-emerald/80">Activadas</p>
       ) : (
         <button
           type="button"
           onClick={subscribe}
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-lg bg-aplat-cyan/20 text-aplat-cyan px-3 py-1.5 text-sm font-medium disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-lg bg-guru-cyan/20 text-guru-cyan px-3 py-1.5 text-sm font-medium disabled:opacity-60"
         >
           {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
           Activar notificaciones

@@ -1,14 +1,14 @@
 /**
- * APlat Presence — Almacén de presencia, zonas, check-ins, beacons y NFC.
- * PostgreSQL (pg) cuando APLAT_POSTGRES_URL está definido; si no, SQLite (sql.js).
+ * GURU Presence — Almacén de presencia, zonas, check-ins, beacons y NFC.
+ * PostgreSQL (pg) cuando GURU_POSTGRES_URL está definido; si no, SQLite (sql.js).
  * Auditoría integrada.
  */
 import fs from "fs";
 import path from "path";
 import { logAudit } from "./audit-store.js";
 
-const USE_POSTGRES = !!process.env.APLAT_POSTGRES_URL;
-const POSTGRES_URL = process.env.APLAT_POSTGRES_URL || "";
+const USE_POSTGRES = !!process.env.GURU_POSTGRES_URL;
+const POSTGRES_URL = process.env.GURU_POSTGRES_URL || "";
 
 export type CheckInChannel = "geolocation" | "wifi_portal" | "qr" | "ble" | "nfc";
 
@@ -187,8 +187,8 @@ async function initPgSchema(): Promise<void> {
 
 import initSqlJs, { type Database } from "sql.js";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
-const DB_PATH = path.join(DATA_DIR, "aplat-presence.db");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
+const DB_PATH = path.join(DATA_DIR, "guru-presence.db");
 const DB_TMP_PATH = `${DB_PATH}.tmp`;
 
 let dbInstance: Database | null = null;

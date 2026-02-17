@@ -67,20 +67,20 @@ export function DashboardMetricPanel({
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.96 }}
         transition={{ type: "tween", duration: 0.2 }}
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-white/10 bg-aplat-card shadow-2xl flex flex-col"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-white/10 bg-guru-card shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
           <div className="flex items-center justify-between gap-2 shrink-0 p-4 border-b border-white/10">
             <div className="flex items-center gap-2">
-              <div className="rounded-xl p-2 bg-aplat-cyan/15 text-aplat-cyan">
+              <div className="rounded-xl p-2 bg-guru-cyan/15 text-guru-cyan">
                 <TitleIcon className="w-5 h-5" />
               </div>
-              <h2 className="text-lg font-semibold text-aplat-text">{title}</h2>
+              <h2 className="text-lg font-semibold text-guru-text">{title}</h2>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl p-2 text-aplat-muted hover:text-aplat-text hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-aplat-cyan/50"
+              className="rounded-xl p-2 text-guru-muted hover:text-guru-text hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-guru-cyan/50"
               aria-label="Cerrar"
             >
               <X className="w-5 h-5" />
@@ -89,7 +89,7 @@ export function DashboardMetricPanel({
           <div className="flex-1 overflow-y-auto p-4">
             {panel === "proyectosActivos" && (
               <div className="space-y-2">
-                <p className="text-aplat-muted text-sm mb-4">
+                <p className="text-guru-muted text-sm mb-4">
                   Proyectos del portafolio en producción.
                 </p>
                 <ul className="space-y-2">
@@ -99,10 +99,10 @@ export function DashboardMetricPanel({
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block rounded-xl px-4 py-3 border border-white/10 hover:border-aplat-cyan/30 hover:bg-white/5 text-aplat-text transition-colors"
+                        className="block rounded-xl px-4 py-3 border border-white/10 hover:border-guru-cyan/30 hover:bg-white/5 text-guru-text transition-colors"
                       >
                         <span className="font-medium">{name}</span>
-                        <span className="text-aplat-muted text-sm block truncate">{url}</span>
+                        <span className="text-guru-muted text-sm block truncate">{url}</span>
                       </a>
                     </li>
                   ))}
@@ -114,12 +114,12 @@ export function DashboardMetricPanel({
             )}
             {panel === "mrrUsd" && (
               <div className="space-y-2">
-                <p className="text-aplat-muted text-sm mb-4">
+                <p className="text-guru-muted text-sm mb-4">
                   Ingresos recurrentes mensuales (MRR) en USD.
                 </p>
                 <div className="rounded-xl border border-white/10 px-4 py-6 text-center">
-                  <p className="text-3xl font-bold text-aplat-emerald">${mrrUsd}</p>
-                  <p className="text-aplat-muted text-sm mt-1">Total MRR</p>
+                  <p className="text-3xl font-bold text-guru-emerald">${mrrUsd}</p>
+                  <p className="text-guru-muted text-sm mt-1">Total MRR</p>
                 </div>
               </div>
             )}

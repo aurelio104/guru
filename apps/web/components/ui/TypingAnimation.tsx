@@ -79,7 +79,7 @@ export function TypingAnimation({
         {displayText}
       </motion.span>
       <motion.span
-        className="text-aplat-cyan inline-block ml-0.5"
+        className="text-guru-cyan inline-block ml-0.5"
         animate={{ opacity: [1, 0] }}
         transition={{ duration: 0.6, repeat: Infinity }}
       >

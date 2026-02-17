@@ -1,12 +1,12 @@
 /**
- * APlat Presence — Alertas por WhatsApp
+ * GURU Presence — Alertas por WhatsApp
  * Envía notificaciones cuando hay pico de ocupación o anomalías.
  * Usa Baileys (sendWhatsAppMessage). Rate limit: 1 alerta por tipo por sitio por hora.
  */
 import { getSites, getSiteById, getZonesBySite } from "./presence-store.js";
 import { getAnalyticsContext } from "./intelligence-engine.js";
 
-const ALERT_PHONES = (process.env.APLAT_PRESENCE_ALERT_PHONE || "")
+const ALERT_PHONES = (process.env.GURU_PRESENCE_ALERT_PHONE || "")
   .split(",")
   .map((p) => p.trim().replace(/[^0-9]/g, ""))
   .filter((p) => p.length >= 8);
@@ -40,7 +40,7 @@ export async function checkAndSendPresenceAlerts(siteId?: string): Promise<{
   let skipped = 0;
 
   if (ALERT_PHONES.length === 0) {
-    return { sent: 0, skipped: 0, errors: ["APLAT_PRESENCE_ALERT_PHONE no configurado."] };
+    return { sent: 0, skipped: 0, errors: ["GURU_PRESENCE_ALERT_PHONE no configurado."] };
   }
 
   let whatsappModule: Awaited<typeof import("./whatsapp.js")> | null = null;
@@ -75,7 +75,7 @@ export async function checkAndSendPresenceAlerts(siteId?: string): Promise<{
         continue;
       }
 
-      const msg = `*APlat Presence* 📍\n\n*${site.name}*\n\n` +
+      const msg = `*GURU Presence* 📍\n\n*${site.name}*\n\n` +
         `🔔 *${insight.title}*\n${insight.description}`;
 
       let ok = false;

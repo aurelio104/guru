@@ -1,6 +1,6 @@
 # Análisis completo: carpeta Aurelio (Work)
 
-**Objetivo:** Inventario de la carpeta local `Work/Aurelio` con todas sus ramas y subcarpetas, para completar la información necesaria para valorar el portafolio (empresa / marca Aurelio / APlat).
+**Objetivo:** Inventario de la carpeta local `Work/Aurelio` con todas sus ramas y subcarpetas, para completar la información necesaria para valorar el portafolio (empresa / marca Aurelio / GURU).
 
 **Ámbito:** `/Users/aureliomedina/Documents/Work/Aurelio`  
 **Fecha de análisis:** 10 Feb 2026
@@ -11,7 +11,7 @@
 
 ```
 Work/Aurelio/
-├── A/                    # APlat — sitio + API (monorepo Next + Fastify)
+├── A/                    # GURU — sitio + API (monorepo Next + Fastify)
 ├── BotArbi/              # Analizador/ejecutor arbitraje cripto (Binance, CCXT)
 ├── Fotos/                # Mejora de resolución con IA (Real-ESRGAN, ComfyUI, integración Jcavalier)
 ├── GVX/                  # GVX City Screens — reserva de slots en pantallas urbanas
@@ -28,13 +28,13 @@ Work/Aurelio/
 
 ## 2. Árbol detallado por carpeta
 
-### 2.1 A (APlat)
+### 2.1 A (GURU)
 
 ```
 A/
 ├── apps/
 │   ├── api/          # API Fastify (formulario contacto) — Koyeb
-│   └── web/          # Sitio público APlat — Next.js 15, Tailwind 4 — Vercel
+│   └── web/          # Sitio público GURU — Next.js 15, Tailwind 4 — Vercel
 ├── docs/             # Portafolio, servicios, deploy, análisis Albatros/Aurelio
 ├── scripts/          # sync-vercel-domains.mjs
 ├── APLAT-PLAN-MAESTRO.md
@@ -44,7 +44,7 @@ A/
 
 | Aspecto | Contenido |
 |--------|-----------|
-| **Propósito** | Marca APlat: servicios digitales (plataformas web, venta/reservas, centros de mando, control de acceso, reportes, integraciones). Sitio público + API contacto. |
+| **Propósito** | Marca GURU: servicios digitales (plataformas web, venta/reservas, centros de mando, control de acceso, reportes, integraciones). Sitio público + API contacto. |
 | **Stack** | Next.js 15, Tailwind 4, TypeScript (web); Node 24, Fastify (api). |
 | **Qué hay** | Landing (Hero, Servicios, Portfolio, Contact, HowItWorks, Intelligence), login, docs (portafolio, servicios, DEPLOY-*, ANALISIS-CARPETA-ALBATROS). Plan maestro con análisis de repos y capacidades. |
 | **Qué puede faltar** | Logos por proyecto; métricas (visitas, leads); página de precios/servicios; casos de éxito con datos. |
@@ -220,13 +220,13 @@ RT/
 
 ---
 
-## 3. Resumen para valoración (Aurelio / APlat)
+## 3. Resumen para valoración (Aurelio / GURU)
 
 ### 3.1 Activos con valor claro
 
 | Carpeta | Valor principal |
 |---------|------------------|
-| **A (APlat)** | Marca y sitio público; plan maestro; base para presentación a inversión/venta. |
+| **A (GURU)** | Marca y sitio público; plan maestro; base para presentación a inversión/venta. |
 | **Jcavalier** | E-commerce + bot WhatsApp completo (IA, visión, OCR, flows); reutilizable como producto o white-label. |
 | **maracay-deportiva** | Sistema de puntos y ventas en producción; caso de uso concreto (cliente Maracay Deportiva). |
 | **RT** | Producto reportes/Excel multiempresa; roles, PWA, deploy listo; base para automatización de datos. |
@@ -243,21 +243,21 @@ RT/
 
 ### 3.3 Lo que suele faltar para una valoración completa
 
-1. **Ingresos y contratos** por proyecto (APlat, Jcavalier, maracay-deportiva, RT, GVX, Fotos).
+1. **Ingresos y contratos** por proyecto (GURU, Jcavalier, maracay-deportiva, RT, GVX, Fotos).
 2. **Métricas de uso**: usuarios activos, ventas, reportes subidos, slots reservados, etc.
 3. **One-pagers o fichas de producto** por cada activo vendible.
 4. **Logos y nombres** unificados (ya iniciado en A con portafolio; completar por proyecto).
 5. **Relación Albatros ↔ Aurelio**: qué es compartido (ej. Pago Móvil, Control de Acceso), qué es solo Aurelio.
-6. **Estado legal e IP**: marcas (APlat, Jcavalier, GVX), licencias de código.
+6. **Estado legal e IP**: marcas (GURU, Jcavalier, GVX), licencias de código.
 7. **Costes**: hosting (Koyeb, Vercel), dominios, tiempo por proyecto.
 
 ---
 
 ## 4. Cruce con carpeta Albatros
 
-- **A (APlat)** incluye en `docs/` el análisis de la carpeta **Albatros** (`ANALISIS-CARPETA-ALBATROS.md`).
+- **A (GURU)** incluye en `docs/` el análisis de la carpeta **Albatros** (`ANALISIS-CARPETA-ALBATROS.md`).
 - Proyectos que aparecen en ambos contextos (Albatros y/o Plan Maestro): Omac, plataforma-albatros, control-acceso-albatros, rt-reportes, JCavalier, maracay-deportiva, MundoIAanime, BotArbi, gvx-demo, albatros-presentacion.
-- Para una **valoración unificada** (empresa que engloba Albatros + Aurelio/APlat), conviene tener un único inventario de productos, ingresos y métricas, y este documento (Aurelio) junto con el de Albatros son la base.
+- Para una **valoración unificada** (empresa que engloba Albatros + Aurelio/GURU), conviene tener un único inventario de productos, ingresos y métricas, y este documento (Aurelio) junto con el de Albatros son la base.
 
 ---
 
@@ -265,6 +265,6 @@ RT/
 
 1. Completar **logos** y **nombres** por proyecto en A (portafolio y docs).
 2. Añadir por carpeta: **¿En producción?** (sí/no, URL), **¿Cliente/ingresos?** (sí/no), **Rol** (producto vendible / interno / experimental).
-3. Crear **fichas de producto** (one-pager) para: APlat, Jcavalier, maracay-deportiva, RT, GVX, Fotos.
+3. Crear **fichas de producto** (one-pager) para: GURU, Jcavalier, maracay-deportiva, RT, GVX, Fotos.
 4. Unificar en un **índice** (en A/docs o en Work) los documentos: ANALISIS-CARPETA-ALBATROS.md, ANALISIS-CARPETA-AURELIO.md, portafolio.md, servicios.md, APLAT-PLAN-MAESTRO.md.
 5. Cuando corresponda: repetir estilo de análisis para **Work/PDF** u otras carpetas que entren en la valoración.

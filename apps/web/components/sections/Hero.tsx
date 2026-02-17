@@ -22,12 +22,12 @@ export function Hero() {
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto preserve-3d">
         <motion.div
-          className="inline-flex items-center gap-2 glass glass-strong rounded-full px-4 py-2 mb-8 text-sm text-aplat-muted smooth-transition border-aplat-cyan/20"
+          className="inline-flex items-center gap-2 glass glass-strong rounded-full px-4 py-2 mb-8 text-sm text-guru-muted smooth-transition border-guru-cyan/20"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
         >
-          <Sparkles className="w-4 h-4 text-aplat-cyan" />
+          <Sparkles className="w-4 h-4 text-guru-cyan" />
           <span>{t("hero.badge")}</span>
         </motion.div>
 
@@ -37,7 +37,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
         >
-          <span className="text-aplat-text">{t("hero.title")}</span>
+          <span className="text-guru-text">{t("hero.title")}</span>
           <br />
           <span className="text-gradient-cyan">
             <TypingAnimation
@@ -48,7 +48,7 @@ export function Hero() {
         </motion.h1>
 
         <motion.p
-          className="text-lg md:text-xl text-aplat-muted max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-lg md:text-xl text-guru-muted max-w-2xl mx-auto mb-10 leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
@@ -64,7 +64,7 @@ export function Hero() {
         >
           <motion.a
             href="#servicios"
-            className="inline-flex items-center gap-2 rounded-xl glass-neon px-6 py-3 text-aplat-text font-medium smooth-transition shadow-depth hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 rounded-xl glass-neon px-6 py-3 text-guru-text font-medium smooth-transition shadow-depth hover:-translate-y-0.5"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -73,7 +73,7 @@ export function Hero() {
           </motion.a>
           <motion.a
             href="#como-funciona"
-            className="inline-flex items-center gap-2 rounded-xl glass glass-strong px-6 py-3 text-aplat-muted font-medium smooth-transition hover:text-aplat-text hover:border-white/20"
+            className="inline-flex items-center gap-2 rounded-xl glass glass-strong px-6 py-3 text-guru-muted font-medium smooth-transition hover:text-guru-text hover:border-white/20"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -94,7 +94,7 @@ export function Hero() {
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <div className="w-1 h-2 rounded-full bg-aplat-cyan/80" />
+          <div className="w-1 h-2 rounded-full bg-guru-cyan/80" />
         </motion.div>
       </motion.div>
     </section>

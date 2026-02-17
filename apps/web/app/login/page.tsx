@@ -15,10 +15,10 @@ import {
 } from "lucide-react";
 import { getWebAuthnRpId, decodeBase64UrlToUint8Array } from "@/lib/webauthn";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -105,7 +105,7 @@ function LoginForm() {
         return;
       }
       if (verifyData.token) {
-        localStorage.setItem("aplat_token", verifyData.token);
+        localStorage.setItem("guru_token", verifyData.token);
       }
       setMessage({ type: "success", text: "Sesión iniciada con Passkey. Redirigiendo..." });
       const target = redirectTo && redirectTo.startsWith("/") ? redirectTo : "/dashboard";
@@ -127,7 +127,7 @@ function LoginForm() {
       setMessage({ type: "error", text: "API no configurada." });
       return;
     }
-    const token = localStorage.getItem("aplat_token");
+    const token = localStorage.getItem("guru_token");
     if (!token) {
       doRedirect();
       return;
@@ -221,7 +221,7 @@ function LoginForm() {
         return;
       }
       if (data.token) {
-        typeof window !== "undefined" && localStorage.setItem("aplat_token", data.token);
+        typeof window !== "undefined" && localStorage.setItem("guru_token", data.token);
       }
       setMessage({
         type: "success",
@@ -259,13 +259,13 @@ function LoginForm() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-aplat-cyan/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-aplat-violet/10 rounded-full blur-[120px]" />
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-guru-cyan/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-guru-violet/10 rounded-full blur-[120px]" />
       </div>
       <div className="absolute top-0 left-0 right-0 z-10 p-6">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-aplat-muted hover:text-aplat-text transition-colors"
+          className="inline-flex items-center gap-2 text-guru-muted hover:text-guru-text transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver
@@ -280,10 +280,10 @@ function LoginForm() {
       >
         <div className="glass glass-strong rounded-2xl p-8 mirror-shine border border-white/10">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-aplat-text mb-1">
+            <h1 className="text-2xl font-bold text-guru-text mb-1">
               Acceso seguro
             </h1>
-            <p className="text-aplat-muted text-sm">
+            <p className="text-guru-muted text-sm">
               Passkey o email/contraseña (como Omac)
             </p>
           </div>
@@ -299,8 +299,8 @@ function LoginForm() {
                 onClick={() => setAuthMethod(id)}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   authMethod === id
-                    ? "bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/30"
-                    : "text-aplat-muted hover:text-aplat-text"
+                    ? "bg-guru-cyan/20 text-guru-cyan border border-guru-cyan/30"
+                    : "text-guru-muted hover:text-guru-text"
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -315,21 +315,21 @@ function LoginForm() {
                 <div
                   className={`rounded-xl px-4 py-3 text-sm ${
                     message.type === "success"
-                      ? "bg-aplat-emerald/10 text-aplat-emerald border border-aplat-emerald/20"
+                      ? "bg-guru-emerald/10 text-guru-emerald border border-guru-emerald/20"
                       : "bg-red-500/10 text-red-400 border border-red-500/20"
                   }`}
                 >
                   {message.text}
                 </div>
               )}
-              <p className="text-aplat-muted text-sm text-center">
+              <p className="text-guru-muted text-sm text-center">
                 Inicia sesión con tu Passkey (Face ID, Touch ID, llave de seguridad o smartphone vía QR).
               </p>
               <button
                 type="button"
                 onClick={handlePasskeyLogin}
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan border border-guru-cyan/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
               >
                 {loading ? (
                   <>
@@ -352,7 +352,7 @@ function LoginForm() {
                 <div
                   className={`rounded-xl px-4 py-3 text-sm ${
                     message.type === "success"
-                      ? "bg-aplat-emerald/10 text-aplat-emerald border border-aplat-emerald/20"
+                      ? "bg-guru-emerald/10 text-guru-emerald border border-guru-emerald/20"
                       : "bg-red-500/10 text-red-400 border border-red-500/20"
                   }`}
                 >
@@ -360,7 +360,7 @@ function LoginForm() {
                 </div>
               )}
               <label className="block">
-                <span className="text-aplat-muted text-sm mb-1 block">Email</span>
+                <span className="text-guru-muted text-sm mb-1 block">Email</span>
                 <input
                   type="email"
                   value={email}
@@ -368,11 +368,11 @@ function LoginForm() {
                   placeholder="tu@email.com"
                   required
                   disabled={loading}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none focus:ring-1 focus:ring-aplat-cyan/30 disabled:opacity-60"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-guru-text placeholder:text-guru-muted/60 focus:border-guru-cyan/50 focus:outline-none focus:ring-1 focus:ring-guru-cyan/30 disabled:opacity-60"
                 />
               </label>
               <label className="block">
-                <span className="text-aplat-muted text-sm mb-1 block">Contraseña</span>
+                <span className="text-guru-muted text-sm mb-1 block">Contraseña</span>
                 <input
                   type="password"
                   value={password}
@@ -380,13 +380,13 @@ function LoginForm() {
                   placeholder="••••••••"
                   required
                   disabled={loading}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-aplat-text placeholder:text-aplat-muted/60 focus:border-aplat-cyan/50 focus:outline-none focus:ring-1 focus:ring-aplat-cyan/30 disabled:opacity-60"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-guru-text placeholder:text-guru-muted/60 focus:border-guru-cyan/50 focus:outline-none focus:ring-1 focus:ring-guru-cyan/30 disabled:opacity-60"
                 />
               </label>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan border border-guru-cyan/40 px-4 py-3 font-medium transition-all disabled:opacity-60"
               >
                 {loading ? (
                   <>
@@ -403,13 +403,13 @@ function LoginForm() {
             </form>
           )}
 
-          <p className="mt-6 text-center text-aplat-muted text-sm">
+          <p className="mt-6 text-center text-guru-muted text-sm">
             ¿No tienes cuenta?{" "}
-            <Link href="/register" className="text-aplat-cyan hover:underline">
+            <Link href="/register" className="text-guru-cyan hover:underline">
               Regístrate como cliente
             </Link>
           </p>
-          <div className="mt-4 flex flex-wrap justify-center gap-4 text-aplat-muted text-xs">
+          <div className="mt-4 flex flex-wrap justify-center gap-4 text-guru-muted text-xs">
             <span className="inline-flex items-center gap-1">
               <Shield className="w-3.5 h-3.5" />
               JWT + HTTPS
@@ -443,7 +443,7 @@ function LoginForm() {
             >
               <div className="glass glass-strong rounded-2xl p-6 border border-white/10 mirror-shine">
                 <div className="flex items-start justify-between gap-4 mb-4">
-                  <div className="rounded-xl p-2 bg-aplat-violet/15 text-aplat-violet">
+                  <div className="rounded-xl p-2 bg-guru-violet/15 text-guru-violet">
                     <KeyRound className="w-5 h-5" />
                   </div>
                   <button
@@ -452,23 +452,23 @@ function LoginForm() {
                       setShowPasskeyPrompt(false);
                       doRedirect();
                     }}
-                    className="text-aplat-muted hover:text-aplat-text p-1 rounded-lg transition-colors"
+                    className="text-guru-muted hover:text-guru-text p-1 rounded-lg transition-colors"
                     aria-label="Cerrar"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
-                <h3 className="text-lg font-semibold text-aplat-text mb-2">
+                <h3 className="text-lg font-semibold text-guru-text mb-2">
                   Registrar Passkey
                 </h3>
-                <p className="text-aplat-muted text-sm mb-5">
+                <p className="text-guru-muted text-sm mb-5">
                   Registra una Passkey para iniciar sesión sin contraseña. Podrás guardarla en este dispositivo o escanear el QR para guardarla en tu smartphone.
                 </p>
                 {message && showPasskeyPrompt && (
                   <div
                     className={`rounded-xl px-4 py-3 text-sm mb-4 ${
                       message.type === "success"
-                        ? "bg-aplat-emerald/10 text-aplat-emerald border border-aplat-emerald/20"
+                        ? "bg-guru-emerald/10 text-guru-emerald border border-guru-emerald/20"
                         : "bg-red-500/10 text-red-400 border border-red-500/20"
                     }`}
                   >
@@ -483,7 +483,7 @@ function LoginForm() {
                       doRedirect();
                     }}
                     disabled={passkeyRegistering}
-                    className="flex-1 rounded-xl border border-white/20 text-aplat-muted hover:text-aplat-text hover:border-white/30 px-4 py-3 text-sm font-medium transition-all disabled:opacity-60"
+                    className="flex-1 rounded-xl border border-white/20 text-guru-muted hover:text-guru-text hover:border-white/30 px-4 py-3 text-sm font-medium transition-all disabled:opacity-60"
                   >
                     Más tarde
                   </button>
@@ -491,7 +491,7 @@ function LoginForm() {
                     type="button"
                     onClick={registerPasskeyFromLogin}
                     disabled={passkeyRegistering}
-                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-aplat-violet/20 hover:bg-aplat-violet/30 text-aplat-violet border border-aplat-violet/40 px-4 py-3 text-sm font-medium transition-all disabled:opacity-60"
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-guru-violet/20 hover:bg-guru-violet/30 text-guru-violet border border-guru-violet/40 px-4 py-3 text-sm font-medium transition-all disabled:opacity-60"
                   >
                     {passkeyRegistering ? (
                       <>
@@ -518,8 +518,8 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-aplat-deep">
-        <div className="w-10 h-10 border-2 border-aplat-cyan/40 border-t-aplat-cyan rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-guru-deep">
+        <div className="w-10 h-10 border-2 border-guru-cyan/40 border-t-guru-cyan rounded-full animate-spin" />
       </div>
     }>
       <LoginForm />

@@ -1,6 +1,6 @@
 # Estudio: 5 plataformas tecnológicas actuales
 
-Análisis de cinco plataformas tecnológicas de referencia (2024–2025) para definir **qué tienen**, **qué les falta** y **qué tiene APlat**, y así armar la página de servicios de APlat.
+Análisis de cinco plataformas tecnológicas de referencia (2024–2025) para definir **qué tienen**, **qué les falta** y **qué tiene GURU**, y así armar la página de servicios de GURU.
 
 ---
 
@@ -28,7 +28,7 @@ Análisis de cinco plataformas tecnológicas de referencia (2024–2025) para de
 - **Footer completo:** Products, Resources, Solutions, Frameworks.
 - **Dark/light mode** y diseño cuidado.
 
-### Qué le falta (para un sitio de servicios como APlat)
+### Qué le falta (para un sitio de servicios como GURU)
 - No vende “servicios de implementación” como tal; vende plataforma.
 - No hay “portafolio de proyectos” ni casos de estudio de clientes (sí testimonios de rendimiento).
 - No hay precios públicos en home (sí en Pricing aparte).
@@ -126,7 +126,7 @@ Análisis de cinco plataformas tecnológicas de referencia (2024–2025) para de
 
 ---
 
-## Qué tiene APlat (tu portafolio actual)
+## Qué tiene GURU (tu portafolio actual)
 
 Basado en el Plan Maestro y el análisis de repos:
 
@@ -145,7 +145,7 @@ Basado en el Plan Maestro y el análisis de repos:
 
 Para acercarnos a lo mejor de las 5 plataformas y adaptarlo a “venta de servicios”:
 
-1. **Home con mensaje en 1 línea** (estilo Vercel/Raycast): qué es APlat y qué gana el cliente.
+1. **Home con mensaje en 1 línea** (estilo Vercel/Raycast): qué es GURU y qué gana el cliente.
 2. **Doble CTA:** uno para “Ver servicios” o “Ver portafolio” y otro para “Contactar” / “Pedir presupuesto”.
 3. **Social proof:** logos de clientes o proyectos (aunque sea “Albatros”, “RT”, etc.) + 1 métrica o frase por proyecto (“Reservas en tiempo real”, “Reportes desde Excel en minutos”).
 4. **Servicios por tipo de uso** (estilo Vercel): “¿Qué necesitas?” → Plataformas web / Venta y reservas / Dashboards / Control de acceso / Reportes y datos / Integraciones. Cada uno con 1–2 frases y enlace a detalle.
@@ -158,7 +158,7 @@ Para acercarnos a lo mejor de las 5 plataformas y adaptarlo a “venta de servic
 
 ---
 
-## Checklist para la página APlat de servicios
+## Checklist para la página GURU de servicios
 
 Usa esta lista al construir la página:
 
@@ -179,15 +179,15 @@ Usa esta lista al construir la página:
 
 - **Vercel/Netlify/Linear/Raycast** son referentes en claridad de mensaje, CTAs, productos listados y diseño; no tienen portafolio ni “servicios a medida”.
 - **Agencias** son referentes en portafolio, casos de estudio y servicios; suelen tener menos “productización” y métricas visibles.
-- **APlat** ya tiene: servicios definidos, portafolio real, stack y casos con resultado. Lo que falta es **llevarlo a una sola página** con estructura “super mega inteligente”: hero + proof + servicios por uso + portafolio + stack + contacto + footer.
+- **GURU** ya tiene: servicios definidos, portafolio real, stack y casos con resultado. Lo que falta es **llevarlo a una sola página** con estructura “super mega inteligente”: hero + proof + servicios por uso + portafolio + stack + contacto + footer.
 
-Con este estudio puedes diseñar y desarrollar la página de servicios de APlat tomando lo mejor de las 5 plataformas y adaptándolo a “venta de servicios digitales”.
+Con este estudio puedes diseñar y desarrollar la página de servicios de GURU tomando lo mejor de las 5 plataformas y adaptándolo a “venta de servicios digitales”.
 
 ---
 
 ## Tabla rápida: tienen / les falta / tenemos nosotros
 
-| Elemento | Las 5 plataformas (qué tienen) | Qué les falta (para vender servicios como nosotros) | APlat (qué tenemos ya) |
+| Elemento | Las 5 plataformas (qué tienen) | Qué les falta (para vender servicios como nosotros) | GURU (qué tenemos ya) |
 |----------|--------------------------------|-----------------------------------------------------|-------------------------|
 | Mensaje en 1 línea | Vercel, Netlify, Linear, Raycast: muy claro | Agencias a veces lo diluyen | Falta escribirlo y ponerlo en hero |
 | CTAs visibles | Todas: 1–2 botones arriba | — | Falta implementarlos en la página |

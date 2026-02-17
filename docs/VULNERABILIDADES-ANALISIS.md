@@ -1,4 +1,4 @@
-# Análisis Completo de Vulnerabilidades - APlat API
+# Análisis Completo de Vulnerabilidades - GURU API
 
 **Fecha:** 2026-02-12  
 **Versión:** 1.0.0  
@@ -125,7 +125,7 @@ dbRun("INSERT INTO clients (id, email, password_hash, ...) VALUES (?, ?, ?, ...)
 
 **Recomendación:**
 - ⚠️ En producción, configurar `CORS_ORIGIN` específico (no `true`)
-- Ejemplo: `CORS_ORIGIN=https://aplat.vercel.app`
+- Ejemplo: `CORS_ORIGIN=https://guru.vercel.app`
 
 **Riesgo actual:** **BAJO** (JWT mitiga CSRF naturalmente)
 
@@ -148,7 +148,7 @@ dbRun("INSERT INTO clients (id, email, password_hash, ...) VALUES (?, ?, ?, ...)
 #### JWT
 ```typescript
 ✅ Algoritmo: HS256
-✅ Secret: APLAT_JWT_SECRET (env variable)
+✅ Secret: GURU_JWT_SECRET (env variable)
 ✅ Expiración: 7 días
 ✅ Validación en todas las rutas protegidas
 ```
@@ -166,7 +166,7 @@ dbRun("INSERT INTO clients (id, email, password_hash, ...) VALUES (?, ?, ?, ...)
 ```typescript
 // Línea 83, index.ts
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.APLAT_JWT_SECRET || "dev-aplat-secret-cambiar-en-produccion"
+  process.env.GURU_JWT_SECRET || "dev-aplat-secret-cambiar-en-produccion"
 );
 ```
 **Impacto:** BAJO (solo desarrollo)  
@@ -175,7 +175,7 @@ const JWT_SECRET = new TextEncoder().encode(
 ⚠️ **2. Contraseña de admin por defecto**
 ```typescript
 // Línea 193, index.ts
-const adminPassword = process.env.APLAT_ADMIN_PASSWORD || "APlat2025!";
+const adminPassword = process.env.GURU_ADMIN_PASSWORD || "GURU2025!";
 ```
 **Impacto:** MEDIO (si no se cambia en producción)  
 **Recomendación:** Agregar validación que falle si en producción no está configurado
@@ -207,7 +207,7 @@ const adminPassword = process.env.APLAT_ADMIN_PASSWORD || "APlat2025!";
 **Estado:** **EXCELENTE**
 
 **Auditoría implementada:**
-- ✅ Base de datos `aplat-audit.db` con todos los cambios
+- ✅ Base de datos `guru-audit.db` con todos los cambios
 - ✅ Eventos: CREATE, UPDATE, DELETE, LOGIN, LOGIN_FAIL
 - ✅ Campos: timestamp, action, entity, entity_id, user_id, ip, details
 - ✅ Persistencia permanente
@@ -383,16 +383,16 @@ $ grep -r "exec(" apps/api/src/  # 0 resultados
 **Código actual:**
 ```typescript
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.APLAT_JWT_SECRET || "dev-aplat-secret-cambiar-en-produccion"
+  process.env.GURU_JWT_SECRET || "dev-aplat-secret-cambiar-en-produccion"
 );
 ```
 
 **Solución:**
 ```typescript
 const JWT_SECRET = (() => {
-  const secret = process.env.APLAT_JWT_SECRET;
+  const secret = process.env.GURU_JWT_SECRET;
   if (!secret && process.env.NODE_ENV === "production") {
-    throw new Error("APLAT_JWT_SECRET es obligatorio en producción");
+    throw new Error("GURU_JWT_SECRET es obligatorio en producción");
   }
   return new TextEncoder().encode(secret || "dev-aplat-secret-SOLO-DESARROLLO");
 })();
@@ -409,20 +409,20 @@ const JWT_SECRET = (() => {
 
 **Código actual:**
 ```typescript
-const adminPassword = process.env.APLAT_ADMIN_PASSWORD || "APlat2025!";
+const adminPassword = process.env.GURU_ADMIN_PASSWORD || "GURU2025!";
 ```
 
 **Solución:**
 ```typescript
 const adminPassword = (() => {
-  const pass = process.env.APLAT_ADMIN_PASSWORD;
+  const pass = process.env.GURU_ADMIN_PASSWORD;
   if (!pass && process.env.NODE_ENV === "production") {
-    throw new Error("APLAT_ADMIN_PASSWORD es obligatorio en producción");
+    throw new Error("GURU_ADMIN_PASSWORD es obligatorio en producción");
   }
   if (pass && pass.length < 12 && process.env.NODE_ENV === "production") {
-    throw new Error("APLAT_ADMIN_PASSWORD debe tener al menos 12 caracteres en producción");
+    throw new Error("GURU_ADMIN_PASSWORD debe tener al menos 12 caracteres en producción");
   }
-  return pass || "APlat2025!-SOLO-DESARROLLO";
+  return pass || "GURU2025!-SOLO-DESARROLLO";
 })();
 ```
 
@@ -501,14 +501,14 @@ await app.register(rateLimit, {
 
 ### Obligatorio antes de deploy:
 
-- [ ] **V-001**: Configurar `APLAT_JWT_SECRET` (32+ chars aleatorios)
-- [ ] **V-002**: Configurar `APLAT_ADMIN_PASSWORD` (12+ chars, compleja)
+- [ ] **V-001**: Configurar `GURU_JWT_SECRET` (32+ chars aleatorios)
+- [ ] **V-002**: Configurar `GURU_ADMIN_PASSWORD` (12+ chars, compleja)
 - [ ] **V-003**: Configurar `CORS_ORIGIN` específico (no `true`)
-- [ ] Configurar `APLAT_DATA_PATH` en volumen persistente
-- [ ] Configurar `APLAT_CRON_SECRET` si se usan cortes automáticos
-- [ ] Configurar `APLAT_WEBAUTHN_RP_ID` con hostname del frontend
+- [ ] Configurar `GURU_DATA_PATH` en volumen persistente
+- [ ] Configurar `GURU_CRON_SECRET` si se usan cortes automáticos
+- [ ] Configurar `GURU_WEBAUTHN_RP_ID` con hostname del frontend
 - [ ] Verificar HTTPS en producción (Koyeb lo hace automáticamente)
-- [ ] Backup de `aplat.db` y `aplat-audit.db`
+- [ ] Backup de `guru.db` y `guru-audit.db`
 
 ### Recomendado:
 
@@ -540,7 +540,7 @@ await app.register(rateLimit, {
 
 **Estado general:** ✅ **MUY SEGURO**
 
-El sistema APlat API está muy bien implementado con múltiples capas de seguridad. Las únicas vulnerabilidades encontradas son de **MEDIA-BAJA prioridad** y fáciles de corregir:
+El sistema GURU API está muy bien implementado con múltiples capas de seguridad. Las únicas vulnerabilidades encontradas son de **MEDIA-BAJA prioridad** y fáciles de corregir:
 
 1. Validación de secrets obligatorios en producción (5 minutos)
 2. CORS más estricto en producción (2 minutos)
@@ -552,4 +552,4 @@ El sistema APlat API está muy bien implementado con múltiples capas de segurid
 ---
 
 **Próxima revisión:** 2026-03-12 (30 días)  
-**Responsable:** Equipo de Seguridad APlat
+**Responsable:** Equipo de Seguridad GURU

@@ -55,11 +55,11 @@ const PILLARS: Pillar[] = [
 
 const colorMap: Record<string, string> = {
   cyan:
-    "border-aplat-cyan/30 bg-aplat-cyan/5 hover:border-aplat-cyan/40 hover:shadow-[0_0_50px_-5px_rgba(34,211,238,0.2)]",
+    "border-guru-cyan/30 bg-guru-cyan/5 hover:border-guru-cyan/40 hover:shadow-[0_0_50px_-5px_rgba(34,211,238,0.2)]",
   violet:
-    "border-aplat-violet/30 bg-aplat-violet/5 hover:border-aplat-violet/40 hover:shadow-[0_0_50px_-5px_rgba(167,139,250,0.2)]",
+    "border-guru-violet/30 bg-guru-violet/5 hover:border-guru-violet/40 hover:shadow-[0_0_50px_-5px_rgba(167,139,250,0.2)]",
   emerald:
-    "border-aplat-emerald/30 bg-aplat-emerald/5 hover:border-aplat-emerald/40 hover:shadow-[0_0_50px_-5px_rgba(52,211,153,0.2)]",
+    "border-guru-emerald/30 bg-guru-emerald/5 hover:border-guru-emerald/40 hover:shadow-[0_0_50px_-5px_rgba(52,211,153,0.2)]",
 };
 
 export function CybersecurityPillars() {
@@ -80,7 +80,7 @@ export function CybersecurityPillars() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-aplat-cyan/30 bg-aplat-cyan/10 px-4 py-2 text-xs font-semibold text-aplat-cyan uppercase tracking-widest">
+          <span className="inline-flex items-center gap-2 rounded-full border border-guru-cyan/30 bg-guru-cyan/10 px-4 py-2 text-xs font-semibold text-guru-cyan uppercase tracking-widest">
             <Shield className="w-4 h-4" />
             Prioridad estratégica
           </span>
@@ -96,7 +96,7 @@ export function CybersecurityPillars() {
           Ciberseguridad como prioridad
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-4"
+          className="text-guru-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -105,7 +105,7 @@ export function CybersecurityPillars() {
           Tres pilares que definen nuestro compromiso con la protección, el cumplimiento normativo y la respuesta ante amenazas.
         </motion.p>
         <motion.p
-          className="text-aplat-muted/80 text-center text-sm max-w-xl mx-auto mb-16"
+          className="text-guru-muted/80 text-center text-sm max-w-xl mx-auto mb-16"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -137,24 +137,24 @@ export function CybersecurityPillars() {
                         className="object-contain p-2"
                       />
                     ) : (
-                      <pillar.icon className="w-10 h-10 text-aplat-emerald/80" />
+                      <pillar.icon className="w-10 h-10 text-guru-emerald/80" />
                     )}
                   </div>
                   <div>
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-aplat-text mb-1">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-guru-text mb-1">
                       {pillar.name}
                     </h3>
-                    <p className="text-aplat-cyan/90 text-sm font-medium uppercase tracking-wider">
+                    <p className="text-guru-cyan/90 text-sm font-medium uppercase tracking-wider">
                       {pillar.tagline}
                     </p>
                   </div>
                 </div>
-                <p className="text-aplat-muted leading-relaxed mb-6 flex-1">
+                <p className="text-guru-muted leading-relaxed mb-6 flex-1">
                   {pillar.description}
                 </p>
                 <div className="flex flex-wrap items-center gap-3">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-mono text-aplat-muted">
-                    <pillar.icon className="w-3.5 h-3.5 text-aplat-cyan/80" />
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-mono text-guru-muted">
+                    <pillar.icon className="w-3.5 h-3.5 text-guru-cyan/80" />
                     {pillar.stack}
                   </span>
                   <span className="rounded-full border border-amber-500/20 bg-amber-500/5 px-3 py-1.5 text-xs text-amber-400/90">

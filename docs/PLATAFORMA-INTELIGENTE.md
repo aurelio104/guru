@@ -1,4 +1,4 @@
-# APlat — Visión: plataforma inteligente, autocurable y en auto-desarrollo
+# GURU — Visión: plataforma inteligente, autocurable y en auto-desarrollo
 
 **Propósito:** Referencia de cómo la plataforma se orienta a ser autocurable, aprender de su estado e ir integrando lo que falta.  
 **Última actualización:** Febrero 2026
@@ -44,7 +44,7 @@ En línea con lo anterior, los módulos del dashboard (Presence, Security, GDPR,
 
 ## 3. Próximos pasos (orientación)
 
-- **Health avanzado:** Incluir en `/api/health` comprobaciones de escritura en `APLAT_DATA_PATH` o disponibilidad de PostgreSQL si aplica (readiness).
+- **Health avanzado:** Incluir en `/api/health` comprobaciones de escritura en `GURU_DATA_PATH` o disponibilidad de PostgreSQL si aplica (readiness).
 - **Auditoría y aprendizaje:** Usar logs de auditoría existentes para detectar patrones (ej. rutas más usadas, errores recurrentes) y exponerlos en un panel o en sugerencias.
 - **Integración continua:** Scripts de prueba (test-public-api, test-production-api) y, si se añade CI, ejecutarlos en cada push para detectar regresiones.
 - **Auto-completado de configuración:** Endpoints tipo "seed" (como en GDPR e Incidentes) para rellenar datos por defecto cuando falten; el widget de estado puede enlazar a esas acciones.

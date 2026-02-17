@@ -5,11 +5,11 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Package, Plus, Trash2, Loader2, ArrowLeft } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -123,7 +123,7 @@ export default function DashboardAssetsPage() {
     <div className="max-w-4xl mx-auto px-4 py-6">
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-2 text-aplat-muted hover:text-aplat-text mb-6"
+        className="inline-flex items-center gap-2 text-guru-muted hover:text-guru-text mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         Volver al panel
@@ -134,15 +134,15 @@ export default function DashboardAssetsPage() {
         className="flex items-center justify-between gap-4 mb-6"
       >
         <div className="flex items-center gap-2">
-          <div className="rounded-xl p-2 bg-aplat-cyan/15 text-aplat-cyan">
+          <div className="rounded-xl p-2 bg-guru-cyan/15 text-guru-cyan">
             <Package className="w-5 h-5" />
           </div>
-          <h1 className="text-2xl font-bold text-aplat-text">Activos (tracking BLE)</h1>
+          <h1 className="text-2xl font-bold text-guru-text">Activos (tracking BLE)</h1>
         </div>
         <button
           type="button"
           onClick={() => setShowForm(!showForm)}
-          className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2 text-sm font-medium"
+          className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan border border-guru-cyan/40 px-4 py-2 text-sm font-medium"
         >
           <Plus className="w-4 h-4" />
           Nuevo activo
@@ -162,8 +162,8 @@ export default function DashboardAssetsPage() {
           onSubmit={handleCreate}
           className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-6"
         >
-          <h2 className="text-lg font-semibold text-aplat-text mb-3">Nuevo activo</h2>
-          <p className="text-aplat-muted text-sm mb-3">
+          <h2 className="text-lg font-semibold text-guru-text mb-3">Nuevo activo</h2>
+          <p className="text-guru-muted text-sm mb-3">
             Asocie un beacon BLE de Presence a un activo (equipo, mochila, etc.) para hacer tracking.
           </p>
           {sites.length === 0 ? (
@@ -173,11 +173,11 @@ export default function DashboardAssetsPage() {
           ) : (
             <div className="grid gap-3">
               <div>
-                <label className="block text-sm font-medium text-aplat-muted mb-1">Sede</label>
+                <label className="block text-sm font-medium text-guru-muted mb-1">Sede</label>
                 <select
                   value={form.siteId}
                   onChange={(e) => setForm((f) => ({ ...f, siteId: e.target.value, beaconId: "" }))}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
                   required
                 >
                   <option value="">Seleccionar sede...</option>
@@ -190,9 +190,9 @@ export default function DashboardAssetsPage() {
               </div>
               {form.siteId && (
                 <div>
-                  <label className="block text-sm font-medium text-aplat-muted mb-1">Beacon</label>
+                  <label className="block text-sm font-medium text-guru-muted mb-1">Beacon</label>
                   {beaconsLoading ? (
-                    <div className="flex items-center gap-2 text-aplat-muted text-sm py-2">
+                    <div className="flex items-center gap-2 text-guru-muted text-sm py-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Cargando beacons...
                     </div>
@@ -204,7 +204,7 @@ export default function DashboardAssetsPage() {
                     <select
                       value={form.beaconId}
                       onChange={(e) => setForm((f) => ({ ...f, beaconId: e.target.value }))}
-                      className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
                       required
                     >
                       <option value="">Seleccionar beacon...</option>
@@ -218,24 +218,24 @@ export default function DashboardAssetsPage() {
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-aplat-muted mb-1">Nombre del activo</label>
+                <label className="block text-sm font-medium text-guru-muted mb-1">Nombre del activo</label>
                 <input
                   type="text"
                   placeholder="Ej. Mochila oficina, Laptop sala 2"
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-aplat-muted mb-1">Descripción (opcional)</label>
+                <label className="block text-sm font-medium text-guru-muted mb-1">Descripción (opcional)</label>
                 <input
                   type="text"
                   placeholder="Detalles adicionales"
                   value={form.description}
                   onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted"
                 />
               </div>
             </div>
@@ -244,7 +244,7 @@ export default function DashboardAssetsPage() {
             <button
               type="submit"
               disabled={submitting || !canCreate || !form.name.trim() || !form.beaconId.trim() || !form.siteId.trim()}
-              className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm font-medium disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 text-guru-cyan px-4 py-2 text-sm font-medium disabled:opacity-60"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               Crear
@@ -252,7 +252,7 @@ export default function DashboardAssetsPage() {
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="rounded-xl border border-white/20 px-4 py-2 text-sm text-aplat-muted hover:text-aplat-text"
+              className="rounded-xl border border-white/20 px-4 py-2 text-sm text-guru-muted hover:text-guru-text"
             >
               Cancelar
             </button>
@@ -261,7 +261,7 @@ export default function DashboardAssetsPage() {
       )}
 
       {loading && (
-        <div className="flex items-center gap-2 text-aplat-muted py-8">
+        <div className="flex items-center gap-2 text-guru-muted py-8">
           <Loader2 className="w-5 h-5 animate-spin" />
           Cargando activos...
         </div>
@@ -272,15 +272,15 @@ export default function DashboardAssetsPage() {
           animate={{ opacity: 1 }}
           className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center"
         >
-          <Package className="w-12 h-12 text-aplat-muted/70 mx-auto mb-4" />
-          <h2 className="text-lg font-semibold text-aplat-text mb-2">No hay activos registrados</h2>
-          <p className="text-aplat-muted text-sm max-w-md mx-auto mb-5">
+          <Package className="w-12 h-12 text-guru-muted/70 mx-auto mb-4" />
+          <h2 className="text-lg font-semibold text-guru-text mb-2">No hay activos registrados</h2>
+          <p className="text-guru-muted text-sm max-w-md mx-auto mb-5">
             Cree un activo para asociar un beacon BLE (de Presence) a un elemento físico y hacer tracking — por ejemplo equipos, mochilas o dispositivos.
           </p>
           <button
             type="button"
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2.5 text-sm font-medium"
+            className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan border border-guru-cyan/40 px-4 py-2.5 text-sm font-medium"
           >
             <Plus className="w-4 h-4" />
             Crear primer activo
@@ -295,11 +295,11 @@ export default function DashboardAssetsPage() {
               className="rounded-xl border border-white/10 bg-white/5 p-4 flex items-center justify-between gap-4"
             >
               <div>
-                <p className="font-medium text-aplat-text">{asset.name}</p>
+                <p className="font-medium text-guru-text">{asset.name}</p>
                 {asset.description && (
-                  <p className="text-sm text-aplat-muted mt-0.5">{asset.description}</p>
+                  <p className="text-sm text-guru-muted mt-0.5">{asset.description}</p>
                 )}
-                <p className="text-xs text-aplat-muted mt-1">
+                <p className="text-xs text-guru-muted mt-1">
                   Beacon: {asset.beaconId} · Sitio: {asset.siteId}
                 </p>
               </div>

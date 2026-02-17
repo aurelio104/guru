@@ -5,10 +5,8 @@
       <stop offset="100%" stop-color="#a78bfa"/>
     </linearGradient>
   </defs>
-  <!-- A: left leg -->
-  <path d="M8 26 L16 6 L18 6 L26 26 L23 26 L21 20 L11 20 L9 26 Z" fill="url(#icon-grad)"/>
-  <!-- A: crossbar -->
-  <path d="M12 16 L20 16 L19 13 L13 13 Z" fill="#030306"/>
+  <!-- G: curve + hook (same gradient style as former A) -->
+  <path d="M18 6 C22 6 26 8 26 16 C26 22 22 26 16 26 C10 26 6 22 6 16 C6 10 10 6 16 6 L18 6 L18 14 L26 14 L26 18 L18 18 Z" fill="url(#icon-grad)"/>
   <!-- Dot -->
   <circle cx="24" cy="26" r="3" fill="#22d3ee"/>
 </svg>

@@ -7,8 +7,8 @@ import fs from "fs";
 import path from "path";
 import { logAudit } from "./audit-store.js";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
-const STORE_FILE = process.env.APLAT_WEBAUTHN_STORE_PATH || path.join(DATA_DIR, "webauthn-store.json");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
+const STORE_FILE = process.env.GURU_WEBAUTHN_STORE_PATH || path.join(DATA_DIR, "webauthn-store.json");
 
 export type StoredCredential = {
   userId: number;

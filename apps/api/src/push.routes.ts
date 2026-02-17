@@ -1,5 +1,5 @@
 /**
- * APlat Web Push — API suscripciones y envío.
+ * GURU Web Push — API suscripciones y envío.
  */
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { jwtVerify } from "jose";
@@ -13,8 +13,8 @@ import {
 
 type AuthPayload = { sub?: string; email?: string; role?: string };
 
-const VAPID_PUBLIC = process.env.APLAT_VAPID_PUBLIC_KEY ?? "";
-const VAPID_PRIVATE = process.env.APLAT_VAPID_PRIVATE_KEY ?? "";
+const VAPID_PUBLIC = process.env.GURU_VAPID_PUBLIC_KEY ?? "";
+const VAPID_PRIVATE = process.env.GURU_VAPID_PRIVATE_KEY ?? "";
 
 if (VAPID_PUBLIC && VAPID_PRIVATE) {
   webpush.setVapidDetails(
@@ -25,7 +25,7 @@ if (VAPID_PUBLIC && VAPID_PRIVATE) {
 }
 
 async function getJwtSecret(): Promise<Uint8Array> {
-  const secret = process.env.APLAT_JWT_SECRET || "dev-aplat-secret-SOLO-DESARROLLO-CAMBIAR";
+  const secret = process.env.GURU_JWT_SECRET || "dev-guru-secret-SOLO-DESARROLLO-CAMBIAR";
   return new TextEncoder().encode(secret);
 }
 
@@ -100,7 +100,7 @@ export async function registerPushRoutes(app: FastifyInstance): Promise<void> {
       return reply.status(503).send({ ok: false, error: "Web Push no configurado (VAPID keys)." });
     }
     const body = request.body as { title?: string; body?: string; tag?: string };
-    const title = body.title ?? "APlat";
+    const title = body.title ?? "GURU";
     const payload = JSON.stringify({
       title,
       body: body.body ?? "",

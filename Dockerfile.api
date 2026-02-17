@@ -1,4 +1,4 @@
-# APlat API · Build desde raíz del monorepo (para Koyeb)
+# GURU API · Build desde raíz del monorepo (para Koyeb)
 FROM node:24-alpine AS base
 WORKDIR /app
 

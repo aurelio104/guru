@@ -1,4 +1,4 @@
-# APlat Presence — Fase 5: Dashboard avanzado y export
+# GURU Presence — Fase 5: Dashboard avanzado y export
 
 ## Resumen
 

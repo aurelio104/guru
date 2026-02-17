@@ -14,7 +14,7 @@ export function ServicesBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
       {/* Base */}
-      <div className="absolute inset-0 bg-aplat-surface/50" />
+      <div className="absolute inset-0 bg-guru-surface/50" />
 
       {/* Nube: capas superiores con animación suave */}
       <svg
@@ -106,7 +106,7 @@ export function ServicesBackground() {
       ].map((p, i) => (
         <div
           key={i}
-          className="absolute w-1.5 h-1.5 rounded-full bg-aplat-cyan/60"
+          className="absolute w-1.5 h-1.5 rounded-full bg-guru-cyan/60"
           style={{
             left: p.left,
             top: p.top,
@@ -163,8 +163,8 @@ export function ServicesBackground() {
       </svg>
 
       {/* Orbes de ambiente */}
-      <div className="absolute top-0 right-0 w-[45vmax] h-[45vmax] max-w-[600px] max-h-[600px] bg-aplat-violet/8 rounded-full blur-[20vmin] animate-neon-pulse" />
-      <div className="absolute bottom-0 left-0 w-[35vmax] h-[35vmax] max-w-[500px] max-h-[500px] bg-aplat-cyan/6 rounded-full blur-[18vmin]" />
+      <div className="absolute top-0 right-0 w-[45vmax] h-[45vmax] max-w-[600px] max-h-[600px] bg-guru-violet/8 rounded-full blur-[20vmin] animate-neon-pulse" />
+      <div className="absolute bottom-0 left-0 w-[35vmax] h-[35vmax] max-w-[500px] max-h-[500px] bg-guru-cyan/6 rounded-full blur-[18vmin]" />
     </div>
   );
 }

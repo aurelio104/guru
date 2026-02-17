@@ -12,7 +12,7 @@ import { FuturistBackground } from "@/components/ui/FuturistBackground";
 export function HeroBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-      <div className="absolute inset-0 bg-aplat-deep" />
+      <div className="absolute inset-0 bg-guru-deep" />
 
       {/* Imagen de fondo sutil + textura futurista (última generación) */}
       <FuturistBackground
@@ -47,9 +47,9 @@ export function HeroBackground() {
       <GlassScreensBackground />
 
       {/* Orbes de luz */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-aplat-cyan/12 rounded-full blur-[180px] animate-neon-pulse" />
-      <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-aplat-violet/10 rounded-full blur-[140px]" />
-      <div className="absolute top-1/3 left-0 w-[400px] h-[300px] bg-aplat-cyan/8 rounded-full blur-[120px]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-guru-cyan/12 rounded-full blur-[180px] animate-neon-pulse" />
+      <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-guru-violet/10 rounded-full blur-[140px]" />
+      <div className="absolute top-1/3 left-0 w-[400px] h-[300px] bg-guru-cyan/8 rounded-full blur-[120px]" />
     </div>
   );
 }

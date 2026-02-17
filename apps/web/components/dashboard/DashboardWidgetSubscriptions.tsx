@@ -18,11 +18,11 @@ import {
 } from "lucide-react";
 import { CountryCodePhoneInput } from "@/components/ui/CountryCodePhoneInput";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const DAYS = Array.from({ length: 28 }, (_, i) => i + 1);
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -178,15 +178,15 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
     >
       <div className="flex items-center justify-between gap-2 mb-4">
         <div className="flex items-center gap-2">
-          <div className="rounded-xl p-2 bg-aplat-violet/15 text-aplat-violet">
+          <div className="rounded-xl p-2 bg-guru-violet/15 text-guru-violet">
             <CreditCard className="w-5 h-5" />
           </div>
-          <h2 className="text-lg font-semibold text-aplat-text">Suscripciones</h2>
+          <h2 className="text-lg font-semibold text-guru-text">Suscripciones</h2>
         </div>
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className="inline-flex items-center gap-1 rounded-lg text-aplat-muted hover:text-aplat-text text-sm"
+          className="inline-flex items-center gap-1 rounded-lg text-guru-muted hover:text-guru-text text-sm"
         >
           {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           {expanded ? "Ocultar lista" : "Ver lista"}
@@ -196,23 +196,23 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
       {/* Métricas */}
       <div className="grid grid-cols-3 gap-2 mb-4">
         <div className="rounded-xl bg-white/5 border border-white/5 px-3 py-2 text-center">
-          <div className="text-lg font-semibold text-aplat-text">{metrics.total}</div>
-          <div className="text-xs text-aplat-muted">Total</div>
+          <div className="text-lg font-semibold text-guru-text">{metrics.total}</div>
+          <div className="text-xs text-guru-muted">Total</div>
         </div>
-        <div className="rounded-xl bg-aplat-emerald/10 border border-aplat-emerald/20 px-3 py-2 text-center">
-          <div className="text-lg font-semibold text-aplat-emerald">{metrics.active}</div>
-          <div className="text-xs text-aplat-muted">Activas</div>
+        <div className="rounded-xl bg-guru-emerald/10 border border-guru-emerald/20 px-3 py-2 text-center">
+          <div className="text-lg font-semibold text-guru-emerald">{metrics.active}</div>
+          <div className="text-xs text-guru-muted">Activas</div>
         </div>
         <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 px-3 py-2 text-center">
           <div className="text-lg font-semibold text-amber-400">{metrics.suspended}</div>
-          <div className="text-xs text-aplat-muted">Suspendidas</div>
+          <div className="text-xs text-guru-muted">Suspendidas</div>
         </div>
       </div>
 
       {message && (
         <div
           className={`rounded-xl px-3 py-2 text-sm mb-3 ${
-            message.type === "success" ? "bg-aplat-emerald/10 text-aplat-emerald" : "bg-red-500/10 text-red-400"
+            message.type === "success" ? "bg-guru-emerald/10 text-guru-emerald" : "bg-red-500/10 text-red-400"
           }`}
         >
           {message.text}
@@ -243,21 +243,21 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
                   setNewOpen(true);
                   setSelected(null);
                 }}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-aplat-violet/20 hover:bg-aplat-violet/30 text-aplat-violet border border-aplat-violet/30 px-2.5 py-1.5 text-xs font-medium"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-guru-violet/20 hover:bg-guru-violet/30 text-guru-violet border border-guru-violet/30 px-2.5 py-1.5 text-xs font-medium"
               >
                 Nueva suscripción
               </button>
-              <button type="button" onClick={fetchSubs} disabled={loading} className="p-1.5 rounded-lg text-aplat-muted hover:text-aplat-text text-xs">
+              <button type="button" onClick={fetchSubs} disabled={loading} className="p-1.5 rounded-lg text-guru-muted hover:text-guru-text text-xs">
                 Actualizar
               </button>
             </div>
 
             {loading ? (
               <div className="flex justify-center py-6">
-                <Loader2 className="w-6 h-6 animate-spin text-aplat-cyan" />
+                <Loader2 className="w-6 h-6 animate-spin text-guru-cyan" />
               </div>
             ) : list.length === 0 ? (
-              <p className="text-aplat-muted text-sm py-4">No hay suscripciones guardadas. Crea una con &quot;Nueva suscripción&quot; y Enviar invitación por WhatsApp.</p>
+              <p className="text-guru-muted text-sm py-4">No hay suscripciones guardadas. Crea una con &quot;Nueva suscripción&quot; y Enviar invitación por WhatsApp.</p>
             ) : (
               <ul className="space-y-2 max-h-[320px] overflow-y-auto">
                 {list.map((s) => (
@@ -270,18 +270,18 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
                     }}
                     className="flex flex-wrap items-center gap-2 rounded-xl bg-white/5 border border-white/5 px-3 py-2 text-sm cursor-pointer hover:bg-white/10 transition-colors"
                   >
-                    <span className="font-medium text-aplat-text">{s.serviceName}</span>
-                    <span className="text-aplat-muted">
+                    <span className="font-medium text-guru-text">{s.serviceName}</span>
+                    <span className="text-guru-muted">
                       {s.status === "suspended" && s.lastMissedCutoff ? `Vencido: ${s.lastMissedCutoff}` : `Corte: ${s.nextCutoff}`}
                     </span>
                     <span
                       className={`text-xs font-medium px-2 py-0.5 rounded-lg ${
-                        s.status === "active" ? "bg-aplat-emerald/20 text-aplat-emerald" : "bg-amber-500/20 text-amber-400"
+                        s.status === "active" ? "bg-guru-emerald/20 text-guru-emerald" : "bg-amber-500/20 text-amber-400"
                       }`}
                     >
                       {s.status === "active" ? "Activo" : "Suspendido"}
                     </span>
-                    {s.amount != null && <span className="text-aplat-emerald text-xs">${s.amount}</span>}
+                    {s.amount != null && <span className="text-guru-emerald text-xs">${s.amount}</span>}
                   </li>
                 ))}
               </ul>
@@ -300,19 +300,19 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
             className="mt-4 rounded-xl bg-white/5 border border-white/10 p-4 space-y-3"
           >
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-aplat-text">Nueva suscripción</h3>
-              <button type="button" onClick={() => setNewOpen(false)} className="p-1 rounded-lg text-aplat-muted hover:text-aplat-text">
+              <h3 className="text-sm font-semibold text-guru-text">Nueva suscripción</h3>
+              <button type="button" onClick={() => setNewOpen(false)} className="p-1 rounded-lg text-guru-muted hover:text-guru-text">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-aplat-muted text-xs">Activa ON, define día de cobro, correo y WhatsApp. Al enviar se guarda y se envía la invitación.</p>
+            <p className="text-guru-muted text-xs">Activa ON, define día de cobro, correo y WhatsApp. Al enviar se guarda y se envía la invitación.</p>
             <div className="grid gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-aplat-violet text-xs font-medium w-24">Servicio</span>
+                <span className="text-guru-violet text-xs font-medium w-24">Servicio</span>
                 <select
                   value={newService}
                   onChange={(e) => setNewService(e.target.value)}
-                  className="rounded-lg bg-white/5 border border-white/10 text-aplat-text px-2 py-1.5 text-sm flex-1"
+                  className="rounded-lg bg-white/5 border border-white/10 text-guru-text px-2 py-1.5 text-sm flex-1"
                 >
                   <option value="">Seleccionar</option>
                   {projects.map((p) => (
@@ -323,12 +323,12 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
                 </select>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-aplat-violet shrink-0" />
-                <span className="text-aplat-muted text-xs w-24">Día de cobro</span>
+                <Calendar className="w-4 h-4 text-guru-violet shrink-0" />
+                <span className="text-guru-muted text-xs w-24">Día de cobro</span>
                 <select
                   value={newDay}
                   onChange={(e) => setNewDay(Number(e.target.value))}
-                  className="rounded-lg bg-white/5 border border-white/10 text-aplat-text px-2 py-1 text-sm"
+                  className="rounded-lg bg-white/5 border border-white/10 text-guru-text px-2 py-1 text-sm"
                 >
                   {DAYS.map((d) => (
                     <option key={d} value={d}>
@@ -336,20 +336,20 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
                     </option>
                   ))}
                 </select>
-                <span className="text-aplat-cyan/90 text-xs">Recordatorio: {getNextReminderLabel(newDay)}</span>
+                <span className="text-guru-cyan/90 text-xs">Recordatorio: {getNextReminderLabel(newDay)}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-aplat-muted text-xs w-24">Correo</span>
+                <span className="text-guru-muted text-xs w-24">Correo</span>
                 <input
                   type="email"
                   placeholder="cliente@email.com (crea cuenta)"
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
-                  className="rounded-lg bg-white/5 border border-white/10 text-aplat-text placeholder:text-aplat-muted/60 px-2 py-1.5 text-sm flex-1"
+                  className="rounded-lg bg-white/5 border border-white/10 text-guru-text placeholder:text-guru-muted/60 px-2 py-1.5 text-sm flex-1"
                 />
               </div>
               <div className="flex items-center gap-2">
-                <MessageCircle className="w-4 h-4 text-aplat-emerald shrink-0" />
+                <MessageCircle className="w-4 h-4 text-guru-emerald shrink-0" />
                 <CountryCodePhoneInput
                   value={newPhone}
                   onChange={setNewPhone}
@@ -359,7 +359,7 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
                 />
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-aplat-muted text-xs w-24">Monto $</span>
+                <span className="text-guru-muted text-xs w-24">Monto $</span>
                 <input
                   type="number"
                   min={0}
@@ -367,14 +367,14 @@ export function DashboardWidgetSubscriptions({ projects }: { projects: ProjectEn
                   placeholder="Opcional"
                   value={newAmount === "" ? "" : newAmount}
                   onChange={(e) => setNewAmount(e.target.value === "" ? "" : Number(e.target.value))}
-                  className="rounded-lg bg-white/5 border border-white/10 text-aplat-text px-2 py-1.5 text-sm w-24"
+                  className="rounded-lg bg-white/5 border border-white/10 text-guru-text px-2 py-1.5 text-sm w-24"
                 />
               </div>
               <button
                 type="button"
                 onClick={handleSendNewInvite}
                 disabled={sendingInvite || !newService.trim() || !newPhone.trim()}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-aplat-emerald/20 hover:bg-aplat-emerald/30 text-aplat-emerald border border-aplat-emerald/40 px-3 py-2 text-sm font-medium disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-guru-emerald/20 hover:bg-guru-emerald/30 text-guru-emerald border border-guru-emerald/40 px-3 py-2 text-sm font-medium disabled:opacity-60"
               >
                 {sendingInvite ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 Enviar invitación por WhatsApp (guarda automático)
@@ -553,22 +553,22 @@ function SubscriptionModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-aplat-bg/95 border border-white/10 rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 space-y-4"
+        className="bg-guru-bg/95 border border-white/10 rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 space-y-4"
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-aplat-text">Editar suscripción</h3>
-          <button type="button" onClick={onClose} className="p-1.5 rounded-lg text-aplat-muted hover:text-aplat-text">
+          <h3 className="text-lg font-semibold text-guru-text">Editar suscripción</h3>
+          <button type="button" onClick={onClose} className="p-1.5 rounded-lg text-guru-muted hover:text-guru-text">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <span className="text-aplat-muted text-sm w-28">Servicio</span>
+            <span className="text-guru-muted text-sm w-28">Servicio</span>
             <select
               value={serviceName}
               onChange={(e) => setServiceName(e.target.value)}
-              className="rounded-lg bg-white/5 border border-white/10 text-aplat-text px-2 py-1.5 text-sm flex-1"
+              className="rounded-lg bg-white/5 border border-white/10 text-guru-text px-2 py-1.5 text-sm flex-1"
             >
               {projects.map((p) => (
                 <option key={p.name} value={p.name}>
@@ -582,13 +582,13 @@ function SubscriptionModal({
           </div>
 
           <div className="flex items-center gap-2">
-            <ToggleLeft className="w-5 h-5 text-aplat-violet shrink-0" />
-            <span className="text-aplat-muted text-sm w-28">Estado</span>
+            <ToggleLeft className="w-5 h-5 text-guru-violet shrink-0" />
+            <span className="text-guru-muted text-sm w-28">Estado</span>
             <button
               type="button"
               onClick={() => setStatus((s) => (s === "active" ? "suspended" : "active"))}
               className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium ${
-                status === "active" ? "bg-aplat-emerald/20 text-aplat-emerald" : "bg-amber-500/20 text-amber-400"
+                status === "active" ? "bg-guru-emerald/20 text-guru-emerald" : "bg-amber-500/20 text-amber-400"
               }`}
             >
               {status === "active" ? "ON" : "OFF"}
@@ -596,12 +596,12 @@ function SubscriptionModal({
           </div>
 
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-aplat-violet shrink-0" />
-            <span className="text-aplat-muted text-sm w-28">Día de cobro</span>
+            <Calendar className="w-4 h-4 text-guru-violet shrink-0" />
+            <span className="text-guru-muted text-sm w-28">Día de cobro</span>
             <select
               value={dayOfMonth}
               onChange={(e) => setDayOfMonth(Number(e.target.value))}
-              className="rounded-lg bg-white/5 border border-white/10 text-aplat-text px-2 py-1 text-sm"
+              className="rounded-lg bg-white/5 border border-white/10 text-guru-text px-2 py-1 text-sm"
             >
               {DAYS.map((d) => (
                 <option key={d} value={d}>
@@ -609,35 +609,35 @@ function SubscriptionModal({
                 </option>
               ))}
             </select>
-            <span className="text-aplat-cyan/90 text-xs">Recordatorio: {getNextReminderLabel(dayOfMonth)}</span>
+            <span className="text-guru-cyan/90 text-xs">Recordatorio: {getNextReminderLabel(dayOfMonth)}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <MessageCircle className="w-4 h-4 shrink-0 text-aplat-emerald" />
-            <span className="text-aplat-muted text-sm w-28">Teléfono</span>
+            <MessageCircle className="w-4 h-4 shrink-0 text-guru-emerald" />
+            <span className="text-guru-muted text-sm w-28">Teléfono</span>
             <CountryCodePhoneInput value={phone} onChange={setPhone} placeholder="WhatsApp" compact className="flex-1" />
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-aplat-muted text-sm w-28">Correo</span>
+            <span className="text-guru-muted text-sm w-28">Correo</span>
             <input
               type="email"
               value={clientEmail}
               onChange={(e) => setClientEmail(e.target.value)}
-              className="rounded-lg bg-white/5 border border-white/10 text-aplat-text px-2 py-1.5 text-sm flex-1"
+              className="rounded-lg bg-white/5 border border-white/10 text-guru-text px-2 py-1.5 text-sm flex-1"
               placeholder="cliente@email.com"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-aplat-muted text-sm w-28">Monto $</span>
+            <span className="text-guru-muted text-sm w-28">Monto $</span>
             <input
               type="number"
               min={0}
               step={0.01}
               value={amount === "" ? "" : amount}
               onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
-              className="rounded-lg bg-white/5 border border-white/10 text-aplat-text px-2 py-1.5 text-sm w-24"
+              className="rounded-lg bg-white/5 border border-white/10 text-guru-text px-2 py-1.5 text-sm w-24"
             />
           </div>
         </div>
@@ -647,7 +647,7 @@ function SubscriptionModal({
             type="button"
             onClick={handleSave}
             disabled={processing === sub.id}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-aplat-violet/20 hover:bg-aplat-violet/30 text-aplat-violet border border-aplat-violet/30 px-3 py-2 text-sm font-medium disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-guru-violet/20 hover:bg-guru-violet/30 text-guru-violet border border-guru-violet/30 px-3 py-2 text-sm font-medium disabled:opacity-60"
           >
             {processing === sub.id ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             Guardar
@@ -657,7 +657,7 @@ function SubscriptionModal({
               type="button"
               onClick={handleMarkPaid}
               disabled={processing === sub.id}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-aplat-emerald/20 hover:bg-aplat-emerald/30 text-aplat-emerald border border-aplat-emerald/30 px-3 py-2 text-sm font-medium disabled:opacity-60"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-guru-emerald/20 hover:bg-guru-emerald/30 text-guru-emerald border border-guru-emerald/30 px-3 py-2 text-sm font-medium disabled:opacity-60"
             >
               {processing === sub.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
               Marcar pagado
@@ -667,7 +667,7 @@ function SubscriptionModal({
             type="button"
             onClick={handleSendWhatsApp}
             disabled={sendingWa}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-aplat-emerald/20 hover:bg-aplat-emerald/30 text-aplat-emerald border border-aplat-emerald/40 px-3 py-2 text-sm font-medium disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-guru-emerald/20 hover:bg-guru-emerald/30 text-guru-emerald border border-guru-emerald/40 px-3 py-2 text-sm font-medium disabled:opacity-60"
           >
             {sendingWa ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             Enviar WhatsApp
@@ -679,7 +679,7 @@ function SubscriptionModal({
             className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60 ${
               confirmDelete
                 ? "bg-red-500/30 text-red-400 border border-red-500/50"
-                : "bg-white/10 text-aplat-muted hover:text-red-400 border border-white/10"
+                : "bg-white/10 text-guru-muted hover:text-red-400 border border-white/10"
             }`}
           >
             {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}

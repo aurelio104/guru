@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import { CreditCard, Plus, Loader2 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -80,7 +80,7 @@ export function NfcTagAdmin({ siteId }: { siteId: string }) {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-aplat-muted text-sm">
+      <div className="flex items-center gap-2 text-guru-muted text-sm">
         <Loader2 className="w-4 h-4 animate-spin" />
         Cargando tags NFC...
       </div>
@@ -90,15 +90,15 @@ export function NfcTagAdmin({ siteId }: { siteId: string }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="font-medium text-aplat-text flex items-center gap-2">
-          <CreditCard className="w-4 h-4 text-aplat-violet" />
+        <h4 className="font-medium text-guru-text flex items-center gap-2">
+          <CreditCard className="w-4 h-4 text-guru-violet" />
           Tags NFC
         </h4>
         {zones.length > 0 && (
           <button
             type="button"
             onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-aplat-violet/20 text-aplat-violet text-sm hover:bg-aplat-violet/30"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-guru-violet/20 text-guru-violet text-sm hover:bg-guru-violet/30"
           >
             <Plus className="w-4 h-4" />
             Añadir
@@ -113,20 +113,20 @@ export function NfcTagAdmin({ siteId }: { siteId: string }) {
             placeholder="Nombre"
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm"
           />
           <input
             type="text"
             placeholder="Tag ID (escaneado o ingresado)"
             value={form.tag_id}
             onChange={(e) => setForm((f) => ({ ...f, tag_id: e.target.value }))}
-            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm font-mono"
+            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm font-mono"
           />
-          <label className="block text-xs text-aplat-muted mb-0.5">Zona</label>
+          <label className="block text-xs text-guru-muted mb-0.5">Zona</label>
           <select
             value={form.zone_id}
             onChange={(e) => setForm((f) => ({ ...f, zone_id: e.target.value }))}
-            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm"
             aria-label="Zona"
           >
             <option value="">Seleccionar zona...</option>
@@ -141,11 +141,11 @@ export function NfcTagAdmin({ siteId }: { siteId: string }) {
             <button
               type="submit"
               disabled={submitting}
-              className="px-4 py-2 rounded-lg bg-aplat-violet text-white font-medium text-sm disabled:opacity-60"
+              className="px-4 py-2 rounded-lg bg-guru-violet text-white font-medium text-sm disabled:opacity-60"
             >
               {submitting ? "Guardando..." : "Guardar"}
             </button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-white/5 text-aplat-muted text-sm">
+            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-white/5 text-guru-muted text-sm">
               Cancelar
             </button>
           </div>
@@ -153,20 +153,20 @@ export function NfcTagAdmin({ siteId }: { siteId: string }) {
       )}
 
       {zones.length === 0 && (
-        <p className="text-aplat-muted text-sm">
+        <p className="text-guru-muted text-sm">
           No hay zonas en esta sede. Cree al menos una en la sección «Zonas» más arriba para poder añadir tags NFC.
         </p>
       )}
       {tags.length === 0 && !showForm && zones.length > 0 && (
-        <p className="text-aplat-muted text-sm">No hay tags NFC. Añada uno para check-in por NFC (Chrome Android).</p>
+        <p className="text-guru-muted text-sm">No hay tags NFC. Añada uno para check-in por NFC (Chrome Android).</p>
       )}
       {tags.length > 0 && (
         <ul className="space-y-2">
           {tags.map((t) => (
             <li key={t.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-white/5 text-sm">
               <div>
-                <span className="text-aplat-text font-medium">{t.name}</span>
-                <span className="text-aplat-muted ml-2 font-mono text-xs">{t.tag_id}</span>
+                <span className="text-guru-text font-medium">{t.name}</span>
+                <span className="text-guru-muted ml-2 font-mono text-xs">{t.tag_id}</span>
               </div>
             </li>
           ))}

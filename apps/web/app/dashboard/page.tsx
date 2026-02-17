@@ -17,17 +17,17 @@ import type { ProjectEntry } from "@/components/dashboard/DashboardWidgetSubscri
 import portfolioUrls from "@/data/portfolio-production-urls.json";
 
 const QUICK_LINKS = [
-  { href: "/dashboard/presence", label: "Presence", desc: "Check-ins, zonas, beacons, portal WiFi", icon: MapPin, color: "bg-aplat-cyan/15 text-aplat-cyan" },
-  { href: "/dashboard/assets", label: "Activos", desc: "Tracking BLE de activos", icon: Package, color: "bg-aplat-cyan/15 text-aplat-cyan" },
+  { href: "/dashboard/presence", label: "Presence", desc: "Check-ins, zonas, beacons, portal WiFi", icon: MapPin, color: "bg-guru-cyan/15 text-guru-cyan" },
+  { href: "/dashboard/assets", label: "Activos", desc: "Tracking BLE de activos", icon: Package, color: "bg-guru-cyan/15 text-guru-cyan" },
   { href: "/dashboard/security", label: "Security", desc: "Vulnerabilidades y escaneos", icon: ShieldAlert, color: "bg-amber-500/15 text-amber-400" },
   { href: "/dashboard/gdpr", label: "GDPR / LOPD", desc: "Checklist de cumplimiento", icon: FileCheck, color: "bg-emerald-500/15 text-emerald-400" },
   { href: "/dashboard/incidents", label: "Incidentes", desc: "Registro y playbooks", icon: AlertTriangle, color: "bg-orange-500/15 text-orange-400" },
-  { href: "/dashboard/slots", label: "Slots", desc: "Disponibilidad y reservas", icon: Calendar, color: "bg-aplat-violet/15 text-aplat-violet" },
-  { href: "/dashboard/reports", label: "Reportes", desc: "Informes y análisis", icon: FileText, color: "bg-aplat-violet/15 text-aplat-violet" },
-  { href: "/dashboard/commerce", label: "Commerce", desc: "Pedidos y productos", icon: ShoppingCart, color: "bg-aplat-emerald/15 text-aplat-emerald" },
+  { href: "/dashboard/slots", label: "Slots", desc: "Disponibilidad y reservas", icon: Calendar, color: "bg-guru-violet/15 text-guru-violet" },
+  { href: "/dashboard/reports", label: "Reportes", desc: "Informes y análisis", icon: FileText, color: "bg-guru-violet/15 text-guru-violet" },
+  { href: "/dashboard/commerce", label: "Commerce", desc: "Pedidos y productos", icon: ShoppingCart, color: "bg-guru-emerald/15 text-guru-emerald" },
 ] as const;
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
 
 const projects: ProjectEntry[] = Object.entries(portfolioUrls as Record<string, string>).map(
@@ -35,7 +35,7 @@ const projects: ProjectEntry[] = Object.entries(portfolioUrls as Record<string, 
 );
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -105,8 +105,8 @@ export default function DashboardPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-aplat-text mb-2">Panel de control</h1>
-      <p className="text-aplat-muted text-sm mb-6">
+      <h1 className="text-2xl font-bold text-guru-text mb-2">Panel de control</h1>
+      <p className="text-guru-muted text-sm mb-6">
         Métricas globales, widgets por servicio y registro de conexiones.
       </p>
 
@@ -135,8 +135,8 @@ export default function DashboardPage() {
       </section>
 
       <section className="mt-6">
-        <h2 className="text-lg font-semibold text-aplat-text mb-3">Accesos rápidos</h2>
-        <p className="text-aplat-muted text-sm mb-4">
+        <h2 className="text-lg font-semibold text-guru-text mb-3">Accesos rápidos</h2>
+        <p className="text-guru-muted text-sm mb-4">
           Módulos del panel: presencia, seguridad, cumplimiento, incidentes y más.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -152,10 +152,10 @@ export default function DashboardPage() {
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-aplat-text group-hover:text-aplat-cyan">{link.label}</p>
-                  <p className="text-xs text-aplat-muted truncate">{link.desc}</p>
+                  <p className="font-medium text-guru-text group-hover:text-guru-cyan">{link.label}</p>
+                  <p className="text-xs text-guru-muted truncate">{link.desc}</p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-aplat-muted shrink-0" />
+                <ChevronRight className="w-4 h-4 text-guru-muted shrink-0" />
               </Link>
             );
           })}

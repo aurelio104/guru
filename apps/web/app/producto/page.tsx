@@ -8,9 +8,9 @@ import { useLocale } from "@/components/providers/LocaleProvider";
 export default function ProductoPage() {
   const { t } = useLocale();
   return (
-    <div className="min-h-screen bg-aplat-deep text-aplat-text">
+    <div className="min-h-screen bg-guru-deep text-guru-text">
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <Link href="/" className="inline-flex items-center gap-2 text-aplat-muted hover:text-aplat-text text-sm mb-8">
+        <Link href="/" className="inline-flex items-center gap-2 text-guru-muted hover:text-guru-text text-sm mb-8">
           ← Volver al inicio
         </Link>
 
@@ -19,10 +19,10 @@ export default function ProductoPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl font-bold text-aplat-text mb-4">
+          <h1 className="text-4xl font-bold text-guru-text mb-4">
             {t("producto.title")}
           </h1>
-          <p className="text-lg text-aplat-muted max-w-2xl mx-auto">
+          <p className="text-lg text-guru-muted max-w-2xl mx-auto">
             {t("producto.subtitle")}
           </p>
         </motion.header>
@@ -43,9 +43,9 @@ export default function ProductoPage() {
               key={item.nameKey}
               className="rounded-2xl border border-white/10 bg-white/5 p-6"
             >
-              <item.icon className="w-8 h-8 text-aplat-cyan mb-3" />
-              <h2 className="text-lg font-semibold text-aplat-text mb-1">{t(item.nameKey)}</h2>
-              <p className="text-sm text-aplat-muted">{t(item.descKey)}</p>
+              <item.icon className="w-8 h-8 text-guru-cyan mb-3" />
+              <h2 className="text-lg font-semibold text-guru-text mb-1">{t(item.nameKey)}</h2>
+              <p className="text-sm text-guru-muted">{t(item.descKey)}</p>
             </div>
           ))}
         </motion.section>
@@ -54,22 +54,22 @@ export default function ProductoPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-2xl border border-aplat-cyan/30 bg-aplat-cyan/5 p-8 mb-12"
+          className="rounded-2xl border border-guru-cyan/30 bg-guru-cyan/5 p-8 mb-12"
         >
-          <h2 className="text-xl font-semibold text-aplat-text mb-4">{t("producto.paquetes.title")}</h2>
-          <ul className="space-y-2 text-aplat-muted mb-6">
+          <h2 className="text-xl font-semibold text-guru-text mb-4">{t("producto.paquetes.title")}</h2>
+          <ul className="space-y-2 text-guru-muted mb-6">
             <li className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-aplat-emerald" />
+              <Check className="w-4 h-4 text-guru-emerald" />
               {t("producto.paquetes.item1")}
             </li>
             <li className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-aplat-emerald" />
+              <Check className="w-4 h-4 text-guru-emerald" />
               {t("producto.paquetes.item2")}
             </li>
           </ul>
           <Link
             href="/servicios"
-            className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan text-aplat-deep font-semibold px-5 py-2.5 hover:bg-aplat-cyan/90 transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan text-guru-deep font-semibold px-5 py-2.5 hover:bg-guru-cyan/90 transition-colors"
           >
             {t("producto.cta")}
             <ArrowRight className="w-4 h-4" />
@@ -82,12 +82,12 @@ export default function ProductoPage() {
           transition={{ delay: 0.3 }}
           className="text-center"
         >
-          <p className="text-aplat-muted text-sm mb-4">
+          <p className="text-guru-muted text-sm mb-4">
             {t("producto.contact.cta")}
           </p>
           <Link
             href="/#contacto"
-            className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-5 py-2.5 text-aplat-text text-sm font-medium transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-5 py-2.5 text-guru-text text-sm font-medium transition-colors"
           >
             {t("nav.contactar")}
           </Link>

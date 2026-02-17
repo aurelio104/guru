@@ -60,9 +60,9 @@ const SERVICES = [
 ];
 
 const colorMap = {
-  cyan: "text-aplat-cyan border-aplat-cyan/30 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]",
-  violet: "text-aplat-violet border-aplat-violet/30 hover:shadow-[0_0_30px_rgba(167,139,250,0.15)]",
-  emerald: "text-aplat-emerald border-aplat-emerald/30 hover:shadow-[0_0_30px_rgba(52,211,153,0.15)]",
+  cyan: "text-guru-cyan border-guru-cyan/30 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]",
+  violet: "text-guru-violet border-guru-violet/30 hover:shadow-[0_0_30px_rgba(167,139,250,0.15)]",
+  emerald: "text-guru-emerald border-guru-emerald/30 hover:shadow-[0_0_30px_rgba(52,211,153,0.15)]",
 };
 
 export function Services() {
@@ -93,7 +93,7 @@ export function Services() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
         >
-          <span className="inline-flex items-center rounded-full border border-aplat-cyan/25 bg-aplat-cyan/5 px-4 py-1.5 text-xs font-semibold text-aplat-cyan uppercase tracking-widest">
+          <span className="inline-flex items-center rounded-full border border-guru-cyan/25 bg-guru-cyan/5 px-4 py-1.5 text-xs font-semibold text-guru-cyan uppercase tracking-widest">
             Servicios
           </span>
         </motion.div>
@@ -108,7 +108,7 @@ export function Services() {
           Soluciones a medida
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-12 sm:mb-16 transition-reveal"
+          className="text-guru-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-12 sm:mb-16 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -132,10 +132,10 @@ export function Services() {
                 <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/5 border border-white/10 mb-4">
                   <service.icon className="w-5 h-5" />
                 </span>
-                <h3 className="text-lg font-semibold text-aplat-text mb-2">
+                <h3 className="text-lg font-semibold text-guru-text mb-2">
                   {service.title}
                 </h3>
-                <p className="text-aplat-muted text-sm leading-relaxed">
+                <p className="text-guru-muted text-sm leading-relaxed">
                   {service.desc}
                 </p>
               </Card3D>

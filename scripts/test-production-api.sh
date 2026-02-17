@@ -4,7 +4,7 @@
 #      o: API_URL=https://tu-api.koyeb.app ./scripts/test-production-api.sh
 # Si visit/visitors/whatsapp/webauthn dan 404, el despliegue activo en Koyeb puede ser antiguo.
 set -e
-API="${API_URL:-https://aplat-api-aurelio104-5877962a.koyeb.app}"
+API="${API_URL:-https://guru-api-aurelio104-5877962a.koyeb.app}"
 FAIL=0
 
 check() {
@@ -27,7 +27,7 @@ r=$(curl -s -w "\n%{http_code}" "$API/api/health")
 code=$(echo "$r" | tail -1)
 body=$(echo "$r" | sed '$d')
 check "health 200" "200" "$code"
-check "health body" "aplat-api" "$body"
+check "health body" "guru-api" "$body"
 echo ""
 
 echo "2. POST /api/analytics/visit"
@@ -37,7 +37,7 @@ check "visit 200" "200" "$code"
 echo ""
 
 echo "3. POST /api/auth/login"
-r=$(curl -s -X POST "$API/api/auth/login" -H "Content-Type: application/json" -d '{"email":"admin@aplat.local","password":"APlat2025!"}')
+r=$(curl -s -X POST "$API/api/auth/login" -H "Content-Type: application/json" -d '{"email":"admin@guru.local","password":"GURU2025!"}')
 check "login ok" '"ok":true' "$r"
 token=$(echo "$r" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
 if [[ -z "$token" ]]; then echo "  FAIL login no token"; FAIL=1; else echo "  OK login + token"; fi

@@ -20,7 +20,7 @@ const WINDOWS = [
 export function PortfolioBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
-      <div className="absolute inset-0 bg-aplat-surface/50" />
+      <div className="absolute inset-0 bg-guru-surface/50" />
 
       {/* Ventanas/cards fantasma (proyectos) */}
       {WINDOWS.map((win, i) => (
@@ -77,8 +77,8 @@ export function PortfolioBackground() {
       />
 
       {/* Orbes violeta (no cyan) */}
-      <div className="absolute top-0 right-0 w-[45vmax] h-[45vmax] max-w-[550px] max-h-[550px] rounded-full bg-aplat-violet/7 blur-[20vmin]" />
-      <div className="absolute bottom-0 left-0 w-[38vmax] h-[38vmax] max-w-[480px] max-h-[480px] rounded-full bg-aplat-violet/5 blur-[18vmin]" />
+      <div className="absolute top-0 right-0 w-[45vmax] h-[45vmax] max-w-[550px] max-h-[550px] rounded-full bg-guru-violet/7 blur-[20vmin]" />
+      <div className="absolute bottom-0 left-0 w-[38vmax] h-[38vmax] max-w-[480px] max-h-[480px] rounded-full bg-guru-violet/5 blur-[18vmin]" />
     </div>
   );
 }

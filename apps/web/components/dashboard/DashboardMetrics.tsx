@@ -61,35 +61,35 @@ const cards: Array<{
     key: "proyectosActivos",
     label: "Proyectos activos",
     icon: Layout,
-    iconClass: "bg-aplat-cyan/15 text-aplat-cyan",
+    iconClass: "bg-guru-cyan/15 text-guru-cyan",
     format: (v) => String(v),
   },
   {
     key: "suscripcionesActivas",
     label: "Suscripciones activas",
     icon: CreditCard,
-    iconClass: "bg-aplat-violet/15 text-aplat-violet",
+    iconClass: "bg-guru-violet/15 text-guru-violet",
     format: (v) => String(v),
   },
   {
     key: "mrrUsd",
     label: "MRR (USD)",
     icon: Activity,
-    iconClass: "bg-aplat-emerald/15 text-aplat-emerald",
+    iconClass: "bg-guru-emerald/15 text-guru-emerald",
     format: (v) => `$${v}`,
   },
   {
     key: "conexionesRecientes",
     label: "Conexiones recientes",
     icon: Users,
-    iconClass: "bg-aplat-cyan/15 text-aplat-cyan",
+    iconClass: "bg-guru-cyan/15 text-guru-cyan",
     format: (v) => String(v),
   },
   {
     key: "whatsappEstado",
     label: "WhatsApp",
     icon: MessageCircle,
-    iconClass: "bg-aplat-emerald/15 text-aplat-emerald",
+    iconClass: "bg-guru-emerald/15 text-guru-emerald",
     format: (_, m) =>
       m.whatsappEstado === "conectado"
         ? "Conectado"
@@ -101,7 +101,7 @@ const cards: Array<{
     key: "passkey",
     label: "Passkey",
     icon: KeyRound,
-    iconClass: "bg-aplat-violet/15 text-aplat-violet",
+    iconClass: "bg-guru-violet/15 text-guru-violet",
     format: (_, m) =>
       m.passkeyEstado === "configurado" ? "Configurado" : "No configurado",
   },
@@ -138,16 +138,16 @@ export function DashboardMetrics({ metrics, onCardClick }: DashboardMetricsProps
               onClick={isClickable ? () => onCardClick(key) : undefined}
               className={`w-full text-left glass glass-neon rounded-2xl p-4 md:p-5 border border-white/10 transition-colors ${
                 isClickable
-                  ? "hover:border-white/25 hover:shadow-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-aplat-cyan/50"
+                  ? "hover:border-white/25 hover:shadow-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-guru-cyan/50"
                   : ""
               }`}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="text-aplat-muted text-xs font-medium uppercase tracking-wider mb-1">
+                  <p className="text-guru-muted text-xs font-medium uppercase tracking-wider mb-1">
                     {label}
                   </p>
-                  <p className="text-2xl font-bold text-aplat-text truncate">
+                  <p className="text-2xl font-bold text-guru-text truncate">
                     {value}
                   </p>
                 </div>
@@ -156,7 +156,7 @@ export function DashboardMetrics({ metrics, onCardClick }: DashboardMetricsProps
                     <Icon className="w-5 h-5" />
                   </div>
                   {isClickable && (
-                    <ChevronRight className="w-4 h-4 text-aplat-muted" />
+                    <ChevronRight className="w-4 h-4 text-guru-muted" />
                   )}
                 </div>
               </div>

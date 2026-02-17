@@ -27,7 +27,7 @@ export function Nav() {
   }, []);
 
   useEffect(() => {
-    setHasToken(!!(typeof window !== "undefined" && localStorage.getItem("aplat_token")));
+    setHasToken(!!(typeof window !== "undefined" && localStorage.getItem("guru_token")));
   }, []);
 
   const { t } = useLocale();
@@ -42,8 +42,8 @@ export function Nav() {
       transition={{ duration: 0.5 }}
     >
       <nav className="container mx-auto px-6 h-16 flex items-center justify-between max-w-6xl">
-        <a href="/" className="text-xl font-bold text-aplat-text">
-          GURU<span className="text-aplat-cyan">.</span>
+        <a href="/" className="text-xl font-bold text-guru-text">
+          GURU<span className="text-guru-cyan">.</span>
         </a>
 
         <ul className="hidden md:flex items-center gap-8">
@@ -51,7 +51,7 @@ export function Nav() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-aplat-muted hover:text-aplat-text transition-colors text-sm font-medium"
+                className="text-guru-muted hover:text-guru-text transition-colors text-sm font-medium"
               >
                 {t(link.labelKey)}
               </a>
@@ -60,12 +60,12 @@ export function Nav() {
         </ul>
 
         <div className="hidden md:flex items-center gap-3">
-          <a href="/login" className="text-aplat-muted hover:text-aplat-text text-sm font-medium transition-colors">
+          <a href="/login" className="text-guru-muted hover:text-guru-text text-sm font-medium transition-colors">
             {t("nav.login")}
           </a>
           <a
             href="#contacto"
-            className="inline-flex items-center rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan px-4 py-2 text-sm font-medium transition-all border border-aplat-cyan/30"
+            className="inline-flex items-center rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan px-4 py-2 text-sm font-medium transition-all border border-guru-cyan/30"
           >
             {t("nav.contactar")}
           </a>
@@ -73,7 +73,7 @@ export function Nav() {
 
         <button
           type="button"
-          className="md:hidden p-2 text-aplat-muted hover:text-aplat-text"
+          className="md:hidden p-2 text-guru-muted hover:text-guru-text"
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           aria-label="Menú"
@@ -96,7 +96,7 @@ export function Nav() {
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="block text-aplat-muted hover:text-aplat-text py-2"
+                    className="block text-guru-muted hover:text-guru-text py-2"
                     onClick={() => setOpen(false)}
                   >
                     {t(link.labelKey)}
@@ -106,7 +106,7 @@ export function Nav() {
               <li>
                 <a
                   href={hasToken ? "/dashboard" : "/login"}
-                  className="block text-aplat-muted hover:text-aplat-text py-2"
+                  className="block text-guru-muted hover:text-guru-text py-2"
                   onClick={() => setOpen(false)}
                 >
                   {hasToken ? "Dashboard" : t("nav.login")}
@@ -115,7 +115,7 @@ export function Nav() {
               <li>
                 <a
                   href="#contacto"
-                  className="inline-flex rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm"
+                  className="inline-flex rounded-xl bg-guru-cyan/20 text-guru-cyan px-4 py-2 text-sm"
                   onClick={() => setOpen(false)}
                 >
                   {t("nav.contactar")}

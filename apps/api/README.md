@@ -1,6 +1,6 @@
-# APlat API
+# GURU API
 
-Backend Node 24 + Fastify para la plataforma APlat. Pensado para desplegar en **Koyeb**.
+Backend Node 24 + Fastify para la plataforma GURU. Pensado para desplegar en **Koyeb**.
 
 ## Endpoints
 
@@ -15,7 +15,7 @@ pnpm install
 pnpm dev
 ```
 
-API en `http://localhost:3001`. Configura en el frontend `NEXT_PUBLIC_APLAT_API_URL=http://localhost:3001`.
+API en `http://localhost:3001`. Configura en el frontend `NEXT_PUBLIC_GURU_API_URL=http://localhost:3001`.
 
 ## Variables de entorno
 

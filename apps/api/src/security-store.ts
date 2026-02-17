@@ -1,11 +1,11 @@
 /**
- * APlat Security — Vulnerabilidades y escaneos.
- * Persistencia en JSON (APLAT_DATA_PATH).
+ * GURU Security — Vulnerabilidades y escaneos.
+ * Persistencia en JSON (GURU_DATA_PATH).
  */
 import fs from "fs";
 import path from "path";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
 const VULNS_FILE = path.join(DATA_DIR, "security-vulnerabilities.json");
 const SCANS_FILE = path.join(DATA_DIR, "security-scans.json");
 

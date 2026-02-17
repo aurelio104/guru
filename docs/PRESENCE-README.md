@@ -1,4 +1,4 @@
-# APlat Presence — Documentación completa
+# GURU Presence — Documentación completa
 
 Sistema de registro de presencia multi-canal con inteligencia contextual, analytics y soporte offline.
 
@@ -43,9 +43,9 @@ docs/                  → Guías por fase
 
 ## Variables de entorno
 
-- `APLAT_DATA_PATH` — Directorio para SQLite (default: `./data`)
-- `APLAT_JWT_SECRET` — Secreto JWT
-- `NEXT_PUBLIC_APLAT_API_URL` — URL de la API (web)
+- `GURU_DATA_PATH` — Directorio para SQLite (default: `./data`)
+- `GURU_JWT_SECRET` — Secreto JWT
+- `NEXT_PUBLIC_GURU_API_URL` — URL de la API (web)
 
 ## Canales y restricciones
 

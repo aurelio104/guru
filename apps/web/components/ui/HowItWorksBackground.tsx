@@ -48,7 +48,7 @@ export function HowItWorksBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
       {/* Base oscura */}
-      <div className="absolute inset-0 bg-aplat-surface/60" />
+      <div className="absolute inset-0 bg-guru-surface/60" />
 
       <svg
         className="absolute inset-0 w-full h-full opacity-100"
@@ -221,7 +221,7 @@ export function HowItWorksBackground() {
       ].map((p, i) => (
         <div
           key={i}
-          className="absolute w-2 h-2 rounded-full bg-aplat-cyan/70"
+          className="absolute w-2 h-2 rounded-full bg-guru-cyan/70"
           style={{
             left: p.left,
             top: p.top,

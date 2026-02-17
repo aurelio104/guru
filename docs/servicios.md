@@ -1,6 +1,6 @@
-# Catálogo de servicios APlat
+# Catálogo de servicios GURU
 
-Servicios digitales que APlat puede ofrecer, alineados con el portafolio actual.
+Servicios digitales que GURU puede ofrecer, alineados con el portafolio actual.
 
 ## 1. Plataformas web y aplicaciones a medida
 

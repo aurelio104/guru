@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import { Bluetooth, Plus, Loader2, Trash2 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -92,7 +92,7 @@ export function BeaconAdmin({ siteId }: { siteId: string }) {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-aplat-muted text-sm">
+      <div className="flex items-center gap-2 text-guru-muted text-sm">
         <Loader2 className="w-4 h-4 animate-spin" />
         Cargando beacons...
       </div>
@@ -102,15 +102,15 @@ export function BeaconAdmin({ siteId }: { siteId: string }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="font-medium text-aplat-text flex items-center gap-2">
-          <Bluetooth className="w-4 h-4 text-aplat-cyan" />
+        <h4 className="font-medium text-guru-text flex items-center gap-2">
+          <Bluetooth className="w-4 h-4 text-guru-cyan" />
           Beacons BLE
         </h4>
         {zones.length > 0 && (
           <button
             type="button"
             onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-aplat-cyan/20 text-aplat-cyan text-sm hover:bg-aplat-cyan/30"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-guru-cyan/20 text-guru-cyan text-sm hover:bg-guru-cyan/30"
           >
             <Plus className="w-4 h-4" />
             Añadir
@@ -125,9 +125,9 @@ export function BeaconAdmin({ siteId }: { siteId: string }) {
             placeholder="Nombre"
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm"
           />
-          <label className="flex items-center gap-2 text-sm text-aplat-muted">
+          <label className="flex items-center gap-2 text-sm text-guru-muted">
             <input
               type="checkbox"
               checked={form.useEddystone}
@@ -142,7 +142,7 @@ export function BeaconAdmin({ siteId }: { siteId: string }) {
               placeholder="Eddystone UID (32 hex: namespace+instance)"
               value={form.eddystone_uid}
               onChange={(e) => setForm((f) => ({ ...f, eddystone_uid: e.target.value }))}
-              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm font-mono"
+              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm font-mono"
             />
           ) : (
             <>
@@ -151,7 +151,7 @@ export function BeaconAdmin({ siteId }: { siteId: string }) {
                 placeholder="UUID (ej. E2C56DB5-DFFB-48D2-B060-D0F5A71096E0)"
                 value={form.uuid}
                 onChange={(e) => setForm((f) => ({ ...f, uuid: e.target.value }))}
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm font-mono"
+                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm font-mono"
               />
               <div className="flex gap-2">
                 <input
@@ -159,23 +159,23 @@ export function BeaconAdmin({ siteId }: { siteId: string }) {
                   placeholder="Major"
                   value={form.major || ""}
                   onChange={(e) => setForm((f) => ({ ...f, major: parseInt(e.target.value, 10) || 0 }))}
-                  className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+                  className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm"
                 />
                 <input
                   type="number"
                   placeholder="Minor"
                   value={form.minor || ""}
                   onChange={(e) => setForm((f) => ({ ...f, minor: parseInt(e.target.value, 10) || 0 }))}
-                  className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+                  className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm"
                 />
               </div>
             </>
           )}
-          <label className="block text-xs text-aplat-muted mb-0.5">Zona</label>
+          <label className="block text-xs text-guru-muted mb-0.5">Zona</label>
           <select
             value={form.zone_id}
             onChange={(e) => setForm((f) => ({ ...f, zone_id: e.target.value }))}
-            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm"
             aria-label="Zona"
           >
             <option value="">Seleccionar zona...</option>
@@ -190,11 +190,11 @@ export function BeaconAdmin({ siteId }: { siteId: string }) {
             <button
               type="submit"
               disabled={submitting}
-              className="px-4 py-2 rounded-lg bg-aplat-cyan text-aplat-deep font-medium text-sm disabled:opacity-60"
+              className="px-4 py-2 rounded-lg bg-guru-cyan text-guru-deep font-medium text-sm disabled:opacity-60"
             >
               {submitting ? "Guardando..." : "Guardar"}
             </button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-white/5 text-aplat-muted text-sm">
+            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-white/5 text-guru-muted text-sm">
               Cancelar
             </button>
           </div>
@@ -202,20 +202,20 @@ export function BeaconAdmin({ siteId }: { siteId: string }) {
       )}
 
       {zones.length === 0 && (
-        <p className="text-aplat-muted text-sm">
+        <p className="text-guru-muted text-sm">
           No hay zonas en esta sede. Cree al menos una en la sección «Zonas» más arriba para poder añadir beacons.
         </p>
       )}
       {beacons.length === 0 && !showForm && zones.length > 0 && (
-        <p className="text-aplat-muted text-sm">No hay beacons registrados. Añada uno para check-in por proximidad BLE.</p>
+        <p className="text-guru-muted text-sm">No hay beacons registrados. Añada uno para check-in por proximidad BLE.</p>
       )}
       {beacons.length > 0 && (
         <ul className="space-y-2">
           {beacons.map((b) => (
             <li key={b.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-white/5 text-sm">
               <div>
-                <span className="text-aplat-text font-medium">{b.name}</span>
-                <span className="text-aplat-muted ml-2 font-mono text-xs">
+                <span className="text-guru-text font-medium">{b.name}</span>
+                <span className="text-guru-muted ml-2 font-mono text-xs">
                   {b.uuid} / {b.major}:{b.minor}
                 </span>
               </div>

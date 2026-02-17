@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { MessageCircle, Wrench, Loader2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -26,7 +26,7 @@ export function DashboardWidgetWhatsApp() {
 
   const checkWhatsAppStatus = useCallback(async () => {
     if (!API_URL) {
-      setWhatsappServiceError("API no configurada (NEXT_PUBLIC_APLAT_API_URL).");
+      setWhatsappServiceError("API no configurada (NEXT_PUBLIC_GURU_API_URL).");
       setWhatsappConnected(false);
       return;
     }
@@ -142,12 +142,12 @@ export function DashboardWidgetWhatsApp() {
       className="glass glass-strong rounded-2xl p-5 border border-white/10 mirror-shine"
     >
       <div className="flex items-center gap-2 mb-4">
-        <div className="rounded-xl p-2 bg-aplat-emerald/15 text-aplat-emerald">
+        <div className="rounded-xl p-2 bg-guru-emerald/15 text-guru-emerald">
           <MessageCircle className="w-5 h-5" />
         </div>
-        <h2 className="text-lg font-semibold text-aplat-text">WhatsApp</h2>
+        <h2 className="text-lg font-semibold text-guru-text">WhatsApp</h2>
       </div>
-      <p className="text-aplat-muted text-sm mb-4">
+      <p className="text-guru-muted text-sm mb-4">
         Conecta con QR (como en Omac). Solo disponible cuando la API corre en Koyeb.
       </p>
 
@@ -155,7 +155,7 @@ export function DashboardWidgetWhatsApp() {
       {whatsappConnected === false && (
         <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-4 mb-4">
           <p className="text-amber-200 text-sm font-medium mb-1">WhatsApp no está conectado</p>
-          <p className="text-aplat-muted text-xs mb-3">
+          <p className="text-guru-muted text-xs mb-3">
             {whatsappQR
               ? "Escanea el QR con tu teléfono (WhatsApp → Dispositivos vinculados → Vincular)."
               : whatsappServiceError
@@ -167,7 +167,7 @@ export function DashboardWidgetWhatsApp() {
                     : "Haz clic en «Obtener QR» para vincular. No se genera automáticamente para evitar restricciones."}
           </p>
           {whatsappMessage && (
-            <p className="text-aplat-muted text-xs mb-2">{whatsappMessage}</p>
+            <p className="text-guru-muted text-xs mb-2">{whatsappMessage}</p>
           )}
           {!whatsappQR && (
             <div className="flex flex-wrap gap-2">
@@ -175,7 +175,7 @@ export function DashboardWidgetWhatsApp() {
                 type="button"
                 onClick={requestQR}
                 disabled={gettingQR || cleaningWhatsApp}
-                className="inline-flex items-center gap-2 rounded-xl bg-aplat-emerald/20 hover:bg-aplat-emerald/30 text-aplat-emerald border border-aplat-emerald/40 px-3 py-2 text-sm font-medium disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-xl bg-guru-emerald/20 hover:bg-guru-emerald/30 text-guru-emerald border border-guru-emerald/40 px-3 py-2 text-sm font-medium disabled:opacity-60"
               >
                 {gettingQR ? <Loader2 className="w-4 h-4 animate-spin" /> : "📱"}
                 {gettingQR ? "Obteniendo..." : "Obtener QR"}
@@ -196,15 +196,15 @@ export function DashboardWidgetWhatsApp() {
               <div className="rounded-xl bg-white p-4">
                 <QRCodeSVG value={whatsappQR} size={220} />
               </div>
-              <p className="text-aplat-muted text-xs text-center">
+              <p className="text-guru-muted text-xs text-center">
                 WhatsApp → Dispositivos vinculados → Vincular un dispositivo
               </p>
             </div>
           )}
           {!whatsappQR && gettingQR && (
             <div className="flex flex-col items-center gap-2 py-4">
-              <Loader2 className="w-8 h-8 animate-spin text-aplat-cyan" />
-              <p className="text-aplat-muted text-xs">Generando QR...</p>
+              <Loader2 className="w-8 h-8 animate-spin text-guru-cyan" />
+              <p className="text-guru-muted text-xs">Generando QR...</p>
             </div>
           )}
         </div>
@@ -212,9 +212,9 @@ export function DashboardWidgetWhatsApp() {
 
       {/* Estado: conectado */}
       {whatsappConnected === true && (
-        <div className="rounded-xl bg-aplat-emerald/10 border border-aplat-emerald/20 p-4 mb-4">
-          <p className="text-aplat-emerald text-sm font-medium">WhatsApp conectado</p>
-          <p className="text-aplat-muted text-xs">Listo para enviar mensajes.</p>
+        <div className="rounded-xl bg-guru-emerald/10 border border-guru-emerald/20 p-4 mb-4">
+          <p className="text-guru-emerald text-sm font-medium">WhatsApp conectado</p>
+          <p className="text-guru-muted text-xs">Listo para enviar mensajes.</p>
           <button
             type="button"
             onClick={handleDisconnect}
@@ -228,7 +228,7 @@ export function DashboardWidgetWhatsApp() {
       )}
 
       {whatsappConnected === null && !whatsappServiceError && (
-        <div className="flex items-center gap-2 py-2 text-aplat-muted text-sm">
+        <div className="flex items-center gap-2 py-2 text-guru-muted text-sm">
           <Loader2 className="w-4 h-4 animate-spin" />
           Comprobando estado...
         </div>

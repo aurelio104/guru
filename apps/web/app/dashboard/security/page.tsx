@@ -18,11 +18,11 @@ import {
   X,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -268,7 +268,7 @@ export default function DashboardSecurityPage() {
     <div className="max-w-5xl mx-auto px-4 py-6">
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-2 text-aplat-muted hover:text-aplat-text mb-6"
+        className="inline-flex items-center gap-2 text-guru-muted hover:text-guru-text mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         Volver al panel
@@ -283,8 +283,8 @@ export default function DashboardSecurityPage() {
             <Shield className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-aplat-text">Guru Security</h1>
-            <p className="text-aplat-muted text-sm">Vulnerabilidades, escaneos y estado de seguridad</p>
+            <h1 className="text-2xl font-bold text-guru-text">Guru Security</h1>
+            <p className="text-guru-muted text-sm">Vulnerabilidades, escaneos y estado de seguridad</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -292,7 +292,7 @@ export default function DashboardSecurityPage() {
             type="button"
             onClick={runScan}
             disabled={scanning}
-            className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2 text-sm font-medium disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan border border-guru-cyan/40 px-4 py-2 text-sm font-medium disabled:opacity-60"
           >
             {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
             Ejecutar escaneo
@@ -300,7 +300,7 @@ export default function DashboardSecurityPage() {
           <button
             type="button"
             onClick={() => { setShowForm(!showForm); setError(null); }}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-4 py-2 text-sm font-medium text-aplat-text"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-4 py-2 text-sm font-medium text-guru-text"
           >
             <Plus className="w-4 h-4" />
             Nueva vulnerabilidad
@@ -308,7 +308,7 @@ export default function DashboardSecurityPage() {
           <button
             type="button"
             onClick={exportJson}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-4 py-2 text-sm text-aplat-muted hover:text-aplat-text"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-4 py-2 text-sm text-guru-muted hover:text-guru-text"
           >
             <Download className="w-4 h-4" />
             Exportar JSON
@@ -331,29 +331,29 @@ export default function DashboardSecurityPage() {
           className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6"
         >
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider mb-1">Total</p>
-            <p className="text-2xl font-bold text-aplat-text">{vulnerabilities.length}</p>
-            <p className="text-aplat-muted text-xs">vulnerabilidades</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider mb-1">Total</p>
+            <p className="text-2xl font-bold text-guru-text">{vulnerabilities.length}</p>
+            <p className="text-guru-muted text-xs">vulnerabilidades</p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider mb-1">Críticas / Altas</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider mb-1">Críticas / Altas</p>
             <p className="text-2xl font-bold text-orange-400">{criticalHigh}</p>
-            <p className="text-aplat-muted text-xs">prioridad</p>
+            <p className="text-guru-muted text-xs">prioridad</p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider mb-1">Abiertas</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider mb-1">Abiertas</p>
             <p className="text-2xl font-bold text-amber-400">{openCount}</p>
-            <p className="text-aplat-muted text-xs">pendientes</p>
+            <p className="text-guru-muted text-xs">pendientes</p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider mb-1">Último escaneo</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider mb-1">Último escaneo</p>
             {lastScan ? (
               <>
-                <p className="text-lg font-semibold text-aplat-text">{lastScan.status === "completed" ? lastScan.findingsCount ?? 0 : "—"}</p>
-                <p className="text-aplat-muted text-xs">{lastScan.status} · {formatDate(lastScan.startedAt)}</p>
+                <p className="text-lg font-semibold text-guru-text">{lastScan.status === "completed" ? lastScan.findingsCount ?? 0 : "—"}</p>
+                <p className="text-guru-muted text-xs">{lastScan.status} · {formatDate(lastScan.startedAt)}</p>
               </>
             ) : (
-              <p className="text-aplat-muted text-sm">Sin escaneos</p>
+              <p className="text-guru-muted text-sm">Sin escaneos</p>
             )}
           </div>
         </motion.div>
@@ -367,28 +367,28 @@ export default function DashboardSecurityPage() {
           onSubmit={handleCreateVuln}
           className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-6"
         >
-          <h2 className="text-lg font-semibold text-aplat-text mb-2">Nueva vulnerabilidad</h2>
-          <p className="text-aplat-muted text-sm mb-3">
+          <h2 className="text-lg font-semibold text-guru-text mb-2">Nueva vulnerabilidad</h2>
+          <p className="text-guru-muted text-sm mb-3">
             Registre un hallazgo manual o resultado de auditoría (OWASP, pentest). Incluya CVE si aplica y remediación recomendada.
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Título *</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Título *</label>
               <input
                 type="text"
                 placeholder="Ej. XSS en formulario de contacto"
                 value={form.title}
                 onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Severidad *</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Severidad *</label>
               <select
                 value={form.severity}
                 onChange={(e) => setForm((f) => ({ ...f, severity: e.target.value }))}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
               >
                 <option value="low">Baja</option>
                 <option value="medium">Media</option>
@@ -397,11 +397,11 @@ export default function DashboardSecurityPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Estado</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Estado</label>
               <select
                 value={form.status}
                 onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
               >
                 <option value="open">Abierta</option>
                 <option value="mitigated">Mitigada</option>
@@ -409,42 +409,42 @@ export default function DashboardSecurityPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-aplat-muted mb-1">CVE (opcional)</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">CVE (opcional)</label>
               <input
                 type="text"
                 placeholder="CVE-2024-XXXX"
                 value={form.cve}
                 onChange={(e) => setForm((f) => ({ ...f, cve: e.target.value }))}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Activo / componente (opcional)</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Activo / componente (opcional)</label>
               <input
                 type="text"
                 placeholder="Ej. API pública, panel admin"
                 value={form.asset}
                 onChange={(e) => setForm((f) => ({ ...f, asset: e.target.value }))}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted"
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Descripción *</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Descripción *</label>
               <textarea
                 placeholder="Detalle técnico del hallazgo, pasos para reproducir, impacto."
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted min-h-[80px]"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted min-h-[80px]"
                 required
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Remediación (opcional)</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Remediación (opcional)</label>
               <textarea
                 placeholder="Acciones recomendadas para corregir o mitigar."
                 value={form.remediation}
                 onChange={(e) => setForm((f) => ({ ...f, remediation: e.target.value }))}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted min-h-[60px]"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted min-h-[60px]"
               />
             </div>
           </div>
@@ -452,7 +452,7 @@ export default function DashboardSecurityPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm font-medium disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 text-guru-cyan px-4 py-2 text-sm font-medium disabled:opacity-60"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               Crear
@@ -460,7 +460,7 @@ export default function DashboardSecurityPage() {
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="rounded-xl border border-white/20 px-4 py-2 text-sm text-aplat-muted hover:text-aplat-text"
+              className="rounded-xl border border-white/20 px-4 py-2 text-sm text-guru-muted hover:text-guru-text"
             >
               Cancelar
             </button>
@@ -472,18 +472,18 @@ export default function DashboardSecurityPage() {
         {/* Vulnerabilidades */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-aplat-text">Vulnerabilidades</h2>
+            <h2 className="text-lg font-semibold text-guru-text">Vulnerabilidades</h2>
             <button
               type="button"
               onClick={fetchData}
-              className="p-1.5 rounded-lg text-aplat-muted hover:bg-white/10 hover:text-aplat-text"
+              className="p-1.5 rounded-lg text-guru-muted hover:bg-white/10 hover:text-guru-text"
               title="Actualizar"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
           </div>
           {loading && vulnerabilities.length === 0 ? (
-            <div className="flex items-center gap-2 text-aplat-muted py-6">
+            <div className="flex items-center gap-2 text-guru-muted py-6">
               <Loader2 className="w-5 h-5 animate-spin" />
               Cargando...
             </div>
@@ -493,16 +493,16 @@ export default function DashboardSecurityPage() {
               animate={{ opacity: 1 }}
               className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center"
             >
-              <Shield className="w-10 h-10 text-aplat-muted/70 mx-auto mb-3" />
-              <p className="text-aplat-text font-medium mb-1">No hay vulnerabilidades registradas</p>
-              <p className="text-aplat-muted text-sm mb-4 max-w-sm mx-auto">
+              <Shield className="w-10 h-10 text-guru-muted/70 mx-auto mb-3" />
+              <p className="text-guru-text font-medium mb-1">No hay vulnerabilidades registradas</p>
+              <p className="text-guru-muted text-sm mb-4 max-w-sm mx-auto">
                 Registre hallazgos manualmente o ejecute un escaneo para evaluar el estado de seguridad (OWASP, pentest, auditoría).
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 <button
                   type="button"
                   onClick={() => setShowForm(true)}
-                  className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/40 px-3 py-2 text-sm"
+                  className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 text-guru-cyan border border-guru-cyan/40 px-3 py-2 text-sm"
                 >
                   <Plus className="w-4 h-4" />
                   Registrar primera vulnerabilidad
@@ -511,7 +511,7 @@ export default function DashboardSecurityPage() {
                   type="button"
                   onClick={runScan}
                   disabled={scanning}
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-3 py-2 text-sm text-aplat-muted hover:text-aplat-text disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-3 py-2 text-sm text-guru-muted hover:text-guru-text disabled:opacity-60"
                 >
                   {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
                   Ejecutar escaneo
@@ -526,35 +526,35 @@ export default function DashboardSecurityPage() {
                   className="rounded-xl border border-white/10 bg-white/5 p-3 flex items-start justify-between gap-2"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-aplat-text truncate">{v.title}</p>
+                    <p className="font-medium text-guru-text truncate">{v.title}</p>
                     <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                      <span className={`inline-block px-2 py-0.5 rounded text-xs ${SEVERITY_COLOR[v.severity] ?? "text-aplat-muted"}`}>
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs ${SEVERITY_COLOR[v.severity] ?? "text-guru-muted"}`}>
                         {SEVERITY_LABEL[v.severity] ?? v.severity}
                       </span>
-                      <span className={`inline-block px-2 py-0.5 rounded text-xs ${STATUS_COLOR[v.status] ?? "bg-white/10 text-aplat-muted"}`}>
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs ${STATUS_COLOR[v.status] ?? "bg-white/10 text-guru-muted"}`}>
                         {STATUS_LABEL[v.status] ?? v.status}
                       </span>
-                      {v.asset && <span className="text-xs text-aplat-muted">{v.asset}</span>}
+                      {v.asset && <span className="text-xs text-guru-muted">{v.asset}</span>}
                       {v.cve && (
                         <a
                           href={`https://nvd.nist.gov/vuln/detail/${v.cve}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-aplat-cyan hover:underline"
+                          className="text-xs text-guru-cyan hover:underline"
                         >
                           {v.cve}
                         </a>
                       )}
                     </div>
                     {v.description && (
-                      <p className="text-aplat-muted text-xs mt-1 line-clamp-2">{v.description}</p>
+                      <p className="text-guru-muted text-xs mt-1 line-clamp-2">{v.description}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       type="button"
                       onClick={() => openEdit(v)}
-                      className="p-1.5 rounded-lg text-aplat-muted hover:bg-white/10 hover:text-aplat-cyan"
+                      className="p-1.5 rounded-lg text-guru-muted hover:bg-white/10 hover:text-guru-cyan"
                       title="Editar"
                     >
                       <Pencil className="w-4 h-4" />
@@ -576,21 +576,21 @@ export default function DashboardSecurityPage() {
 
         {/* Últimos escaneos */}
         <section>
-          <h2 className="text-lg font-semibold text-aplat-text mb-3">Últimos escaneos</h2>
+          <h2 className="text-lg font-semibold text-guru-text mb-3">Últimos escaneos</h2>
           {scans.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center"
             >
-              <Play className="w-10 h-10 text-aplat-muted/70 mx-auto mb-3" />
-              <p className="text-aplat-text font-medium mb-1">No hay escaneos aún</p>
-              <p className="text-aplat-muted text-sm mb-4">Ejecute un escaneo para evaluar el estado de seguridad.</p>
+              <Play className="w-10 h-10 text-guru-muted/70 mx-auto mb-3" />
+              <p className="text-guru-text font-medium mb-1">No hay escaneos aún</p>
+              <p className="text-guru-muted text-sm mb-4">Ejecute un escaneo para evaluar el estado de seguridad.</p>
               <button
                 type="button"
                 onClick={runScan}
                 disabled={scanning}
-                className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2 text-sm disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 text-guru-cyan border border-guru-cyan/40 px-4 py-2 text-sm disabled:opacity-60"
               >
                 {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
                 Ejecutar primer escaneo
@@ -607,13 +607,13 @@ export default function DashboardSecurityPage() {
                   >
                     <div className="flex items-center gap-2">
                       {s.status === "completed" && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
-                      {s.status === "running" && <Loader2 className="w-4 h-4 animate-spin text-aplat-cyan shrink-0" />}
-                      {s.status === "pending" && <RefreshCw className="w-4 h-4 text-aplat-muted shrink-0" />}
+                      {s.status === "running" && <Loader2 className="w-4 h-4 animate-spin text-guru-cyan shrink-0" />}
+                      {s.status === "pending" && <RefreshCw className="w-4 h-4 text-guru-muted shrink-0" />}
                       {s.status === "failed" && <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />}
-                      <span className="text-aplat-text text-sm font-medium">{s.type === "manual" ? "Manual" : "Programado"}</span>
-                      <span className="text-aplat-muted text-xs">{s.status}</span>
+                      <span className="text-guru-text text-sm font-medium">{s.type === "manual" ? "Manual" : "Programado"}</span>
+                      <span className="text-guru-muted text-xs">{s.status}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-aplat-muted">
+                    <div className="flex items-center gap-2 text-sm text-guru-muted">
                       {s.findingsCount != null && (
                         <span>{s.findingsCount} hallazgos</span>
                       )}
@@ -635,36 +635,36 @@ export default function DashboardSecurityPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="rounded-2xl border border-white/10 bg-aplat-deep p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            className="rounded-2xl border border-white/10 bg-guru-deep p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-aplat-text">Editar vulnerabilidad</h2>
+              <h2 className="text-lg font-semibold text-guru-text">Editar vulnerabilidad</h2>
               <button
                 type="button"
                 onClick={() => setEditingId(null)}
-                className="p-2 rounded-lg text-aplat-muted hover:bg-white/10 hover:text-aplat-text"
+                className="p-2 rounded-lg text-guru-muted hover:bg-white/10 hover:text-guru-text"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <form onSubmit={handleUpdateVuln} className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-aplat-muted mb-1">Título *</label>
+                <label className="block text-sm font-medium text-guru-muted mb-1">Título *</label>
                 <input
                   type="text"
                   value={editForm.title}
                   onChange={(e) => setEditForm((f) => ({ ...f, title: e.target.value }))}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
                   required
                 />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-sm font-medium text-aplat-muted mb-1">Severidad</label>
+                  <label className="block text-sm font-medium text-guru-muted mb-1">Severidad</label>
                   <select
                     value={editForm.severity}
                     onChange={(e) => setEditForm((f) => ({ ...f, severity: e.target.value }))}
-                    className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                    className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
                   >
                     <option value="low">Baja</option>
                     <option value="medium">Media</option>
@@ -673,11 +673,11 @@ export default function DashboardSecurityPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-aplat-muted mb-1">Estado</label>
+                  <label className="block text-sm font-medium text-guru-muted mb-1">Estado</label>
                   <select
                     value={editForm.status}
                     onChange={(e) => setEditForm((f) => ({ ...f, status: e.target.value }))}
-                    className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                    className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
                   >
                     <option value="open">Abierta</option>
                     <option value="mitigated">Mitigada</option>
@@ -686,52 +686,52 @@ export default function DashboardSecurityPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-aplat-muted mb-1">CVE</label>
+                <label className="block text-sm font-medium text-guru-muted mb-1">CVE</label>
                 <input
                   type="text"
                   value={editForm.cve}
                   onChange={(e) => setEditForm((f) => ({ ...f, cve: e.target.value }))}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-aplat-muted mb-1">Activo / componente</label>
+                <label className="block text-sm font-medium text-guru-muted mb-1">Activo / componente</label>
                 <input
                   type="text"
                   value={editForm.asset}
                   onChange={(e) => setEditForm((f) => ({ ...f, asset: e.target.value }))}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-aplat-muted mb-1">Descripción *</label>
+                <label className="block text-sm font-medium text-guru-muted mb-1">Descripción *</label>
                 <textarea
                   value={editForm.description}
                   onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text min-h-[80px]"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text min-h-[80px]"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-aplat-muted mb-1">Remediación</label>
+                <label className="block text-sm font-medium text-guru-muted mb-1">Remediación</label>
                 <textarea
                   value={editForm.remediation}
                   onChange={(e) => setEditForm((f) => ({ ...f, remediation: e.target.value }))}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text min-h-[60px]"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text min-h-[60px]"
                 />
               </div>
               <div className="flex gap-2 pt-2">
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm font-medium disabled:opacity-60"
+                  className="rounded-xl bg-guru-cyan/20 text-guru-cyan px-4 py-2 text-sm font-medium disabled:opacity-60"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditingId(null)}
-                  className="rounded-xl border border-white/20 px-4 py-2 text-sm text-aplat-muted hover:text-aplat-text"
+                  className="rounded-xl border border-white/20 px-4 py-2 text-sm text-guru-muted hover:text-guru-text"
                 >
                   Cancelar
                 </button>

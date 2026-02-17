@@ -1,11 +1,11 @@
 # Configuración del Captive Portal con CUDY AP1200
 
-Guía para redirigir el captive portal del CUDY AP1200 a APlat Presence.
+Guía para redirigir el captive portal del CUDY AP1200 a GURU Presence.
 
 ## Requisitos
 
 - Punto de acceso CUDY AP1200
-- Sitio APlat desplegado (ej. aplat.vercel.app)
+- Sitio GURU desplegado (ej. guru.vercel.app)
 - `site_id` del sitio (obtener desde Dashboard → Presence → Admin)
 
 ## Pasos
@@ -33,12 +33,12 @@ https://tu-dominio.com/portal?site_id=UUID_DEL_SITIO
 ```
 
 Reemplace:
-- `tu-dominio.com` por su dominio (ej. aplat.vercel.app)
+- `tu-dominio.com` por su dominio (ej. guru.vercel.app)
 - `UUID_DEL_SITIO` por el ID del sitio (desde el dashboard)
 
 ### 4. Obtener el site_id
 
-1. Inicie sesión en APlat como administrador.
+1. Inicie sesión en GURU como administrador.
 2. Vaya a **Dashboard → Presence**.
 3. El `site_id` aparece en la URL al seleccionar un sitio, o puede obtenerlo desde la API:
    - `GET /api/presence/admin/sites` (con token de master)
@@ -47,7 +47,7 @@ Reemplace:
 ### 5. Ejemplo de URL completa
 
 ```
-https://aplat.vercel.app/portal?site_id=1c71afa2-9839-4a50-a88c-d30aa147d616
+https://guru.vercel.app/portal?site_id=1c71afa2-9839-4a50-a88c-d30aa147d616
 ```
 
 ### 6. Si no hay opción de URL externa

@@ -1,4 +1,4 @@
-# APlat Presence — Ecosistema expandido
+# GURU Presence — Ecosistema expandido
 
 ## Bluetooth (BLE)
 

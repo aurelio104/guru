@@ -80,7 +80,7 @@ export async function registerGeofencingRoutes(app: FastifyInstance): Promise<vo
       return null;
     }
     try {
-      const secret = new TextEncoder().encode(process.env.APLAT_JWT_SECRET || "dev-aplat-secret-SOLO-DESARROLLO-CAMBIAR");
+      const secret = new TextEncoder().encode(process.env.GURU_JWT_SECRET || "dev-guru-secret-SOLO-DESARROLLO-CAMBIAR");
       const { payload } = await jwtVerify(token, secret);
       return payload as { sub?: string; email?: string };
     } catch {

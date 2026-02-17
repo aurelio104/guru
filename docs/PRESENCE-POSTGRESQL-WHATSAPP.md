@@ -1,16 +1,16 @@
-# APlat Presence — PostgreSQL y alertas WhatsApp
+# GURU Presence — PostgreSQL y alertas WhatsApp
 
 ## PostgreSQL
 
 ### Configuración
 
-- **Variable de entorno**: `APLAT_POSTGRES_URL`
+- **Variable de entorno**: `GURU_POSTGRES_URL`
 - Si está definida, Presence usa PostgreSQL. Si no, usa SQLite (sql.js).
 
 ### Ejemplo
 
 ```
-APLAT_POSTGRES_URL=postgresql://user:pass@host:5432/dbname
+GURU_POSTGRES_URL=postgresql://user:pass@host:5432/dbname
 ```
 
 ### Schema (auto-creado al iniciar)
@@ -29,7 +29,7 @@ Para migrar datos existentes, usa un script que lea de SQLite e inserte en Postg
 
 ### Configuración
 
-- **Variable de entorno**: `APLAT_PRESENCE_ALERT_PHONE`
+- **Variable de entorno**: `GURU_PRESENCE_ALERT_PHONE`
 - Números separados por coma (E.164, ej. `50412345678,50487654321`)
 
 ### Cuándo se envían
@@ -45,7 +45,7 @@ Para migrar datos existentes, usa un script que lea de SQLite e inserte en Postg
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
-| POST | `/api/cron/presence-alerts` | `x-cron-secret` = APLAT_CRON_SECRET | Cron (cada 5–15 min) |
+| POST | `/api/cron/presence-alerts` | `x-cron-secret` = GURU_CRON_SECRET | Cron (cada 5–15 min) |
 | POST | `/api/admin/presence-alerts` | JWT master | Disparo manual desde dashboard |
 
 Query opcional: `?site_id=xxx` para limitar a un sitio.
@@ -54,7 +54,7 @@ Query opcional: `?site_id=xxx` para limitar a un sitio.
 
 ```
 POST /api/cron/presence-alerts
-Header: x-cron-secret: <APLAT_CRON_SECRET>
+Header: x-cron-secret: <GURU_CRON_SECRET>
 ```
 
 Cada 10–15 minutos.
@@ -62,4 +62,4 @@ Cada 10–15 minutos.
 ### Requisitos
 
 - WhatsApp conectado (QR escaneado)
-- `APLAT_PRESENCE_ALERT_PHONE` configurado
+- `GURU_PRESENCE_ALERT_PHONE` configurado

@@ -1,4 +1,4 @@
-# APlat — Estado del plan e ítems pendientes
+# GURU — Estado del plan e ítems pendientes
 
 **Propósito:** Documento de referencia para el equipo. Qué está hecho y qué falta por implementar.  
 **Última actualización:** Febrero 2026
@@ -39,19 +39,19 @@
 | **Verificación firma digital** | Validar hash SHA256/384/512 | `apps/api/src/verify-signature.routes.ts`, `POST /api/verify-signature` |
 | **Serwist/Workbox PWA** | Service Worker, precache, fallback offline | `apps/web/next.config.ts`, `apps/web/app/sw.ts`, `@serwist/next` |
 | **Página offline** | Fallback sin red | `apps/web/app/~offline/page.tsx` |
-| **APlat Security** | Vulnerabilidades y escaneos | `apps/api/src/security-store.ts`, `security.routes.ts`, `apps/web/app/dashboard/security/page.tsx`, `/api/security/*` |
+| **GURU Security** | Vulnerabilidades y escaneos | `apps/api/src/security-store.ts`, `security.routes.ts`, `apps/web/app/dashboard/security/page.tsx`, `/api/security/*` |
 | **GDPR/LOPD** | Checklist cumplimiento | `apps/api/src/gdpr-store.ts`, `gdpr.routes.ts`, `apps/web/app/dashboard/gdpr/page.tsx`, `/api/gdpr/checklist` |
 | **Respuesta incidentes** | Playbooks e incidentes | `apps/api/src/incidents-store.ts`, `incidents.routes.ts`, `apps/web/app/dashboard/incidents/page.tsx`, `/api/incidents/*` |
 | **Slots** | Recursos y reservas | `apps/api/src/slots-store.ts`, `slots.routes.ts`, `apps/web/app/dashboard/slots/page.tsx`, `/api/slots/*` |
 | **Reportes (base)** | Reportes y metadatos | `apps/api/src/reports-store.ts`, `reports.routes.ts`, `apps/web/app/dashboard/reports/page.tsx`, `/api/reports` |
-| **APlat Commerce** | Productos y pedidos | `apps/api/src/commerce-store.ts`, `commerce.routes.ts`, `apps/web/app/dashboard/commerce/page.tsx`, `/api/commerce/*` |
+| **GURU Commerce** | Productos y pedidos | `apps/api/src/commerce-store.ts`, `commerce.routes.ts`, `apps/web/app/dashboard/commerce/page.tsx`, `/api/commerce/*` |
 | **WebSocket** | Ping/pong y broadcast Presence | `@fastify/websocket`, `GET /ws`, `ws-broadcast.ts`, broadcast en `presence.routes.ts` |
 | **Background Sync** | Reintento check-ins desde SW al recuperar red | `app/sw.ts` (sync), `presence-offline-queue.ts` (registerSyncForPresence), check-in page (message listener) |
 | **Web Push** | VAPID, subscribe/send, widget | `push-store.ts`, `push.routes.ts`, `DashboardWidgetPush`, `app/sw.ts` (push), `/api/push/*` |
 | **OCR cédulas** | Tesseract en portal | `OcrCedulaCapture.tsx`, integrado en `app/portal/page.tsx` |
 | **Reports Excel** | Subida, parseo, tabla | `POST /api/reports/upload-excel`, xlsx, `dashboard/reports` con upload y tabla |
 | **Geofencing Omac** | Órdenes y validación llegada | `omac-store.ts`, `GET/POST /api/geofencing/omac/orders`, `POST /api/geofencing/omac/validate-arrival` |
-| **Commerce WhatsApp** | Notificación al crear pedido | `APLAT_COMMERCE_NOTIFY_PHONE`, `sendWhatsAppMessage` en `commerce.routes.ts` |
+| **Commerce WhatsApp** | Notificación al crear pedido | `GURU_COMMERCE_NOTIFY_PHONE`, `sendWhatsAppMessage` en `commerce.routes.ts` |
 | **Cierre comercial** | Página producto y precios | `app/producto/page.tsx`, enlace en Nav |
 
 ### Auth e integración (API principal)
@@ -75,7 +75,7 @@
 
 | Ítem | Descripción | Esfuerzo est. |
 |------|-------------|---------------|
-| **Integración Fortinet / SOC** | Monitoreo P-CS/OACI, Ciber → APlat Security | 6–8 sem |
+| **Integración Fortinet / SOC** | Monitoreo P-CS/OACI, Ciber → GURU Security | 6–8 sem |
 | **Evaluación seguridad por dominio** | Evaluación por dominio de aplicación | 4–6 sem |
 | **Pago Móvil** | Verificación y auditoría de pagos móviles | No definido |
 
@@ -117,15 +117,15 @@
 
 | Variable | Uso |
 |----------|-----|
-| `APLAT_JWT_SECRET` | JWT auth (obligatorio en producción) |
-| `APLAT_ADMIN_PASSWORD` | Login admin (obligatorio en producción) |
-| `APLAT_DATA_PATH` | Directorio de datos (SQLite, stores) |
-| `APLAT_WEBAUTHN_STORE_PATH` | Persistencia Passkey |
-| `APLAT_WHATSAPP_AUTH_PATH` | Sesión WhatsApp (Baileys) |
+| `GURU_JWT_SECRET` | JWT auth (obligatorio en producción) |
+| `GURU_ADMIN_PASSWORD` | Login admin (obligatorio en producción) |
+| `GURU_DATA_PATH` | Directorio de datos (SQLite, stores) |
+| `GURU_WEBAUTHN_STORE_PATH` | Persistencia Passkey |
+| `GURU_WHATSAPP_AUTH_PATH` | Sesión WhatsApp (Baileys) |
 | `CORS_ORIGIN` | Origen permitido para CORS (frontend) |
-| `APLAT_CRON_SECRET` | Cron process-cutoffs / presence-alerts |
+| `GURU_CRON_SECRET` | Cron process-cutoffs / presence-alerts |
 
-Para **Web Push** (cuando se implemente): `APLAT_VAPID_PUBLIC_KEY`, `APLAT_VAPID_PRIVATE_KEY` — generar con `npx web-push generate-vapid-keys`.
+Para **Web Push** (cuando se implemente): `GURU_VAPID_PUBLIC_KEY`, `GURU_VAPID_PRIVATE_KEY` — generar con `npx web-push generate-vapid-keys`.
 
 ---
 

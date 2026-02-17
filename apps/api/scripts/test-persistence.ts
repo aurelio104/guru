@@ -1,8 +1,8 @@
 /**
  * Prueba de persistencia: escribe datos, sale (persistiendo), y en una segunda ejecución comprueba que sigan ahí.
  * Uso:
- *   APLAT_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase1
- *   APLAT_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase2
+ *   GURU_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase1
+ *   GURU_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase2
  */
 import {
   initStoreDb,
@@ -63,6 +63,6 @@ const phase = process.argv[2] || "";
 if (phase === "phase1") phase1().catch((e) => { console.error(e); process.exit(1); });
 else if (phase === "phase2") phase2().catch((e) => { console.error(e); process.exit(1); });
 else {
-  console.error("Uso: APLAT_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase1 | phase2");
+  console.error("Uso: GURU_DATA_PATH=./data-persist-test npx tsx scripts/test-persistence.ts phase1 | phase2");
   process.exit(1);
 }

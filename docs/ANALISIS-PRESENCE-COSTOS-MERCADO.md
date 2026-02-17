@@ -1,11 +1,11 @@
 # Análisis exhaustivo: Presence — Lo que tenemos y costos en el mercado
 
 **Paquete:** Presence — Check-in BLE/NFC, zonas, portal, ocupación, alertas WhatsApp, export.  
-**Precio propuesto en APlat:** $99/mes.
+**Precio propuesto en GURU:** $99/mes.
 
 ---
 
-## 1. Inventario exacto de lo que tiene la plataforma APlat (Presence)
+## 1. Inventario exacto de lo que tiene la plataforma GURU (Presence)
 
 ### 1.1 Canales de check-in (5)
 
@@ -48,7 +48,7 @@
 |---------------|--------------|-------------|
 | **Alertas por ocupación/anomalía** | Sí | Pico de ocupación (≥90% del pico del día); anomalía (check-ins hoy > 1.5× promedio semanal). Mensaje por WhatsApp vía Baileys. |
 | **Rate limit** | Sí | 1 alerta por tipo por sitio por hora. |
-| **Configuración** | Sí | `APLAT_PRESENCE_ALERT_PHONE` (números separados por coma). Cron `POST /api/cron/presence-alerts` o disparo manual `POST /api/admin/presence-alerts`. |
+| **Configuración** | Sí | `GURU_PRESENCE_ALERT_PHONE` (números separados por coma). Cron `POST /api/cron/presence-alerts` o disparo manual `POST /api/admin/presence-alerts`. |
 | **Documentación** | Sí | `docs/PRESENCE-POSTGRESQL-WHATSAPP.md`. |
 
 ### 1.6 Export
@@ -86,7 +86,7 @@
 
 | Aspecto | Implementado | Descripción |
 |---------|--------------|-------------|
-| **Base de datos** | Sí | SQLite (`aplat-presence.db`) o PostgreSQL si `APLAT_POSTGRES_URL`. Tablas: sites, zones, check_ins, beacons, nfc_tags. |
+| **Base de datos** | Sí | SQLite (`guru-presence.db`) o PostgreSQL si `GURU_POSTGRES_URL`. Tablas: sites, zones, check_ins, beacons, nfc_tags. |
 | **WebSockets** | Sí | Broadcast de eventos (ej. nuevo check-in) para actualización en tiempo real. `ws-broadcast.ts`. |
 | **Firmware beacon** | Sí (opcional) | `hardware/esp32-beacon/`: firmware para ESP32 como iBeacon (bajo costo vs beacons comerciales). |
 
@@ -140,9 +140,9 @@
 
 ---
 
-## 4. Posicionamiento del producto APlat Presence
+## 4. Posicionamiento del producto GURU Presence
 
-| Criterio | APlat Presence | Comentario |
+| Criterio | GURU Presence | Comentario |
 |----------|----------------|------------|
 | **Canales** | 5 (geoloc, QR, portal, BLE, NFC) | Más canales que muchos competidores en su rango. |
 | **Ocupación e insights** | Sí (actual, pico, por zona/canal, dwell time, insights automáticos) | Nivel “occupancy & utilization” / “Pro”. |
@@ -158,7 +158,7 @@
 
 - **Lo que tenemos:** Sistema completo de presencia multi-canal (geoloc, QR, portal WiFi, BLE, NFC), zonas GeoJSON, portal captive documentado (CUDY), ocupación en tiempo real, motor de insights, alertas por WhatsApp, export CSV/JSON, cola offline, dashboard con gráficos y admin de beacons/NFC. Base SQLite o PostgreSQL, WebSockets, documentación y opción de beacon económico (ESP32).
 - **Mercado:** Productos comparables (varios canales + ocupación + alertas/export) suelen estar en **$100–250/mes por ubicación**; soluciones más limitadas en **$15–50/mes**.
-- **Precio propuesto:** **$99/mes** para el paquete Presence es **conservador y muy competitivo** para lo que incluye (5 canales, ocupación, insights, alertas WhatsApp, export). Permite posicionar APlat como “todo en uno” a precio mid-low, con margen para subir a **$129–149/mes** si se añaden garantías SLA, más sitios incluidos o integraciones (calendario, acceso físico, etc.).
+- **Precio propuesto:** **$99/mes** para el paquete Presence es **conservador y muy competitivo** para lo que incluye (5 canales, ocupación, insights, alertas WhatsApp, export). Permite posicionar GURU como “todo en uno” a precio mid-low, con margen para subir a **$129–149/mes** si se añaden garantías SLA, más sitios incluidos o integraciones (calendario, acceso físico, etc.).
 
 ---
 

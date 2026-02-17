@@ -1,4 +1,4 @@
-# APlat
+# GURU
 
 Plataforma integrada de ciberseguridad y gestión con autenticación avanzada (Passkey), WhatsApp, dashboard y análisis.
 
@@ -6,30 +6,30 @@ Plataforma integrada de ciberseguridad y gestión con autenticación avanzada (P
 
 - 🔐 **Autenticación multi-factor**: Email/password + Passkey (WebAuthn)
 - 📊 **Dashboard**: Métricas, conexiones, visitas, suscripciones
-- 💬 **WhatsApp**: Integración con Baileys para notificaciones y gestión
+- 📬 **WhatsApp**: Integración con Baileys para notificaciones y gestión
 - 👥 **Gestión de clientes**: Perfiles, suscripciones, pagos
 - 📈 **Analytics**: Registro de visitas (público) y conexiones (autenticado)
 - 🔒 **Seguridad completa**: Rate limiting, Helmet, validación, sanitización, auditoría
 
 ## 🔒 Seguridad
 
-APlat implementa múltiples capas de seguridad:
+GURU implementa múltiples capas de seguridad:
 
 - **Rate limiting**: 100 req/min (protección DDoS y fuerza bruta)
 - **Headers**: Helmet con CSP, HSTS, X-Frame-Options
 - **Validación**: Email, contraseña, longitud de campos
 - **Sanitización**: Eliminación de caracteres peligrosos
 - **Hashing**: scrypt con salt aleatorio
-- **Auditoría**: Registro completo en `aplat-audit.db`
+- **Auditoría**: Registro completo en `guru-audit.db`
 - **JWT**: HS256 con secret fuerte
 - **Persistencia**: Guardado periódico + al salir + escritura atómica
 
-Ver [docs/SEGURIDAD-APLAT.md](docs/SEGURIDAD-APLAT.md) para detalles completos.
+Ver [docs/SEGURIDAD-GURU.md](docs/SEGURIDAD-GURU.md) para detalles completos.
 
 ## 🏗️ Estructura
 
 ```
-APlat/
+GURU/
 ├── apps/
 │   ├── api/          # Backend (Fastify + SQLite + Auditoría)
 │   └── web/          # Frontend (Next.js 15 + Tailwind 4)
@@ -51,7 +51,7 @@ cd apps/web && pnpm install && pnpm dev
 
 Abre [http://localhost:3000](http://localhost:3000).
 
-**Formulario de contacto:** para que envíe a la API, en `apps/web` crea `.env.local` con `NEXT_PUBLIC_APLAT_API_URL=http://localhost:3001` y en otra terminal ejecuta `pnpm dev:api` (o `cd apps/api && pnpm dev`).
+**Formulario de contacto:** para que envíe a la API, en `apps/web` crea `.env.local` con `NEXT_PUBLIC_GURU_API_URL=http://localhost:3001` y en otra terminal ejecuta `pnpm dev:api` (o `cd apps/api && pnpm dev`).
 
 **Producción:** frontend en Vercel (`vercel --cwd apps/web --prod` tras `vercel login`); API en Koyeb (ya desplegada). Ver `docs/DEPLOY-PRODUCCION.md`.
 
@@ -70,15 +70,15 @@ cd apps/api && pnpm test:persist
 
 ## 📚 Documentación
 
-- [Seguridad](docs/SEGURIDAD-APLAT.md) - Guía completa de seguridad y auditoría
+- [Seguridad](docs/SEGURIDAD-GURU.md) - Guía completa de seguridad y auditoría
 - [Deploy en Koyeb](docs/DEPLOY-KOYEB.md) - Configuración de variables y volúmenes
 - [Deploy en producción](docs/DEPLOY-PRODUCCION.md) - Flujo completo de deploy
-- [Negocio](docs/NEGOCIO-APLAT.md) - Modelo de negocio y valoración
+- [Negocio](docs/NEGOCIO-GURU.md) - Modelo de negocio y valoración
 - [Servicios](docs/servicios.md) - Servicios ofrecidos
 - [Portafolio](docs/portafolio.md) - Proyectos realizados
 
 ## Repositorio y producción
 
-- **GitHub:** [github.com/aurelio104/APlat](https://github.com/aurelio104/APlat)
-- **Frontend (Vercel):** [aplat.vercel.app](https://aplat.vercel.app)
-- **API (Koyeb):** https://aplat-api-aurelio104-5877962a.koyeb.app
+- **GitHub:** [github.com/aurelio104/GURU](https://github.com/aurelio104/GURU)
+- **Frontend (Vercel):** [guru.vercel.app](https://guru.vercel.app)
+- **API (Koyeb):** https://guru-api-aurelio104-5877962a.koyeb.app

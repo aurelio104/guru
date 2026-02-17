@@ -42,7 +42,7 @@ export function GlobalScale() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
         >
-          <span className="inline-flex items-center rounded-full border border-aplat-emerald/25 bg-aplat-emerald/5 px-4 py-1.5 text-xs font-semibold text-aplat-emerald uppercase tracking-widest">
+          <span className="inline-flex items-center rounded-full border border-guru-emerald/25 bg-guru-emerald/5 px-4 py-1.5 text-xs font-semibold text-guru-emerald uppercase tracking-widest">
             A nivel global
           </span>
         </motion.div>
@@ -57,7 +57,7 @@ export function GlobalScale() {
           Construido para competir en cualquier escala.
         </motion.h2>
         <motion.p
-          className="text-aplat-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-6 transition-reveal"
+          className="text-guru-muted text-center text-lg md:text-xl max-w-2xl mx-auto mb-6 transition-reveal"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -67,7 +67,7 @@ export function GlobalScale() {
         </motion.p>
 
         <motion.blockquote
-          className="text-center text-aplat-muted/90 text-base md:text-lg max-w-3xl mx-auto mb-12 sm:mb-16 italic"
+          className="text-center text-guru-muted/90 text-base md:text-lg max-w-3xl mx-auto mb-12 sm:mb-16 italic"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -85,14 +85,14 @@ export function GlobalScale() {
               viewport={{ once: true, margin: "-30px" }}
               transition={{ duration: 0.5, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
             >
-              <Card3D className="glass glass-strong rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 mirror-shine border border-white/10 hover:border-aplat-emerald/30 h-full min-w-0">
-                <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-aplat-emerald/10 border border-aplat-emerald/20 text-aplat-emerald mb-4">
+              <Card3D className="glass glass-strong rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 mirror-shine border border-white/10 hover:border-guru-emerald/30 h-full min-w-0">
+                <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-guru-emerald/10 border border-guru-emerald/20 text-guru-emerald mb-4">
                   <feature.Icon className="w-5 h-5" />
                 </span>
-                <h3 className="text-xl font-semibold text-aplat-text mb-2">
+                <h3 className="text-xl font-semibold text-guru-text mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-aplat-muted text-sm leading-relaxed">
+                <p className="text-guru-muted text-sm leading-relaxed">
                   {feature.desc}
                 </p>
               </Card3D>
@@ -111,7 +111,7 @@ export function GlobalScale() {
           {PILLS.map((pill, i) => (
             <span
               key={pill}
-              className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs sm:text-sm font-medium text-aplat-muted backdrop-blur-sm"
+              className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs sm:text-sm font-medium text-guru-muted backdrop-blur-sm"
             >
               {pill}
             </span>

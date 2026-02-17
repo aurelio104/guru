@@ -1,6 +1,6 @@
-# APlat como negocio: costos y sistemas de negocio
+# GURU como negocio: costos y sistemas de negocio
 
-Documento para posicionar APlat como empresa de servicios digitales: qué precios ofrecer y qué sistemas/ modelos de negocio proponer a clientes.
+Documento para posicionar GURU como empresa de servicios digitales: qué precios ofrecer y qué sistemas/ modelos de negocio proponer a clientes.
 
 ---
 
@@ -29,9 +29,9 @@ Precios “de catálogo” para productos que ya tienes base (white-label):
 
 | Producto | Qué incluye | Precio sugerido (USD) | Notas |
 |----------|-------------|------------------------|-------|
-| **Control de acceso APlat** | Instalación base (OCR, QR, carnets), configuración de marca, 1 sede, soporte 3 meses | 5.000 – 8.000 | A partir de control-acceso-albatros |
-| **Reportes desde Excel APlat** | Carga Excel, columnas configurables, dashboard, hasta X empresas, soporte 3 meses | 6.000 – 10.000 | A partir de rt-reportes |
-| **Centro de mando APlat** | Dashboard operativo, métricas, alertas (ej. WhatsApp), 1 entorno | 8.000 – 14.000 | A partir de Omac |
+| **Control de acceso GURU** | Instalación base (OCR, QR, carnets), configuración de marca, 1 sede, soporte 3 meses | 5.000 – 8.000 | A partir de control-acceso-albatros |
+| **Reportes desde Excel GURU** | Carga Excel, columnas configurables, dashboard, hasta X empresas, soporte 3 meses | 6.000 – 10.000 | A partir de rt-reportes |
+| **Centro de mando GURU** | Dashboard operativo, métricas, alertas (ej. WhatsApp), 1 entorno | 8.000 – 14.000 | A partir de Omac |
 
 Ventaja: plazos más cortos y precio previsible para el cliente.
 
@@ -65,7 +65,7 @@ Requiere operar y facturar de forma recurrente; ideal cuando ya tienes producto 
 
 ## 2. Sistemas de negocio que puedes ofrecer
 
-“Sistemas de negocio” aquí = **cómo el cliente compra y usa** lo que APlat entrega.
+“Sistemas de negocio” aquí = **cómo el cliente compra y usa** lo que GURU entrega.
 
 ---
 
@@ -87,7 +87,7 @@ Requiere operar y facturar de forma recurrente; ideal cuando ya tienes producto 
 
 ### 2.3 Productos empaquetados (white-label)
 
-- **Qué es:** “Control de acceso APlat”, “Reportes desde Excel APlat”, “Centro de mando APlat” con tu marca, configurados por cliente (logo, colores, dominios).
+- **Qué es:** “Control de acceso GURU”, “Reportes desde Excel GURU”, “Centro de mando GURU” con tu marca, configurados por cliente (logo, colores, dominios).
 - **Qué ofreces:** Precio fijo por implementación + opción de soporte mensual o licencia por sede/usuario.
 - **Ideal para:** Replicar casos como Albatros/RT en otros sectores (oficinas, retail, operaciones) con menos tiempo de venta y desarrollo.
 
@@ -133,7 +133,7 @@ Requiere operar y facturar de forma recurrente; ideal cuando ya tienes producto 
   - Consultoría y auditoría.  
   - (Opcional) Alianza con revenue share.
 
-En la web de APlat puedes mostrar: “Desde proyectos a medida hasta productos listos (control de acceso, reportes, centros de mando) y soporte mensual. Cotización según alcance y modelo que prefieras.”
+En la web de GURU puedes mostrar: “Desde proyectos a medida hasta productos listos (control de acceso, reportes, centros de mando) y soporte mensual. Cotización según alcance y modelo que prefieras.”
 
 ---
 

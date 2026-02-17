@@ -44,12 +44,12 @@ export function CountryCodePhoneInput({
   };
 
   return (
-    <div className={`flex rounded-xl bg-white/5 border border-white/10 overflow-hidden focus-within:border-aplat-cyan/50 focus-within:ring-1 focus-within:ring-aplat-cyan/30 ${compact ? "rounded-lg" : ""} ${className}`}>
+    <div className={`flex rounded-xl bg-white/5 border border-white/10 overflow-hidden focus-within:border-guru-cyan/50 focus-within:ring-1 focus-within:ring-guru-cyan/30 ${compact ? "rounded-lg" : ""} ${className}`}>
       <select
         value={code}
         onChange={handleCodeChange}
         disabled={disabled}
-        className={`bg-white/5 text-aplat-text border-r border-white/10 focus:outline-none focus:ring-0 disabled:opacity-60 [&>option]:bg-aplat-card ${compact ? "pl-1.5 pr-1 py-1 text-xs min-w-[72px]" : "pl-3 pr-2 py-2.5 text-sm min-w-[140px]"}`}
+        className={`bg-white/5 text-guru-text border-r border-white/10 focus:outline-none focus:ring-0 disabled:opacity-60 [&>option]:bg-guru-card ${compact ? "pl-1.5 pr-1 py-1 text-xs min-w-[72px]" : "pl-3 pr-2 py-2.5 text-sm min-w-[140px]"}`}
         aria-label="Código de país"
         title="Código de país"
       >
@@ -68,7 +68,7 @@ export function CountryCodePhoneInput({
         placeholder={placeholder}
         disabled={disabled}
         id={id}
-        className={`flex-1 min-w-0 bg-transparent text-aplat-text placeholder:text-aplat-muted/60 focus:outline-none ${compact ? "px-2 py-1 text-xs" : "px-4 py-2.5 text-sm"} ${inputClassName}`}
+        className={`flex-1 min-w-0 bg-transparent text-guru-text placeholder:text-guru-muted/60 focus:outline-none ${compact ? "px-2 py-1 text-xs" : "px-4 py-2.5 text-sm"} ${inputClassName}`}
         aria-label="Número de teléfono"
       />
     </div>

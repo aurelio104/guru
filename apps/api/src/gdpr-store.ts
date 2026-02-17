@@ -1,11 +1,11 @@
 /**
  * Guru — Checklist de cumplimiento: EU (GDPR/LOPD), Latinoamérica, Venezuela, INAC.
- * Persistencia en JSON (APLAT_DATA_PATH).
+ * Persistencia en JSON (GURU_DATA_PATH).
  */
 import fs from "fs";
 import path from "path";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
 const GDPR_FILE = path.join(DATA_DIR, "gdpr-checklist.json");
 
 export type GdprItemStatus = "pending" | "in_progress" | "done" | "na";

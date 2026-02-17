@@ -1,6 +1,6 @@
-# Método: control de suscripciones mensuales desde APlat
+# Método: control de suscripciones mensuales desde GURU
 
-Objetivo: desde APlat poder **controlar las mensualidades** de los proyectos desplegados (Omac, JCavalier, Maracay deportiva), con **recordatorio de pago por WhatsApp** (replicando la lógica de Omac) y **desconexión automática** si no hay pago en la fecha límite. Control vía **API/CLI** (Vercel, Koyeb) o script programado.
+Objetivo: desde GURU poder **controlar las mensualidades** de los proyectos desplegados (Omac, JCavalier, Maracay deportiva), con **recordatorio de pago por WhatsApp** (replicando la lógica de Omac) y **desconexión automática** si no hay pago en la fecha límite. Control vía **API/CLI** (Vercel, Koyeb) o script programado.
 
 ---
 
@@ -31,9 +31,9 @@ Objetivo: desde APlat poder **controlar las mensualidades** de los proyectos des
 
 **Koyeb:** si algún proyecto corre en Koyeb (API, backend), se puede **pausar el servicio** o **escalar a 0** por API/CLI (consultar la referencia de Koyeb para el endpoint exacto). Lo mismo aplica para “reconectar”.
 
-**Git:** por sí solo no desconecta un sitio. La desconexión se hace con la **API del proveedor** (Vercel/Koyeb). Git sirve para versionar el **script/código** que hace las llamadas (por ejemplo un script en el repo APlat que se ejecuta por cron).
+**Git:** por sí solo no desconecta un sitio. La desconexión se hace con la **API del proveedor** (Vercel/Koyeb). Git sirve para versionar el **script/código** que hace las llamadas (por ejemplo un script en el repo GURU que se ejecuta por cron).
 
-**WhatsApp:** en Omac ya usas **Baileys** (o similar) para enviar mensajes. La idea es **reutilizar esa lógica** en un único “servicio de notificaciones APlat”: un proceso (puede vivir en la API de APlat en Koyeb o en un worker aparte) que tenga **un número de WhatsApp** y envíe los recordatorios de pago. No hace falta un bot por cliente; un solo bot/envío centralizado que mande a los 3 contactos según el calendario.
+**WhatsApp:** en Omac ya usas **Baileys** (o similar) para enviar mensajes. La idea es **reutilizar esa lógica** en un único “servicio de notificaciones GURU”: un proceso (puede vivir en la API de GURU en Koyeb o en un worker aparte) que tenga **un número de WhatsApp** y envíe los recordatorios de pago. No hace falta un bot por cliente; un solo bot/envío centralizado que mande a los 3 contactos según el calendario.
 
 ---
 
@@ -52,15 +52,15 @@ Objetivo: desde APlat poder **controlar las mensualidades** de los proyectos des
   - `lastPaymentAt`: fecha del último pago registrado (para saber si ya pagó este mes)
 
 - Puede ser:
-  - **SQLite** en la API de APlat (Koyeb), con una tabla `subscriptions` o `billing_clients`, o
+  - **SQLite** en la API de GURU (Koyeb), con una tabla `subscriptions` o `billing_clients`, o
   - Un **JSON** en el repo (por ejemplo `apps/api/data/subscriptions.json`) que el script lea, si prefieres no tocar la API todavía.
 
 ### 3.2 Quién ejecuta la lógica (cron)
 
 Tienes varias opciones; con lo que tienes, las más razonables son:
 
-- **Opción A – Cron en la API de APlat (Koyeb)**  
-  La API de APlat (Fastify en Koyeb) expone además un **cron interno** (o un endpoint protegido que solo llama un cron externo): cada día a las 00:05 (o 01:00) corre una función que:
+- **Opción A – Cron en la API de GURU (Koyeb)**  
+  La API de GURU (Fastify en Koyeb) expone además un **cron interno** (o un endpoint protegido que solo llama un cron externo): cada día a las 00:05 (o 01:00) corre una función que:
   - Lee la fecha actual y la lista de clientes con sus `dueDay`.
   - **Si hoy es día de recordatorio** (1 o 4 para dueDay 5; 21 para dueDay 22) → envía WhatsApp.
   - **Si hoy es día de corte** (5 o 22) y son las 23:59 (o a las 00:00 del día siguiente, comprobando “el día anterior era 5 o 22 y no hay pago”) → llama a Vercel/Koyeb para pausar.
@@ -69,27 +69,27 @@ Tienes varias opciones; con lo que tienes, las más razonables son:
 
 - **Opción B – GitHub Actions (cron)**  
   Un workflow que corre **daily** (o dos veces al día), que:
-  - Lee el JSON (o llama a la API de APlat) para saber qué clientes tocan hoy.
-  - Envía recordatorio (llamando a un endpoint de la API de APlat que tenga Baileys/WhatsApp).
+  - Lee el JSON (o llama a la API de GURU) para saber qué clientes tocan hoy.
+  - Envía recordatorio (llamando a un endpoint de la API de GURU que tenga Baileys/WhatsApp).
   - Si es día de corte y no hay pago → el mismo workflow llama a **Vercel API** (y si aplica Koyeb) con tokens guardados en GitHub Secrets. Aquí el “cerebro” puede ser la API (que devuelve “quién suspender”) y el Action solo ejecuta pause/unpause.
 
 - **Opción C – Script local + cron del sistema (o tú lo ejecutas)**  
   Un script en el repo (p. ej. `scripts/billing-cron.mjs`) que:
   - Lee la configuración de suscripciones.
   - Compara fecha y reglas.
-  - Envía WhatsApp (vía API de APlat que tenga el envío) y/o llama a Vercel/Koyeb por API.
+  - Envía WhatsApp (vía API de GURU que tenga el envío) y/o llama a Vercel/Koyeb por API.
   - Lo ejecutas tú con **CLI** cuando quieras (`node scripts/billing-cron.mjs`) o lo programás con **cron** en un servidor (o en tu máquina si está encendida a las 00:00).
 
-En todos los casos el **método** es el mismo: un único proceso que, en una fecha/hora determinada, **decide** “enviar recordatorio” o “pausar proyecto” y ejecuta esa acción vía **API de WhatsApp** (Omac/APlat) y **API de Vercel/Koyeb**.
+En todos los casos el **método** es el mismo: un único proceso que, en una fecha/hora determinada, **decide** “enviar recordatorio” o “pausar proyecto” y ejecuta esa acción vía **API de WhatsApp** (Omac/GURU) y **API de Vercel/Koyeb**.
 
 ### 3.3 Flujo del recordatorio WhatsApp (replicar Omac)
 
 - En **Omac** ya tienes el envío de mensajes (Baileys). Para no duplicar mantenimiento, lo ideal es:
-  - **Centralizar el envío** en un solo lugar: por ejemplo un **servicio dentro de la API de APlat** (o un microservicio en Koyeb) que use la misma librería (Baileys) y **un número de WhatsApp dedicado a APlat** (no el de Omac), para no mezclar conversaciones.
+  - **Centralizar el envío** en un solo lugar: por ejemplo un **servicio dentro de la API de GURU** (o un microservicio en Koyeb) que use la misma librería (Baileys) y **un número de WhatsApp dedicado a GURU** (no el de Omac), para no mezclar conversaciones.
   - Ese servicio expone algo como `POST /api/internal/send-whatsapp` (protegido con API key o JWT) con `{ to: "58...", message: "..." }`.
   - El **cron** (API, GitHub Action o script) solo decide el texto del mensaje y llama a ese endpoint.
 
-- **Texto del mensaje:** puedes tomar el mismo criterio que en Omac (recordatorio de pago, vencimiento día 5 o 22). Ejemplo: *“APlat: Recordatorio – Su mensualidad vence el día 5. Por favor realizar el pago para mantener el servicio activo.”*
+- **Texto del mensaje:** puedes tomar el mismo criterio que en Omac (recordatorio de pago, vencimiento día 5 o 22). Ejemplo: *“GURU: Recordatorio – Su mensualidad vence el día 5. Por favor realizar el pago para mantener el servicio activo.”*
 
 ### 3.4 Flujo de “desconexión” (pause) y “reconexión” (unpause)
 
@@ -102,7 +102,7 @@ En todos los casos el **método** es el mismo: un único proceso que, en una fec
   - Consultar la [referencia de la API Koyeb](https://www.koyeb.com/docs/reference/api) para **pause service** o **scale to 0** (o stop/start). El script/cron llamaría a ese endpoint con el `service_id` de cada cliente que esté en Koyeb.
   - Reconexión: endpoint inverso (resume / scale to 1).
 
-- **Quién llama:** el mismo proceso que corre el cron (API de APlat, GitHub Action o script con `VERCEL_TOKEN` y `KOYEB_TOKEN` en env). No hace falta “botón” en la UI para el corte automático: el **cron** es el que ejecuta la desconexión a las 23:59 (o 00:00 del día siguiente). Opcionalmente puedes tener un **botón en un panel admin de APlat** que llame a `POST /api/admin/subscriptions/:id/pause` o `unpause` para hacerlo manual.
+- **Quién llama:** el mismo proceso que corre el cron (API de GURU, GitHub Action o script con `VERCEL_TOKEN` y `KOYEB_TOKEN` en env). No hace falta “botón” en la UI para el corte automático: el **cron** es el que ejecuta la desconexión a las 23:59 (o 00:00 del día siguiente). Opcionalmente puedes tener un **botón en un panel admin de GURU** que llame a `POST /api/admin/subscriptions/:id/pause` o `unpause` para hacerlo manual.
 
 ### 3.5 Control vía CLI (Vercel, Koyeb, Git)
 
@@ -110,17 +110,17 @@ En todos los casos el **método** es el mismo: un único proceso que, en una fec
 - **Koyeb CLI:** si existe `koyeb service pause / resume`, el mismo script podría llamar al CLI en vez de la API. Lo importante es que el **cron** (o tú a mano) ejecute esa acción; da igual si es por API o por CLI desde un script.
 - **Git:** no “desconecta” el sitio. Git sirve para guardar el código del script, la config de suscripciones (JSON o migraciones) y el flujo de cron (p. ej. en `.github/workflows/billing-cron.yml`). El control real es **Vercel/Koyeb API (o CLI)**.
 
-Resumen: **sí puedes controlar todo desde “APlat”** en el sentido de: (1) un solo lugar donde se definen vencimientos y reglas, (2) un cron (en API, GitHub Actions o script) que envía WhatsApp y ejecuta pause/unpause vía Vercel/Koyeb. La “consola” puede ser un panel en APlat (futuro) o, de momento, **script + CLI/API** que tú ejecutes o que corra por cron.
+Resumen: **sí puedes controlar todo desde “GURU”** en el sentido de: (1) un solo lugar donde se definen vencimientos y reglas, (2) un cron (en API, GitHub Actions o script) que envía WhatsApp y ejecuta pause/unpause vía Vercel/Koyeb. La “consola” puede ser un panel en GURU (futuro) o, de momento, **script + CLI/API** que tú ejecutes o que corra por cron.
 
 ---
 
 ## 4. Orden sugerido de implementación
 
 1. **Config de suscripciones**  
-   Definir en JSON o en BD (API APlat) los 3 clientes con: `dueDay` (5 o 22), `provider` + `projectId`/`serviceId`, `whatsappNumber`, `status`, `lastPaymentAt`.
+   Definir en JSON o en BD (API GURU) los 3 clientes con: `dueDay` (5 o 22), `provider` + `projectId`/`serviceId`, `whatsappNumber`, `status`, `lastPaymentAt`.
 
 2. **WhatsApp centralizado**  
-   En la API de APlat (o en un worker en Koyeb) montar el envío por WhatsApp (replicar lógica de Omac con Baileys y un número para APlat). Endpoint interno `POST /api/internal/send-whatsapp`.
+   En la API de GURU (o en un worker en Koyeb) montar el envío por WhatsApp (replicar lógica de Omac con Baileys y un número para GURU). Endpoint interno `POST /api/internal/send-whatsapp`.
 
 3. **Lógica de fechas**  
    Función que, dada la fecha actual y la config, devuelva: “hoy toca recordatorio para [Omac, JCavalier]” o “hoy toca recordatorio para [Maracay]” o “hoy toca corte para [Omac, JCavalier]” (día 5) o “hoy toca corte para [Maracay]” (día 22).

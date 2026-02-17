@@ -5,11 +5,11 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { FileText, ArrowLeft, Plus, Loader2, RefreshCw, Upload, Trash2 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -31,8 +31,8 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const STATUS_COLOR: Record<string, string> = {
-  draft: "bg-aplat-muted/20 text-aplat-muted",
-  generating: "bg-aplat-cyan/20 text-aplat-cyan",
+  draft: "bg-guru-muted/20 text-guru-muted",
+  generating: "bg-guru-cyan/20 text-guru-cyan",
   ready: "bg-emerald-500/20 text-emerald-400",
   failed: "bg-red-500/20 text-red-400",
 };
@@ -126,22 +126,22 @@ export default function DashboardReportsPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
-      <Link href="/dashboard" className="inline-flex items-center gap-2 text-aplat-muted hover:text-aplat-text mb-6">
+      <Link href="/dashboard" className="inline-flex items-center gap-2 text-guru-muted hover:text-guru-text mb-6">
         <ArrowLeft className="w-4 h-4" />
         Volver al panel
       </Link>
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-2">
-          <div className="rounded-xl p-2 bg-aplat-cyan/15 text-aplat-cyan">
+          <div className="rounded-xl p-2 bg-guru-cyan/15 text-guru-cyan">
             <FileText className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-aplat-text">Reportes</h1>
-            <p className="text-aplat-muted text-sm">Crear reportes, subir Excel y consultar datos importados</p>
+            <h1 className="text-2xl font-bold text-guru-text">Reportes</h1>
+            <p className="text-guru-muted text-sm">Crear reportes, subir Excel y consultar datos importados</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <label className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2 text-sm font-medium cursor-pointer hover:bg-aplat-cyan/30">
+          <label className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 text-guru-cyan border border-guru-cyan/40 px-4 py-2 text-sm font-medium cursor-pointer hover:bg-guru-cyan/30">
             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             Subir Excel
             <input type="file" accept=".xlsx,.xls,.csv" onChange={handleExcelUpload} disabled={uploading} className="hidden" />
@@ -149,12 +149,12 @@ export default function DashboardReportsPage() {
           <button
             type="button"
             onClick={() => { setShowForm(!showForm); setError(null); }}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-4 py-2 text-sm font-medium text-aplat-text"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:bg-white/5 px-4 py-2 text-sm font-medium text-guru-text"
           >
             <Plus className="w-4 h-4" />
             Nuevo reporte
           </button>
-          <button type="button" onClick={fetchReports} className="p-2 rounded-xl border border-white/20 hover:bg-white/5 text-aplat-muted hover:text-aplat-text" title="Actualizar">
+          <button type="button" onClick={fetchReports} className="p-2 rounded-xl border border-white/20 hover:bg-white/5 text-guru-muted hover:text-guru-text" title="Actualizar">
             <RefreshCw className="w-4 h-4" />
           </button>
         </div>
@@ -169,27 +169,27 @@ export default function DashboardReportsPage() {
       {!loading && reports.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider">Total</p>
-            <p className="text-xl font-bold text-aplat-text">{reports.length}</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider">Total</p>
+            <p className="text-xl font-bold text-guru-text">{reports.length}</p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider">Listos</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider">Listos</p>
             <p className="text-xl font-bold text-emerald-400">{readyCount}</p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider">Borradores</p>
-            <p className="text-xl font-bold text-aplat-muted">{draftCount}</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider">Borradores</p>
+            <p className="text-xl font-bold text-guru-muted">{draftCount}</p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-aplat-muted text-xs uppercase tracking-wider">Importaciones</p>
-            <p className="text-xl font-bold text-aplat-cyan">{reports.filter((r) => r.type === "manual" && r.description?.includes("columnas")).length}</p>
+            <p className="text-guru-muted text-xs uppercase tracking-wider">Importaciones</p>
+            <p className="text-xl font-bold text-guru-cyan">{reports.filter((r) => r.type === "manual" && r.description?.includes("columnas")).length}</p>
           </div>
         </div>
       )}
 
       {excelResult && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
-          <p className="text-aplat-muted text-sm mb-2">
+          <p className="text-guru-muted text-sm mb-2">
             {excelResult.columns.length} columnas, {excelResult.totalRows} filas (mostrando hasta {excelResult.rows.length})
           </p>
           <div className="overflow-x-auto rounded-xl border border-white/10">
@@ -197,7 +197,7 @@ export default function DashboardReportsPage() {
               <thead>
                 <tr className="border-b border-white/10">
                   {excelResult.columns.map((col) => (
-                    <th key={col} className="px-3 py-2 text-aplat-muted font-medium whitespace-nowrap">
+                    <th key={col} className="px-3 py-2 text-guru-muted font-medium whitespace-nowrap">
                       {col}
                     </th>
                   ))}
@@ -207,7 +207,7 @@ export default function DashboardReportsPage() {
                 {excelResult.rows.slice(0, 50).map((row, i) => (
                   <tr key={i} className="border-b border-white/5 hover:bg-white/5">
                     {excelResult.columns.map((col) => (
-                      <td key={col} className="px-3 py-2 text-aplat-text whitespace-nowrap max-w-[200px] truncate">
+                      <td key={col} className="px-3 py-2 text-guru-text whitespace-nowrap max-w-[200px] truncate">
                         {String(row[col] ?? "")}
                       </td>
                     ))}
@@ -216,7 +216,7 @@ export default function DashboardReportsPage() {
               </tbody>
             </table>
           </div>
-          <button type="button" onClick={() => setExcelResult(null)} className="mt-2 text-sm text-aplat-muted hover:text-aplat-text">
+          <button type="button" onClick={() => setExcelResult(null)} className="mt-2 text-sm text-guru-muted hover:text-guru-text">
             Cerrar vista
           </button>
         </motion.div>
@@ -229,34 +229,34 @@ export default function DashboardReportsPage() {
           onSubmit={handleCreate}
           className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-6"
         >
-          <h2 className="text-lg font-semibold text-aplat-text mb-3">Nuevo reporte</h2>
+          <h2 className="text-lg font-semibold text-guru-text mb-3">Nuevo reporte</h2>
           <div className="grid gap-3">
             <div>
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Título *</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Título *</label>
               <input
                 type="text"
                 placeholder="Ej. Ventas Q1, Asistencia mensual"
                 value={form.title}
                 onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted w-full"
+                className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted w-full"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Descripción (opcional)</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Descripción (opcional)</label>
               <textarea
                 placeholder="Detalle o alcance del reporte"
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text placeholder:text-aplat-muted w-full min-h-[60px]"
+                className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text placeholder:text-guru-muted w-full min-h-[60px]"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-aplat-muted mb-1">Tipo</label>
+              <label className="block text-sm font-medium text-guru-muted mb-1">Tipo</label>
               <select
                 value={form.type}
                 onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
-                className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-aplat-text w-full"
+                className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-guru-text w-full"
               >
                 <option value="manual">Manual</option>
                 <option value="scheduled">Programado</option>
@@ -265,10 +265,10 @@ export default function DashboardReportsPage() {
             </div>
           </div>
           <div className="flex gap-2 mt-3">
-            <button type="submit" className="rounded-xl bg-aplat-cyan/20 text-aplat-cyan px-4 py-2 text-sm font-medium">
+            <button type="submit" className="rounded-xl bg-guru-cyan/20 text-guru-cyan px-4 py-2 text-sm font-medium">
               Crear
             </button>
-            <button type="button" onClick={() => setShowForm(false)} className="rounded-xl border border-white/20 px-4 py-2 text-sm text-aplat-muted hover:text-aplat-text">
+            <button type="button" onClick={() => setShowForm(false)} className="rounded-xl border border-white/20 px-4 py-2 text-sm text-guru-muted hover:text-guru-text">
               Cancelar
             </button>
           </div>
@@ -276,7 +276,7 @@ export default function DashboardReportsPage() {
       )}
 
       {loading && reports.length === 0 ? (
-        <div className="flex items-center gap-2 text-aplat-muted py-8">
+        <div className="flex items-center gap-2 text-guru-muted py-8">
           <Loader2 className="w-5 h-5 animate-spin" />
           Cargando...
         </div>
@@ -286,13 +286,13 @@ export default function DashboardReportsPage() {
           animate={{ opacity: 1 }}
           className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center"
         >
-          <FileText className="w-12 h-12 text-aplat-muted/70 mx-auto mb-4" />
-          <h2 className="text-lg font-semibold text-aplat-text mb-2">No hay reportes</h2>
-          <p className="text-aplat-muted text-sm max-w-md mx-auto mb-5">
+          <FileText className="w-12 h-12 text-guru-muted/70 mx-auto mb-4" />
+          <h2 className="text-lg font-semibold text-guru-text mb-2">No hay reportes</h2>
+          <p className="text-guru-muted text-sm max-w-md mx-auto mb-5">
             Cree un reporte manual o suba un archivo Excel (.xlsx, .xls, .csv) para importar datos y visualizarlos en tabla.
           </p>
           <div className="flex flex-wrap justify-center gap-2">
-            <label className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2.5 text-sm font-medium cursor-pointer hover:bg-aplat-cyan/30">
+            <label className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 text-guru-cyan border border-guru-cyan/40 px-4 py-2.5 text-sm font-medium cursor-pointer hover:bg-guru-cyan/30">
               {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
               Subir Excel
               <input type="file" accept=".xlsx,.xls,.csv" onChange={handleExcelUpload} disabled={uploading} className="hidden" />
@@ -300,7 +300,7 @@ export default function DashboardReportsPage() {
             <button
               type="button"
               onClick={() => setShowForm(true)}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-4 py-2.5 text-sm text-aplat-muted hover:bg-white/5 hover:text-aplat-text"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-4 py-2.5 text-sm text-guru-muted hover:bg-white/5 hover:text-guru-text"
             >
               <Plus className="w-4 h-4" />
               Nuevo reporte
@@ -315,14 +315,14 @@ export default function DashboardReportsPage() {
               className="rounded-xl border border-white/10 bg-white/5 p-3 flex items-start justify-between gap-2"
             >
               <div className="min-w-0 flex-1">
-                <p className="font-medium text-aplat-text">{r.title}</p>
-                {r.description && <p className="text-sm text-aplat-muted mt-0.5 line-clamp-1">{r.description}</p>}
+                <p className="font-medium text-guru-text">{r.title}</p>
+                {r.description && <p className="text-sm text-guru-muted mt-0.5 line-clamp-1">{r.description}</p>}
                 <div className="flex flex-wrap items-center gap-2 mt-1">
                   <span className={`inline-block px-2 py-0.5 rounded text-xs ${STATUS_COLOR[r.status] ?? ""}`}>
                     {STATUS_LABEL[r.status] ?? r.status}
                   </span>
-                  <span className="text-aplat-muted text-xs">{TYPE_LABEL[r.type] ?? r.type}</span>
-                  <span className="text-aplat-muted text-xs">{new Date(r.createdAt).toLocaleString("es")}</span>
+                  <span className="text-guru-muted text-xs">{TYPE_LABEL[r.type] ?? r.type}</span>
+                  <span className="text-guru-muted text-xs">{new Date(r.createdAt).toLocaleString("es")}</span>
                 </div>
               </div>
               <button

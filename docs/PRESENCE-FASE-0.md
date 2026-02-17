@@ -1,8 +1,8 @@
-# APlat Presence — Fase 0 Completada
+# GURU Presence — Fase 0 Completada
 
 ## Resumen
 
-Fase 0 del plan de desarrollo APlat Presence implementada: base API, modelo de datos, módulo de inteligencia, PWA y rutas.
+Fase 0 del plan de desarrollo GURU Presence implementada: base API, modelo de datos, módulo de inteligencia, PWA y rutas.
 
 ## Archivos creados
 
@@ -72,7 +72,7 @@ Fase 0 del plan de desarrollo APlat Presence implementada: base API, modelo de d
 
 ## Base de datos
 
-- `aplat-presence.db` en `APLAT_DATA_PATH` (por defecto `data/`)
+- `guru-presence.db` en `GURU_DATA_PATH` (por defecto `data/`)
 - Sitio por defecto "Sede Principal" creado automáticamente
 
 ## Próximas fases

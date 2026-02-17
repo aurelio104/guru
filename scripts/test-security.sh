@@ -1,12 +1,12 @@
 #!/bin/bash
-# Pruebas de seguridad de APlat API
+# Pruebas de seguridad de GURU API
 # Uso: ./scripts/test-security.sh [API_URL]
 # Ejemplo: ./scripts/test-security.sh http://localhost:3001
 
 set -e
 
 API_URL="${1:-http://localhost:3001}"
-echo "🔒 Probando seguridad de APlat API en: $API_URL"
+echo "🔒 Probando seguridad de GURU API en: $API_URL"
 echo ""
 
 # Colores
@@ -177,7 +177,7 @@ fi
 # Verificar auditoría (requiere admin)
 ADMIN_TOKEN=$(curl -s -X POST "$API_URL/api/auth/login" \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@aplat.local","password":"APlat2025!"}' | jq -r '.token')
+  -d '{"email":"admin@aplat.local","password":"GURU2025!"}' | jq -r '.token')
 
 if [ "$ADMIN_TOKEN" != "null" ] && [ "$ADMIN_TOKEN" != "" ]; then
   AUDIT_COUNT=$(curl -s "$API_URL/api/admin/audit-logs?limit=10" \
@@ -211,7 +211,7 @@ echo "📋 Checklist de producción:"
 echo "  - JWT_SECRET configurado (32+ chars)"
 echo "  - ADMIN_PASSWORD fuerte"
 echo "  - CORS_ORIGIN apunta al frontend"
-echo "  - APLAT_DATA_PATH en volumen persistente"
+echo "  - GURU_DATA_PATH en volumen persistente"
 echo "  - Rate limiting habilitado"
 echo "  - Helmet habilitado"
 echo "  - Auditoría inicializada"

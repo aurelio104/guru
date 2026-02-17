@@ -1,4 +1,4 @@
-# Informe de Despliegue y Verificación - APlat API
+# Informe de Despliegue y Verificación - GURU API
 
 **Fecha:** 2026-02-12 13:45 UTC  
 **Versión:** 1.0.0  
@@ -41,12 +41,12 @@
 #### Workflow Docker API
 - **Estado:** ✅ SUCCESS
 - **Duración:** 26s
-- **Imagen:** `ghcr.io/aurelio104/aplat-api:latest`
+- **Imagen:** `ghcr.io/aurelio104/guru-api:latest`
 
 ### 3. Despliegue en Koyeb
 
-- **Servicio:** aplat-api
-- **URL:** https://aplat-api-aurelio104-5877962a.koyeb.app
+- **Servicio:** guru-api
+- **URL:** https://guru-api-aurelio104-5877962a.koyeb.app
 - **Estado inicial:** 503 (deploying)
 - **Tiempo de despliegue:** ~20 segundos
 - **Estado final:** ✅ 200 OK
@@ -59,7 +59,7 @@
 ```bash
 GET /api/health
 Status: 200 OK
-Response: {"ok":true,"service":"aplat-api"}
+Response: {"ok":true,"service":"guru-api"}
 ```
 ✅ **PASS**
 
@@ -174,9 +174,9 @@ Resultado: ✅ Perfil intacto con todos los datos
 
 Se verificó que las siguientes variables estén configuradas:
 
-- ✅ `APLAT_DATA_PATH=/data` (volumen persistente)
-- ✅ `APLAT_JWT_SECRET` (configurado)
-- ✅ `APLAT_ADMIN_PASSWORD` (configurado)
+- ✅ `GURU_DATA_PATH=/data` (volumen persistente)
+- ✅ `GURU_JWT_SECRET` (configurado)
+- ✅ `GURU_ADMIN_PASSWORD` (configurado)
 - ✅ `CORS_ORIGIN` (configurado)
 - ✅ `NODE_ENV=production`
 
@@ -214,7 +214,7 @@ Ninguna advertencia crítica. El sistema está configurado correctamente.
 ### Recomendaciones Post-Deploy
 
 1. ✅ **Monitoreo de logs:** Configurar alertas en Koyeb para errores
-2. ✅ **Backup automático:** Configurar backup de `/data/aplat.db` y `/data/aplat-audit.db`
+2. ✅ **Backup automático:** Configurar backup de `/data/guru.db` y `/data/guru-audit.db`
 3. ✅ **Rate limit:** Considerar ajuste si hay usuarios legítimos afectados
 4. ✅ **Auditoría:** Revisar logs semanalmente en `/api/admin/audit-logs`
 
@@ -249,7 +249,7 @@ Ninguna advertencia crítica. El sistema está configurado correctamente.
 
 ## ✨ Conclusión
 
-**APlat API está completamente desplegado, seguro y funcional en producción.**
+**GURU API está completamente desplegado, seguro y funcional en producción.**
 
 - ✅ Todas las medidas de seguridad activas
 - ✅ Todos los datos persisten correctamente
@@ -263,5 +263,5 @@ Ninguna advertencia crítica. El sistema está configurado correctamente.
 ---
 
 **Próxima revisión:** 2026-03-12 (30 días)  
-**Responsable:** Equipo APlat  
+**Responsable:** Equipo GURU  
 **Contacto:** aurelio104@github

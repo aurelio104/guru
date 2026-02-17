@@ -28,11 +28,11 @@ import { NfcTagAdmin } from "@/components/presence/NfcTagAdmin";
 
 const QRCodeSVG = dynamic(() => import("qrcode.react").then((m) => m.QRCodeSVG), { ssr: false });
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 const BASE = API_URL.replace(/\/$/, "");
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -96,14 +96,14 @@ function CreateFirstSiteCard({ onCreated }: { onCreated: () => void }) {
 
   return (
     <div className="rounded-xl glass p-8 text-center max-w-md mx-auto">
-      <MapPin className="w-12 h-12 text-aplat-cyan mx-auto mb-4 opacity-80" />
-      <p className="text-aplat-muted mb-4">No hay sitios configurados. Crea el primero para usar Presence.</p>
+      <MapPin className="w-12 h-12 text-guru-cyan mx-auto mb-4 opacity-80" />
+      <p className="text-guru-muted mb-4">No hay sitios configurados. Crea el primero para usar Presence.</p>
       {error && <p className="text-red-400 text-sm mb-3">{error}</p>}
       <button
         type="button"
         onClick={handleCreate}
         disabled={creating}
-        className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-5 py-2.5 font-medium disabled:opacity-60"
+        className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan border border-guru-cyan/40 px-5 py-2.5 font-medium disabled:opacity-60"
       >
         {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
         Crear sitio «Sede Principal»
@@ -230,7 +230,7 @@ export default function PresenceDashboardPage() {
   if (user?.role !== "master") {
     return (
       <div className="rounded-xl glass p-6 text-center">
-        <p className="text-aplat-muted">Acceso restringido a administradores.</p>
+        <p className="text-guru-muted">Acceso restringido a administradores.</p>
       </div>
     );
   }
@@ -238,7 +238,7 @@ export default function PresenceDashboardPage() {
   if (!API_URL) {
     return (
       <div className="rounded-xl glass p-6 text-center">
-        <p className="text-aplat-muted">Configure NEXT_PUBLIC_APLAT_API_URL para usar Presence.</p>
+        <p className="text-guru-muted">Configure NEXT_PUBLIC_GURU_API_URL para usar Presence.</p>
       </div>
     );
   }
@@ -246,7 +246,7 @@ export default function PresenceDashboardPage() {
   if (loading && sites.length === 0) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Loader2 className="w-8 h-8 animate-spin text-aplat-cyan" />
+        <Loader2 className="w-8 h-8 animate-spin text-guru-cyan" />
       </div>
     );
   }
@@ -268,11 +268,11 @@ export default function PresenceDashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-aplat-text flex items-center gap-2">
-            <MapPin className="w-7 h-7 text-aplat-cyan" />
+          <h1 className="text-2xl font-bold text-guru-text flex items-center gap-2">
+            <MapPin className="w-7 h-7 text-guru-cyan" />
             Presence
           </h1>
-          <p className="text-aplat-muted text-sm mt-1">
+          <p className="text-guru-muted text-sm mt-1">
             Presencia, check-ins e inteligencia contextual
           </p>
         </div>
@@ -281,7 +281,7 @@ export default function PresenceDashboardPage() {
             <select
               value={selectedSiteId}
               onChange={(e) => setSelectedSiteId(e.target.value)}
-              className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-aplat-text"
+              className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-guru-text"
               aria-label="Sede"
             >
               {sites.map((s) => (
@@ -306,7 +306,7 @@ export default function PresenceDashboardPage() {
                   URL.revokeObjectURL(a.href);
                 });
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-aplat-text text-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-guru-text text-sm"
           >
             <Download className="w-4 h-4" />
             Exportar CSV
@@ -326,7 +326,7 @@ export default function PresenceDashboardPage() {
                   URL.revokeObjectURL(a.href);
                 });
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-aplat-text text-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-guru-text text-sm"
           >
             <Download className="w-4 h-4" />
             Exportar JSON
@@ -357,7 +357,7 @@ export default function PresenceDashboardPage() {
           <button
             onClick={() => fetchAnalytics()}
             disabled={refreshing}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan hover:bg-aplat-cyan/30"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-guru-cyan/20 text-guru-cyan hover:bg-guru-cyan/30"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
             Actualizar
@@ -367,17 +367,17 @@ export default function PresenceDashboardPage() {
 
       {refreshing && !analytics && (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 animate-spin text-aplat-cyan" />
+          <Loader2 className="w-8 h-8 animate-spin text-guru-cyan" />
         </div>
       )}
 
       {!refreshing && !analytics && sites.length > 0 && (
         <div className="rounded-xl glass p-6 text-center">
-          <p className="text-aplat-muted">No se pudieron cargar los datos. Revisa la conexión e intenta de nuevo.</p>
+          <p className="text-guru-muted">No se pudieron cargar los datos. Revisa la conexión e intenta de nuevo.</p>
           <button
             type="button"
             onClick={() => fetchAnalytics()}
-            className="mt-3 px-4 py-2 rounded-xl bg-aplat-cyan/20 text-aplat-cyan hover:bg-aplat-cyan/30 text-sm"
+            className="mt-3 px-4 py-2 rounded-xl bg-guru-cyan/20 text-guru-cyan hover:bg-guru-cyan/30 text-sm"
           >
             Reintentar
           </button>
@@ -392,12 +392,12 @@ export default function PresenceDashboardPage() {
               animate={{ opacity: 1, y: 0 }}
               className="glass-neon rounded-xl p-4"
             >
-              <div className="flex items-center gap-2 text-aplat-muted text-sm mb-1">
+              <div className="flex items-center gap-2 text-guru-muted text-sm mb-1">
                 <Users className="w-4 h-4" />
                 Ahora
               </div>
-              <p className="text-2xl font-bold text-aplat-text">{m?.current ?? 0}</p>
-              <p className="text-xs text-aplat-muted">personas en el sitio</p>
+              <p className="text-2xl font-bold text-guru-text">{m?.current ?? 0}</p>
+              <p className="text-xs text-guru-muted">personas en el sitio</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 8 }}
@@ -405,12 +405,12 @@ export default function PresenceDashboardPage() {
               transition={{ delay: 0.05 }}
               className="glass-neon rounded-xl p-4"
             >
-              <div className="flex items-center gap-2 text-aplat-muted text-sm mb-1">
+              <div className="flex items-center gap-2 text-guru-muted text-sm mb-1">
                 <TrendingUp className="w-4 h-4" />
                 Pico hoy
               </div>
-              <p className="text-2xl font-bold text-aplat-text">{m?.peak_today ?? 0}</p>
-              <p className="text-xs text-aplat-muted">a las {m?.peak_hour_today ?? "—"}</p>
+              <p className="text-2xl font-bold text-guru-text">{m?.peak_today ?? 0}</p>
+              <p className="text-xs text-guru-muted">a las {m?.peak_hour_today ?? "—"}</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 8 }}
@@ -418,9 +418,9 @@ export default function PresenceDashboardPage() {
               transition={{ delay: 0.1 }}
               className="glass-neon rounded-xl p-4"
             >
-              <div className="flex items-center gap-2 text-aplat-muted text-sm mb-1">Total 7 días</div>
-              <p className="text-2xl font-bold text-aplat-text">{analytics.total_check_ins}</p>
-              <p className="text-xs text-aplat-muted">check-ins</p>
+              <div className="flex items-center gap-2 text-guru-muted text-sm mb-1">Total 7 días</div>
+              <p className="text-2xl font-bold text-guru-text">{analytics.total_check_ins}</p>
+              <p className="text-xs text-guru-muted">check-ins</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 8 }}
@@ -428,9 +428,9 @@ export default function PresenceDashboardPage() {
               transition={{ delay: 0.15 }}
               className="glass-neon rounded-xl p-4"
             >
-              <div className="flex items-center gap-2 text-aplat-muted text-sm mb-1">Permanencia</div>
-              <p className="text-2xl font-bold text-aplat-text">{m?.average_dwell_minutes ?? 0} min</p>
-              <p className="text-xs text-aplat-muted">promedio</p>
+              <div className="flex items-center gap-2 text-guru-muted text-sm mb-1">Permanencia</div>
+              <p className="text-2xl font-bold text-guru-text">{m?.average_dwell_minutes ?? 0} min</p>
+              <p className="text-xs text-guru-muted">promedio</p>
             </motion.div>
           </div>
 
@@ -442,8 +442,8 @@ export default function PresenceDashboardPage() {
                 transition={{ delay: 0.18 }}
                 className="glass-neon rounded-xl p-6"
               >
-                <h3 className="font-semibold text-aplat-text mb-4 flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-aplat-cyan" />
+                <h3 className="font-semibold text-guru-text mb-4 flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-guru-cyan" />
                   Check-ins por hora (7 días)
                 </h3>
                 <div className="flex items-end gap-0.5 h-24">
@@ -453,14 +453,14 @@ export default function PresenceDashboardPage() {
                     return (
                       <div key={item.hour} className="flex-1 flex flex-col items-center" title={`${item.label}: ${item.count}`}>
                         <div
-                          className="w-full min-h-[2px] rounded-t bg-aplat-cyan/60 transition-all duration-300"
+                          className="w-full min-h-[2px] rounded-t bg-guru-cyan/60 transition-all duration-300"
                           style={{ height: `${Math.max(2, pct)}%` }}
                         />
                       </div>
                     );
                   })}
                 </div>
-                <div className="flex justify-between mt-1 text-[10px] text-aplat-muted">
+                <div className="flex justify-between mt-1 text-[10px] text-guru-muted">
                   <span>06:00</span>
                   <span>22:00</span>
                 </div>
@@ -471,8 +471,8 @@ export default function PresenceDashboardPage() {
                 transition={{ delay: 0.2 }}
                 className="glass-neon rounded-xl p-6"
               >
-                <h3 className="font-semibold text-aplat-text mb-4 flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-aplat-emerald" />
+                <h3 className="font-semibold text-guru-text mb-4 flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-guru-emerald" />
                   Check-ins por día (7 días)
                 </h3>
                 <div className="flex items-end gap-1 h-24">
@@ -482,10 +482,10 @@ export default function PresenceDashboardPage() {
                     return (
                       <div key={item.date} className="flex-1 flex flex-col items-center" title={`${item.label}: ${item.count}`}>
                         <div
-                          className="w-full min-h-[2px] rounded-t bg-aplat-emerald/60"
+                          className="w-full min-h-[2px] rounded-t bg-guru-emerald/60"
                           style={{ height: `${Math.max(2, pct)}%` }}
                         />
-                        <span className="text-[10px] text-aplat-muted mt-1 truncate max-w-full">{item.label}</span>
+                        <span className="text-[10px] text-guru-muted mt-1 truncate max-w-full">{item.label}</span>
                       </div>
                     );
                   })}
@@ -501,8 +501,8 @@ export default function PresenceDashboardPage() {
               transition={{ delay: 0.22 }}
               className="glass-neon rounded-xl p-6"
             >
-              <h3 className="font-semibold text-aplat-text mb-4 flex items-center gap-2">
-                <PieChart className="w-5 h-5 text-aplat-cyan" />
+              <h3 className="font-semibold text-guru-text mb-4 flex items-center gap-2">
+                <PieChart className="w-5 h-5 text-guru-cyan" />
                 Check-ins por canal
               </h3>
               <div className="flex flex-wrap gap-3">
@@ -511,9 +511,9 @@ export default function PresenceDashboardPage() {
                   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
                   return (
                     <div key={channel} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5">
-                      <span className="text-aplat-text text-sm capitalize">{channel.replace("_", " ")}</span>
-                      <span className="text-aplat-cyan font-medium">{count}</span>
-                      <span className="text-aplat-muted text-xs">({pct}%)</span>
+                      <span className="text-guru-text text-sm capitalize">{channel.replace("_", " ")}</span>
+                      <span className="text-guru-cyan font-medium">{count}</span>
+                      <span className="text-guru-muted text-xs">({pct}%)</span>
                     </div>
                   );
                 })}
@@ -528,12 +528,12 @@ export default function PresenceDashboardPage() {
               transition={{ delay: 0.24 }}
               className="glass-neon rounded-xl p-6"
             >
-              <h3 className="font-semibold text-aplat-text mb-4 flex items-center gap-2">
-                <Wifi className="w-5 h-5 text-aplat-cyan" />
+              <h3 className="font-semibold text-guru-text mb-4 flex items-center gap-2">
+                <Wifi className="w-5 h-5 text-guru-cyan" />
                 Activos ahora
               </h3>
               {active.length === 0 ? (
-                <p className="text-aplat-muted text-sm">Nadie en el sitio.</p>
+                <p className="text-guru-muted text-sm">Nadie en el sitio.</p>
               ) : (
                 <ul className="space-y-2">
                   {active.map((a) => (
@@ -541,7 +541,7 @@ export default function PresenceDashboardPage() {
                       key={a.id}
                       className="flex items-center justify-between py-2 border-b border-white/5 last:border-0"
                     >
-                      <span className="text-aplat-text text-sm">
+                      <span className="text-guru-text text-sm">
                         Check-in vía {a.channel} • {new Date(a.checked_in_at).toLocaleTimeString("es")}
                       </span>
                     </li>
@@ -556,18 +556,18 @@ export default function PresenceDashboardPage() {
               transition={{ delay: 0.25 }}
               className="glass-neon rounded-xl p-6"
             >
-              <h3 className="font-semibold text-aplat-text mb-4 flex items-center gap-2">
-                <Lightbulb className="w-5 h-5 text-aplat-emerald" />
+              <h3 className="font-semibold text-guru-text mb-4 flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-guru-emerald" />
                 Insights
               </h3>
               {!analytics.insights?.length ? (
-                <p className="text-aplat-muted text-sm">Sin insights aún.</p>
+                <p className="text-guru-muted text-sm">Sin insights aún.</p>
               ) : (
                 <ul className="space-y-3">
                   {analytics.insights.slice(0, 5).map((insight, i) => (
                     <li key={i} className="text-sm">
-                      <span className="font-medium text-aplat-text">{insight.title}</span>
-                      <p className="text-aplat-muted mt-0.5">{insight.description}</p>
+                      <span className="font-medium text-guru-text">{insight.title}</span>
+                      <p className="text-guru-muted mt-0.5">{insight.description}</p>
                     </li>
                   ))}
                 </ul>
@@ -580,13 +580,13 @@ export default function PresenceDashboardPage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="glass rounded-xl p-6 border border-aplat-cyan/20"
+              className="glass rounded-xl p-6 border border-guru-cyan/20"
             >
-              <h3 className="font-semibold text-aplat-text mb-3">Recomendaciones</h3>
+              <h3 className="font-semibold text-guru-text mb-3">Recomendaciones</h3>
               <ul className="space-y-2">
                 {analytics.recommendations.map((r, i) => (
-                  <li key={i} className="text-aplat-muted text-sm flex items-start gap-2">
-                    <span className="text-aplat-cyan">•</span>
+                  <li key={i} className="text-guru-muted text-sm flex items-start gap-2">
+                    <span className="text-guru-cyan">•</span>
                     {r}
                   </li>
                 ))}
@@ -600,13 +600,13 @@ export default function PresenceDashboardPage() {
             transition={{ delay: 0.33 }}
             className="glass-neon rounded-xl p-6"
           >
-            <h3 className="font-semibold text-aplat-text mb-4 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-aplat-cyan" />
+            <h3 className="font-semibold text-guru-text mb-4 flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-guru-cyan" />
               Zonas
             </h3>
             {zones.length === 0 ? (
               <div className="space-y-3">
-                <p className="text-aplat-muted text-sm">
+                <p className="text-guru-muted text-sm">
                   No hay zonas en esta sede. Cree al menos una para habilitar check-in por ubicación, QR, BLE y NFC.
                 </p>
                 <form onSubmit={createZoneSubmit} className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3 max-w-sm">
@@ -615,7 +615,7 @@ export default function PresenceDashboardPage() {
                     placeholder="Nombre de la zona (ej. Recepción)"
                     value={zoneForm.name}
                     onChange={(e) => setZoneForm((f) => ({ ...f, name: e.target.value }))}
-                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm"
                   />
                   <div className="flex gap-2">
                     <input
@@ -623,21 +623,21 @@ export default function PresenceDashboardPage() {
                       placeholder="Lat"
                       value={zoneForm.lat}
                       onChange={(e) => setZoneForm((f) => ({ ...f, lat: e.target.value }))}
-                      className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+                      className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm"
                     />
                     <input
                       type="text"
                       placeholder="Lng"
                       value={zoneForm.lng}
                       onChange={(e) => setZoneForm((f) => ({ ...f, lng: e.target.value }))}
-                      className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+                      className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm"
                     />
                   </div>
                   {zoneError && <p className="text-red-400 text-sm">{zoneError}</p>}
                   <button
                     type="submit"
                     disabled={zoneSubmitting}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-aplat-cyan text-aplat-deep font-medium text-sm disabled:opacity-60"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-guru-cyan text-guru-deep font-medium text-sm disabled:opacity-60"
                   >
                     {zoneSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                     Crear zona
@@ -646,11 +646,11 @@ export default function PresenceDashboardPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                <ul className="space-y-1 text-sm text-aplat-muted">
+                <ul className="space-y-1 text-sm text-guru-muted">
                   {zones.map((z) => (
                     <li key={z.id} className="flex items-center gap-2">
-                      <span className="text-aplat-text font-medium">{z.name}</span>
-                      <span className="text-aplat-muted text-xs">({z.id})</span>
+                      <span className="text-guru-text font-medium">{z.name}</span>
+                      <span className="text-guru-muted text-xs">({z.id})</span>
                     </li>
                   ))}
                 </ul>
@@ -660,11 +660,11 @@ export default function PresenceDashboardPage() {
                     placeholder="Nueva zona"
                     value={zoneForm.name}
                     onChange={(e) => setZoneForm((f) => ({ ...f, name: e.target.value }))}
-                    className="w-32 min-w-0 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-sm"
+                    className="w-32 min-w-0 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-guru-text text-sm"
                   />
-                  <input type="text" placeholder="Lat" value={zoneForm.lat} onChange={(e) => setZoneForm((f) => ({ ...f, lat: e.target.value }))} className="w-20 px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-xs" />
-                  <input type="text" placeholder="Lng" value={zoneForm.lng} onChange={(e) => setZoneForm((f) => ({ ...f, lng: e.target.value }))} className="w-20 px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-aplat-text text-xs" />
-                  <button type="submit" disabled={zoneSubmitting} className="px-3 py-1.5 rounded-lg bg-aplat-cyan/20 text-aplat-cyan text-sm font-medium disabled:opacity-60">
+                  <input type="text" placeholder="Lat" value={zoneForm.lat} onChange={(e) => setZoneForm((f) => ({ ...f, lat: e.target.value }))} className="w-20 px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-guru-text text-xs" />
+                  <input type="text" placeholder="Lng" value={zoneForm.lng} onChange={(e) => setZoneForm((f) => ({ ...f, lng: e.target.value }))} className="w-20 px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-guru-text text-xs" />
+                  <button type="submit" disabled={zoneSubmitting} className="px-3 py-1.5 rounded-lg bg-guru-cyan/20 text-guru-cyan text-sm font-medium disabled:opacity-60">
                     {zoneSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Añadir zona"}
                   </button>
                 </form>
@@ -680,11 +680,11 @@ export default function PresenceDashboardPage() {
               transition={{ delay: 0.35 }}
               className="glass-neon rounded-xl p-6"
             >
-              <h3 className="font-semibold text-aplat-text mb-4 flex items-center gap-2">
-                <QrCode className="w-5 h-5 text-aplat-cyan" />
+              <h3 className="font-semibold text-guru-text mb-4 flex items-center gap-2">
+                <QrCode className="w-5 h-5 text-guru-cyan" />
                 Códigos QR por zona
               </h3>
-              <p className="text-aplat-muted text-sm mb-4">
+              <p className="text-guru-muted text-sm mb-4">
                 Imprima o muestre en pantalla. Los visitantes escanean con la cámara del teléfono.
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -702,12 +702,12 @@ export default function PresenceDashboardPage() {
                           <QRCodeSVG value={qrUrl} size={120} level="M" />
                         </div>
                       )}
-                      <p className="text-aplat-text text-sm font-medium text-center">{z.name}</p>
+                      <p className="text-guru-text text-sm font-medium text-center">{z.name}</p>
                       <a
                         href={qrUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-aplat-cyan text-xs mt-1 hover:underline"
+                        className="text-guru-cyan text-xs mt-1 hover:underline"
                       >
                         Abrir
                       </a>
@@ -742,7 +742,7 @@ export default function PresenceDashboardPage() {
               href={`/portal?site_id=${selectedSiteId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-aplat-text text-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-guru-text text-sm"
             >
               <ExternalLink className="w-4 h-4" />
               Portal WiFi
@@ -760,7 +760,7 @@ export default function PresenceDashboardPage() {
               href={`/presence/check-in?site_id=${selectedSiteId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-aplat-text text-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-guru-text text-sm"
             >
               <ExternalLink className="w-4 h-4" />
               Check-in manual

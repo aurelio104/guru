@@ -11,7 +11,7 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
-      console.error("[APlat Global Error]", error?.message, error?.digest);
+      console.error("[GURU Global Error]", error?.message, error?.digest);
     }
   }, [error]);
 

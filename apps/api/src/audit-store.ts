@@ -6,8 +6,8 @@ import fs from "fs";
 import path from "path";
 import initSqlJs, { type Database } from "sql.js";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
-const AUDIT_DB_PATH = path.join(DATA_DIR, "aplat-audit.db");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
+const AUDIT_DB_PATH = path.join(DATA_DIR, "guru-audit.db");
 const AUDIT_DB_TMP_PATH = `${AUDIT_DB_PATH}.tmp`;
 
 let auditDbInstance: Database | null = null;

@@ -12,7 +12,7 @@
 ```
 Work/
 ├── Albatros/     ← ~118.500 archivos (PHP, JS, TS, etc.)
-├── Aurelio/      ← ~29.400 archivos (incl. proyecto A/APlat)
+├── Aurelio/      ← ~29.400 archivos (incl. proyecto A/GURU)
 └── PDF/          ← 8 archivos
 ```
 

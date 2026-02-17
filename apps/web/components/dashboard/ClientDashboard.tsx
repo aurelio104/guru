@@ -18,10 +18,10 @@ import {
 } from "lucide-react";
 import { useDashboardUser } from "@/contexts/DashboardUserContext";
 
-const API_URL = process.env.NEXT_PUBLIC_APLAT_API_URL ?? "";
+const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("aplat_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
@@ -114,7 +114,7 @@ export function ClientDashboard() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-16">
-        <Loader2 className="w-8 h-8 animate-spin text-aplat-cyan" />
+        <Loader2 className="w-8 h-8 animate-spin text-guru-cyan" />
       </div>
     );
   }
@@ -126,8 +126,8 @@ export function ClientDashboard() {
     <>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-aplat-text mb-1">Mi panel</h1>
-          <p className="text-aplat-muted text-sm">
+          <h1 className="text-2xl font-bold text-guru-text mb-1">Mi panel</h1>
+          <p className="text-guru-muted text-sm">
             Tus servicios, fechas de corte y perfil. Actualiza para ver los últimos cambios.
           </p>
         </div>
@@ -135,7 +135,7 @@ export function ClientDashboard() {
           type="button"
           onClick={onRefresh}
           disabled={refreshing}
-          className="inline-flex items-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 text-sm font-medium text-aplat-text disabled:opacity-50 transition-all"
+          className="inline-flex items-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 text-sm font-medium text-guru-text disabled:opacity-50 transition-all"
         >
           {refreshing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
           Actualizar
@@ -146,20 +146,20 @@ export function ClientDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass glass-strong rounded-2xl p-6 border border-aplat-cyan/20 mb-6 mirror-shine"
+          className="glass glass-strong rounded-2xl p-6 border border-guru-cyan/20 mb-6 mirror-shine"
         >
           <div className="flex items-start gap-4">
-            <div className="rounded-xl p-3 bg-aplat-cyan/15 text-aplat-cyan">
+            <div className="rounded-xl p-3 bg-guru-cyan/15 text-guru-cyan">
               <User className="w-6 h-6" />
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-lg font-semibold text-aplat-text mb-1">Completa tu perfil</h2>
-              <p className="text-aplat-muted text-sm mb-4">
+              <h2 className="text-lg font-semibold text-guru-text mb-1">Completa tu perfil</h2>
+              <p className="text-guru-muted text-sm mb-4">
                 Añade tus datos personales, verifica tu teléfono y elige tu tipo de servicio.
               </p>
               <Link
                 href="/dashboard/profile"
-                className="inline-flex items-center gap-2 rounded-xl bg-aplat-cyan/20 hover:bg-aplat-cyan/30 text-aplat-cyan border border-aplat-cyan/40 px-4 py-2.5 text-sm font-medium transition-all"
+                className="inline-flex items-center gap-2 rounded-xl bg-guru-cyan/20 hover:bg-guru-cyan/30 text-guru-cyan border border-guru-cyan/40 px-4 py-2.5 text-sm font-medium transition-all"
               >
                 Ir a Perfil
                 <ArrowRight className="w-4 h-4" />
@@ -177,33 +177,33 @@ export function ClientDashboard() {
           className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6"
         >
           <div className="glass glass-strong rounded-2xl p-4 border border-white/10 flex items-center gap-4">
-            <div className="rounded-xl p-2.5 bg-aplat-violet/15 text-aplat-violet">
+            <div className="rounded-xl p-2.5 bg-guru-violet/15 text-guru-violet">
               <CreditCard className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-aplat-muted text-xs uppercase tracking-wider">Servicios activos</p>
-              <p className="text-xl font-bold text-aplat-text">{activeCount}</p>
+              <p className="text-guru-muted text-xs uppercase tracking-wider">Servicios activos</p>
+              <p className="text-xl font-bold text-guru-text">{activeCount}</p>
             </div>
           </div>
           <div className="glass glass-strong rounded-2xl p-4 border border-white/10 flex items-center gap-4">
-            <div className="rounded-xl p-2.5 bg-aplat-emerald/15 text-aplat-emerald">
+            <div className="rounded-xl p-2.5 bg-guru-emerald/15 text-guru-emerald">
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-aplat-muted text-xs uppercase tracking-wider">Próximo corte</p>
-              <p className="text-xl font-bold text-aplat-text">{nextCutoffLabel}</p>
+              <p className="text-guru-muted text-xs uppercase tracking-wider">Próximo corte</p>
+              <p className="text-xl font-bold text-guru-text">{nextCutoffLabel}</p>
               {upcoming[0] && (
-                <p className="text-xs text-aplat-muted mt-0.5">{upcoming[0].serviceName} · {upcoming[0].date}</p>
+                <p className="text-xs text-guru-muted mt-0.5">{upcoming[0].serviceName} · {upcoming[0].date}</p>
               )}
             </div>
           </div>
           <div className="glass glass-strong rounded-2xl p-4 border border-white/10 flex items-center gap-4">
-            <div className="rounded-xl p-2.5 bg-aplat-cyan/15 text-aplat-cyan">
+            <div className="rounded-xl p-2.5 bg-guru-cyan/15 text-guru-cyan">
               <DollarSign className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-aplat-muted text-xs uppercase tracking-wider">Total mensual</p>
-              <p className="text-xl font-bold text-aplat-text">${totalMonthly}</p>
+              <p className="text-guru-muted text-xs uppercase tracking-wider">Total mensual</p>
+              <p className="text-xl font-bold text-guru-text">${totalMonthly}</p>
             </div>
           </div>
         </motion.section>
@@ -218,12 +218,12 @@ export function ClientDashboard() {
           className="glass glass-strong rounded-2xl p-5 border border-white/10 mb-6 mirror-shine"
         >
           <div className="flex items-center gap-2 mb-4">
-            <div className="rounded-xl p-2 bg-aplat-cyan/15 text-aplat-cyan">
+            <div className="rounded-xl p-2 bg-guru-cyan/15 text-guru-cyan">
               <Bell className="w-5 h-5" />
             </div>
-            <h2 className="text-lg font-semibold text-aplat-text">Próximos cortes</h2>
+            <h2 className="text-lg font-semibold text-guru-text">Próximos cortes</h2>
           </div>
-          <p className="text-aplat-muted text-sm mb-4">
+          <p className="text-guru-muted text-sm mb-4">
             Fechas de cobro de tus servicios activos. Recibirás un recordatorio por WhatsApp unos días antes.
           </p>
           <ul className="space-y-3">
@@ -233,16 +233,16 @@ export function ClientDashboard() {
               return (
                 <li key={`${item.serviceName}-${item.date}`} className="rounded-xl bg-white/5 border border-white/5 p-3">
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="font-medium text-aplat-text">{item.serviceName}</span>
-                    <span className="text-aplat-cyan text-sm">{item.date}</span>
+                    <span className="font-medium text-guru-text">{item.serviceName}</span>
+                    <span className="text-guru-cyan text-sm">{item.date}</span>
                   </div>
                   <div className="flex items-center gap-3 text-xs">
-                    <span className="text-aplat-muted shrink-0 w-20">
+                    <span className="text-guru-muted shrink-0 w-20">
                       {days < 0 ? "Vencido" : days === 0 ? "Hoy" : days === 1 ? "Mañana" : `${days} días`}
                     </span>
                     <div className="flex-1 h-2 rounded-full bg-white/10 overflow-hidden">
                       <motion.div
-                        className="h-full rounded-full bg-gradient-to-r from-aplat-cyan/40 to-aplat-cyan/80"
+                        className="h-full rounded-full bg-gradient-to-r from-guru-cyan/40 to-guru-cyan/80"
                         initial={{ width: 0 }}
                         animate={{ width: `${fillPct}%` }}
                         transition={{ duration: 0.4, delay: i * 0.08 }}
@@ -265,13 +265,13 @@ export function ClientDashboard() {
           className="glass glass-strong rounded-2xl p-5 border border-white/10 mirror-shine"
         >
           <div className="flex items-center gap-2 mb-4">
-            <div className="rounded-xl p-2 bg-aplat-violet/15 text-aplat-violet">
+            <div className="rounded-xl p-2 bg-guru-violet/15 text-guru-violet">
               <CreditCard className="w-5 h-5" />
             </div>
-            <h2 className="text-lg font-semibold text-aplat-text">Servicios contratados</h2>
+            <h2 className="text-lg font-semibold text-guru-text">Servicios contratados</h2>
           </div>
           {subscriptions.length === 0 ? (
-            <p className="text-aplat-muted text-sm">
+            <p className="text-guru-muted text-sm">
               Aún no tienes servicios asociados. Cuando te afilien por WhatsApp, aparecerán aquí.
             </p>
           ) : (
@@ -285,17 +285,17 @@ export function ClientDashboard() {
                       onClick={() => setExpandedId(isExpanded ? null : s.id)}
                       className="w-full flex items-center justify-between rounded-xl bg-white/5 border border-white/5 px-3 py-2.5 gap-2 text-left hover:bg-white/10 transition-colors"
                     >
-                      <span className="text-aplat-text font-medium truncate">{s.serviceName}</span>
+                      <span className="text-guru-text font-medium truncate">{s.serviceName}</span>
                       <span className="flex items-center gap-2 shrink-0">
                         <span
                           className={`text-xs font-medium px-2 py-0.5 rounded-lg ${
-                            s.status === "active" ? "bg-aplat-emerald/20 text-aplat-emerald" : "bg-amber-500/20 text-amber-400"
+                            s.status === "active" ? "bg-guru-emerald/20 text-guru-emerald" : "bg-amber-500/20 text-amber-400"
                           }`}
                         >
                           {s.status === "active" ? "Activo" : "Suspendido"}
                         </span>
-                        {s.amount != null && <span className="text-aplat-emerald text-sm">${s.amount}</span>}
-                        {isExpanded ? <ChevronUp className="w-4 h-4 text-aplat-muted" /> : <ChevronDown className="w-4 h-4 text-aplat-muted" />}
+                        {s.amount != null && <span className="text-guru-emerald text-sm">${s.amount}</span>}
+                        {isExpanded ? <ChevronUp className="w-4 h-4 text-guru-muted" /> : <ChevronDown className="w-4 h-4 text-guru-muted" />}
                       </span>
                     </button>
                     <AnimatePresence>
@@ -308,18 +308,18 @@ export function ClientDashboard() {
                           className="overflow-hidden"
                         >
                           <div className="rounded-b-xl bg-white/5 border border-t-0 border-white/5 px-3 py-3 text-sm space-y-2">
-                            <div className="flex justify-between text-aplat-muted">
+                            <div className="flex justify-between text-guru-muted">
                               <span>Corte</span>
-                              <span className="text-aplat-text">{s.nextCutoff}</span>
+                              <span className="text-guru-text">{s.nextCutoff}</span>
                             </div>
-                            <div className="flex justify-between text-aplat-muted">
+                            <div className="flex justify-between text-guru-muted">
                               <span>Recordatorio</span>
-                              <span className="text-aplat-cyan">{s.nextReminder}</span>
+                              <span className="text-guru-cyan">{s.nextReminder}</span>
                             </div>
                             {s.amount != null && (
-                              <div className="flex justify-between text-aplat-muted">
+                              <div className="flex justify-between text-guru-muted">
                                 <span>Monto</span>
-                                <span className="text-aplat-emerald">${s.amount}/mes</span>
+                                <span className="text-guru-emerald">${s.amount}/mes</span>
                               </div>
                             )}
                           </div>
@@ -342,23 +342,23 @@ export function ClientDashboard() {
         >
           <div className="flex items-center justify-between gap-4 h-full">
             <div className="flex items-center gap-3">
-              <div className="rounded-xl p-2.5 bg-aplat-cyan/15 text-aplat-cyan">
+              <div className="rounded-xl p-2.5 bg-guru-cyan/15 text-guru-cyan">
                 <User className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-aplat-text">Mi perfil</h2>
-                <p className="text-aplat-muted text-sm">
+                <h2 className="text-lg font-semibold text-guru-text">Mi perfil</h2>
+                <p className="text-guru-muted text-sm">
                   {hasProfile ? "Datos personales, teléfono y tipo de servicio." : "Completa tus datos para continuar."}
                 </p>
               </div>
             </div>
             <Link
               href="/dashboard/profile"
-              className="inline-flex items-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 text-aplat-text border border-white/10 px-4 py-2.5 text-sm font-medium transition-all shrink-0"
+              className="inline-flex items-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 text-guru-text border border-white/10 px-4 py-2.5 text-sm font-medium transition-all shrink-0"
             >
               {hasProfile ? (
                 <>
-                  <CheckCircle className="w-4 h-4 text-aplat-emerald" />
+                  <CheckCircle className="w-4 h-4 text-guru-emerald" />
                   Ver / Editar
                 </>
               ) : (

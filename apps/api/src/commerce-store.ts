@@ -1,11 +1,11 @@
 /**
- * APlat Commerce — Catálogo de productos y pedidos.
- * Persistencia en JSON (APLAT_DATA_PATH).
+ * GURU Commerce — Catálogo de productos y pedidos.
+ * Persistencia en JSON (GURU_DATA_PATH).
  */
 import fs from "fs";
 import path from "path";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
 const PRODUCTS_FILE = path.join(DATA_DIR, "commerce-products.json");
 const ORDERS_FILE = path.join(DATA_DIR, "commerce-orders.json");
 

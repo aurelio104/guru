@@ -1,11 +1,11 @@
 /**
  * Geofencing Omac — Órdenes de trabajo con punto de llegada.
- * Persistencia JSON (APLAT_DATA_PATH).
+ * Persistencia JSON (GURU_DATA_PATH).
  */
 import fs from "fs";
 import path from "path";
 
-const DATA_DIR = process.env.APLAT_DATA_PATH || path.join(process.cwd(), "data");
+const DATA_DIR = process.env.GURU_DATA_PATH || path.join(process.cwd(), "data");
 const OMAC_FILE = path.join(DATA_DIR, "omac-orders.json");
 
 export type OmacOrderStatus = "pending" | "in_progress" | "arrived" | "completed" | "cancelled";

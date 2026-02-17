@@ -1,14 +1,14 @@
-# Seguridad y Auditoría de APlat API
+# Seguridad y Auditoría de GURU API
 
 ## Resumen Ejecutivo
 
-APlat API implementa múltiples capas de seguridad para proteger contra vulnerabilidades comunes y garantizar que **todos los datos se guarden permanentemente** con un registro completo de auditoría.
+GURU API implementa múltiples capas de seguridad para proteger contra vulnerabilidades comunes y garantizar que **todos los datos se guarden permanentemente** con un registro completo de auditoría.
 
 ## 1. Autenticación y Autorización
 
 ### JWT (JSON Web Tokens)
 - **Algoritmo**: HS256
-- **Secret**: `APLAT_JWT_SECRET` (obligatorio en producción)
+- **Secret**: `GURU_JWT_SECRET` (obligatorio en producción)
 - **Expiración**: 7 días
 - **Validación**: En cada ruta protegida con `requireAuth()` o `requireRole()`
 
@@ -103,7 +103,7 @@ Formato: salt:hash (ambos en base64)
 ## 6. Persistencia de Datos
 
 ### SQLite con sql.js
-- **Ruta**: `APLAT_DATA_PATH` (debe ser volumen persistente en producción)
+- **Ruta**: `GURU_DATA_PATH` (debe ser volumen persistente en producción)
 - **Guardado periódico**: Cada 20 segundos
 - **Guardado al salir**: beforeExit, SIGINT, SIGTERM
 - **Escritura atómica**: temp file + rename para evitar corrupción
@@ -118,13 +118,13 @@ Formato: salt:hash (ambos en base64)
 - `deleteSubscription()` → DELETE subscription + audit
 
 ### WebAuthn (Passkey)
-- Persistencia en JSON (`APLAT_WEBAUTHN_STORE_PATH`)
+- Persistencia en JSON (`GURU_WEBAUTHN_STORE_PATH`)
 - `addCredential()` → writeFile + audit
 - `updateCredentialLastUsed()` → writeFile + audit
 
 ## 7. Auditoría Completa
 
-### Base de datos de auditoría: `aplat-audit.db`
+### Base de datos de auditoría: `guru-audit.db`
 ```sql
 CREATE TABLE audit_logs (
   id TEXT PRIMARY KEY,
@@ -167,9 +167,9 @@ GET /api/admin/audit-logs?entity=subscription&entity_id=abc123&limit=100
 ## 8. Protección de Secrets
 
 ### Variables de entorno sensibles
-- `APLAT_JWT_SECRET`: Generar con `openssl rand -hex 32`
-- `APLAT_ADMIN_PASSWORD`: Contraseña fuerte (mínimo 12 caracteres, mayúsculas, números, símbolos)
-- `APLAT_CRON_SECRET`: Para ejecutar cortes automáticos
+- `GURU_JWT_SECRET`: Generar con `openssl rand -hex 32`
+- `GURU_ADMIN_PASSWORD`: Contraseña fuerte (mínimo 12 caracteres, mayúsculas, números, símbolos)
+- `GURU_CRON_SECRET`: Para ejecutar cortes automáticos
 
 ### Nunca en código
 - No hay secrets hardcodeados
@@ -231,18 +231,18 @@ curl -H "Authorization: Bearer $ADMIN_TOKEN" http://localhost:3001/api/admin/aud
 
 ## 12. Lista de Verificación para Producción
 
-- [ ] `APLAT_JWT_SECRET` configurado (32+ caracteres aleatorios)
-- [ ] `APLAT_ADMIN_PASSWORD` fuerte (12+ caracteres, complejidad)
-- [ ] `APLAT_CRON_SECRET` configurado si se usan cortes automáticos
+- [ ] `GURU_JWT_SECRET` configurado (32+ caracteres aleatorios)
+- [ ] `GURU_ADMIN_PASSWORD` fuerte (12+ caracteres, complejidad)
+- [ ] `GURU_CRON_SECRET` configurado si se usan cortes automáticos
 - [ ] `CORS_ORIGIN` apunta al dominio del frontend (sin barra final)
-- [ ] `APLAT_DATA_PATH` apunta a volumen persistente (ej. `/data` en Koyeb)
-- [ ] `APLAT_WEBAUTHN_RP_ID` es el hostname del frontend (sin protocolo)
+- [ ] `GURU_DATA_PATH` apunta a volumen persistente (ej. `/data` en Koyeb)
+- [ ] `GURU_WEBAUTHN_RP_ID` es el hostname del frontend (sin protocolo)
 - [ ] Rate limiting habilitado (default: 100/min)
 - [ ] Helmet habilitado (headers de seguridad)
 - [ ] Auditoría inicializada (`initAuditDb()`)
 - [ ] Logs de aplicación configurados (Fastify logger)
 - [ ] Monitoreo de espacio en disco (volumen persistente)
-- [ ] Backups periódicos de `aplat.db` y `aplat-audit.db`
+- [ ] Backups periódicos de `guru.db` y `guru-audit.db`
 
 ## 13. Monitoreo y Alertas
 
@@ -290,7 +290,7 @@ pnpm audit
 ## 16. Respuesta a Incidentes
 
 ### En caso de compromiso
-1. **Rotación de secrets**: Cambiar `APLAT_JWT_SECRET`, `APLAT_ADMIN_PASSWORD`, `APLAT_CRON_SECRET`
+1. **Rotación de secrets**: Cambiar `GURU_JWT_SECRET`, `GURU_ADMIN_PASSWORD`, `GURU_CRON_SECRET`
 2. **Revisar logs de auditoría**: Identificar accesos no autorizados
 3. **Revocar tokens**: Tokens actuales quedan inválidos con nuevo secret
 4. **Notificar usuarios**: Si hubo acceso a datos de clientes
@@ -312,7 +312,7 @@ pnpm audit
 ✅ **404 en producción**: Sin exponer URL en la respuesta  
 ✅ **Persistencia**: Guardado periódico, al salir, atómico  
 ✅ **Frontend**: CSP, frame-ancestors 'none', upgrade-insecure-requests, Permissions-Policy  
-✅ **Auditoría**: Registro completo en `aplat-audit.db`  
+✅ **Auditoría**: Registro completo en `guru-audit.db`  
 ✅ **JWT**: HS256 con secret fuerte  
 ✅ **CORS**: Origen restringido  
 ✅ **Secrets**: Solo en variables de entorno  
