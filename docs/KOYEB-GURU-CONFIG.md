@@ -11,7 +11,7 @@ Copia completa de la configuración del servicio GURU en Koyeb.
 
 ## Origen
 
-- **Repositorio:** github.com/aurelio104/APlat
+- **Repositorio:** github.com/aurelio104/Guru
 - **Rama:** main
 - **Builder:** Docker
 - **Dockerfile:** Dockerfile.api (raíz del repo)
@@ -50,7 +50,7 @@ Copia completa de la configuración del servicio GURU en Koyeb.
 
 ```bash
 koyeb apps init guru \
-  --git github.com/aurelio104/APlat \
+  --git github.com/aurelio104/Guru \
   --git-branch main \
   --git-builder docker \
   --git-docker-dockerfile Dockerfile.api \
