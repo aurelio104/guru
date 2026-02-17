@@ -1,0 +1,23 @@
+# Redeploy API en Koyeb cuando hay push a main (alternativa al webhook de Koyeb).
+# Requiere: KOYEB_TOKEN en GitHub Secrets (crear en https://app.koyeb.com/account/profile)
+name: Koyeb Redeploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - "Dockerfile.api"
+  workflow_dispatch:
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Koyeb CLI
+        uses: koyeb-community/koyeb-actions@v2
+        with:
+          api_token: ${{ secrets.KOYEB_TOKEN }}
+
+      - name: Redeploy guru/guru
+        run: koyeb service redeploy guru/guru
