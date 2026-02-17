@@ -38,8 +38,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const headersList = await headers();
-  const locale = (headersList.get("x-locale") === "en" ? "en" : "es") as "es" | "en";
+  let locale: "es" | "en" = "es";
+  try {
+    const headersList = await headers();
+    locale = headersList.get("x-locale") === "en" ? "en" : "es";
+  } catch {
+    // Build time o contexto sin request: fallback a español
+  }
   return (
     <html lang={locale} className="dark" suppressHydrationWarning>
       <body className="min-h-screen bg-aplat-deep text-aplat-text font-sans bg-grid-perspective">
