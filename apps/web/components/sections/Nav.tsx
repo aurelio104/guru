@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
@@ -42,9 +43,9 @@ export function Nav() {
       transition={{ duration: 0.5 }}
     >
       <nav className="container mx-auto px-6 h-16 flex items-center justify-between max-w-6xl">
-        <a href="/" className="text-xl font-bold text-guru-text">
+        <Link href="/" className="text-xl font-bold text-guru-text">
           GURU<span className="text-guru-cyan">.</span>
-        </a>
+        </Link>
 
         <ul className="hidden md:flex items-center gap-8">
           {LINKS.map((link) => (
