@@ -28,7 +28,7 @@ Si el script indica que local y origin están sincronizados, el push a GitHub es
 1. **Add New** → **Project**
 2. **Import** → `aurelio104/Guru`
 3. **Root Directory:** `apps/web`
-4. Añade `NEXT_PUBLIC_GURU_API_URL` = `https://guru-aurelio104-9ad05a6a.koyeb.app`
+4. Añade `NEXT_PUBLIC_GURU_API_URL` = `https://guru-aurelio104-8e2f096a.koyeb.app`
 5. **Deploy**
 
 ---

@@ -66,17 +66,17 @@ vercel login
 
 ### Configurar variable de entorno (API URL)
 
-La API está en `https://guru-aurelio104-9ad05a6a.koyeb.app`. El frontend debe conocerla:
+La API está en `https://guru-aurelio104-8e2f096a.koyeb.app`. El frontend debe conocerla:
 
 **Opción A — CLI**
 
 ```bash
 cd /ruta/a/Guru
 vercel env add NEXT_PUBLIC_GURU_API_URL production --cwd apps/web
-# Pega: https://guru-aurelio104-9ad05a6a.koyeb.app
+# Pega: https://guru-aurelio104-8e2f096a.koyeb.app
 
 vercel env add NEXT_PUBLIC_GURU_API_URL preview --cwd apps/web
-# Pega: https://guru-aurelio104-9ad05a6a.koyeb.app
+# Pega: https://guru-aurelio104-8e2f096a.koyeb.app
 ```
 
 **Opción B — Dashboard**
@@ -85,7 +85,7 @@ vercel env add NEXT_PUBLIC_GURU_API_URL preview --cwd apps/web
 2. **Settings** → **Environment Variables**
 3. Añade:
    - **Name:** `NEXT_PUBLIC_GURU_API_URL`
-   - **Value:** `https://guru-aurelio104-9ad05a6a.koyeb.app`
+   - **Value:** `https://guru-aurelio104-8e2f096a.koyeb.app`
    - **Environment:** Production y Preview
 4. Guarda
 
@@ -121,6 +121,6 @@ Sin barra final, con `https://`.
 
 | Servicio | URL |
 |----------|-----|
-| API (Koyeb) | https://guru-aurelio104-9ad05a6a.koyeb.app |
+| API (Koyeb) | https://guru-aurelio104-8e2f096a.koyeb.app |
 | Frontend (Vercel) | https://guru.vercel.app (o la que tengas) |
-| Health check | `curl https://guru-aurelio104-9ad05a6a.koyeb.app/api/health` |
+| Health check | `curl https://guru-aurelio104-8e2f096a.koyeb.app/api/health` |

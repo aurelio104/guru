@@ -116,7 +116,7 @@ Para que visitas, login, Passkey, WhatsApp y dashboard funcionen, el frontend de
 1. En Vercel → proyecto GURU → **Settings** → **Environment Variables**
 2. Añade:
    - **Name**: `NEXT_PUBLIC_GURU_API_URL`
-   - **Value**: `https://guru-aurelio104-9ad05a6a.koyeb.app` (o la URL actual del servicio en Koyeb, **sin** barra final)
+   - **Value**: `https://guru-aurelio104-8e2f096a.koyeb.app` (o la URL actual del servicio en Koyeb, **sin** barra final)
 3. Redespliega el frontend.
 
 Si esta variable no está definida o apunta a otra URL, verás **404** en `/api/analytics/visit`, `/api/auth/login`, etc.
@@ -202,7 +202,7 @@ Así el Dockerfile puede hacer `COPY apps/api/...` correctamente. La imagen usa 
 ## Health check
 
 ```bash
-curl https://guru-aurelio104-9ad05a6a.koyeb.app/api/health
+curl https://guru-aurelio104-8e2f096a.koyeb.app/api/health
 ```
 
 Respuesta esperada: `{"ok":true,"service":"guru-api"}`.

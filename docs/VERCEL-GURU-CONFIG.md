@@ -40,7 +40,7 @@ En **Settings → Environment Variables**:
 
 | Nombre | Valor | Entornos |
 |--------|-------|----------|
-| `NEXT_PUBLIC_GURU_API_URL` | `https://guru-aurelio104-9ad05a6a.koyeb.app` | Production, Preview |
+| `NEXT_PUBLIC_GURU_API_URL` | `https://guru-aurelio104-8e2f096a.koyeb.app` | Production, Preview |
 | `NEXT_PUBLIC_GURU_WEBAUTHN_RP_ID` | `guru.vercel.app` | Production (opcional, para Passkey) |
 
 ---
@@ -61,7 +61,7 @@ npx vercel link --cwd apps/web --yes
 
 # 4. Configurar variables
 npx vercel env add NEXT_PUBLIC_GURU_API_URL production --cwd apps/web
-# Pegar: https://guru-aurelio104-9ad05a6a.koyeb.app
+# Pegar: https://guru-aurelio104-8e2f096a.koyeb.app
 
 # 5. Desplegar a producción
 npx vercel --cwd apps/web --prod
@@ -78,7 +78,7 @@ npx vercel --cwd apps/web --prod
    - **Root Directory:** `apps/web` (editar y poner `apps/web`)
    - **Framework Preset:** Next.js
    - **Build Command:** (vacío, auto)
-   - **Environment Variables:** añadir `NEXT_PUBLIC_GURU_API_URL` = `https://guru-aurelio104-9ad05a6a.koyeb.app`
+   - **Environment Variables:** añadir `NEXT_PUBLIC_GURU_API_URL` = `https://guru-aurelio104-8e2f096a.koyeb.app`
 4. **Deploy**
 
 ---

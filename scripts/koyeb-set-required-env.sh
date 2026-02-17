@@ -33,4 +33,4 @@ koyeb service update "$SERVICE" \
 echo ""
 echo "✅ Variables configuradas. Koyeb redesplegará el servicio."
 echo "   Si no usaste GURU_ADMIN_PASSWORD de entorno, la contraseña de admin es la mostrada arriba."
-echo "   Health: curl https://guru-aurelio104-9ad05a6a.koyeb.app/api/health"
+echo "   Health: curl https://guru-aurelio104-8e2f096a.koyeb.app/api/health"

@@ -24,4 +24,4 @@ koyeb services list | grep -E "guru" || true
 echo ""
 echo "=== 4. Verificación ==="
 echo "   Frontend: https://guru.vercel.app"
-echo "   API:      https://guru-aurelio104-9ad05a6a.koyeb.app/api/health"
+echo "   API:      https://guru-aurelio104-8e2f096a.koyeb.app/api/health"

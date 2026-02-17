@@ -6,7 +6,7 @@ Copia completa de la configuración del servicio GURU en Koyeb.
 
 - **App:** guru
 - **Servicio:** guru
-- **URL:** https://guru-aurelio104-9ad05a6a.koyeb.app
+- **URL:** https://guru-aurelio104-8e2f096a.koyeb.app
 - **Estado:** HEALTHY
 
 ## Origen
@@ -76,5 +76,5 @@ koyeb apps init guru \
 Actualiza `NEXT_PUBLIC_GURU_API_URL` en Vercel:
 
 ```
-NEXT_PUBLIC_GURU_API_URL=https://guru-aurelio104-9ad05a6a.koyeb.app
+NEXT_PUBLIC_GURU_API_URL=https://guru-aurelio104-8e2f096a.koyeb.app
 ```

@@ -5,7 +5,7 @@
 set -e
 
 SERVICE="${KOYEB_SERVICE:-guru/guru}"
-API_URL="https://guru-aurelio104-9ad05a6a.koyeb.app"
+API_URL="https://guru-aurelio104-8e2f096a.koyeb.app"
 
 # Credenciales Gurumaster
 GURU_ADMIN_EMAIL="gurumaster@guru.local"

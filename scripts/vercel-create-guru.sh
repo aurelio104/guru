@@ -26,4 +26,4 @@ npx vercel --cwd apps/web --prod --yes
 echo ""
 echo "✅ Hecho. Revisa la URL en la salida anterior (guru.vercel.app o similar)."
 echo "   Configura NEXT_PUBLIC_GURU_API_URL en Vercel Dashboard si no lo has hecho:"
-echo "   https://guru-aurelio104-9ad05a6a.koyeb.app"
+echo "   https://guru-aurelio104-8e2f096a.koyeb.app"

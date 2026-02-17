@@ -4,7 +4,7 @@
 set -e
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-API_URL="https://guru-aurelio104-9ad05a6a.koyeb.app"
+API_URL="https://guru-aurelio104-8e2f096a.koyeb.app"
 
 export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 
