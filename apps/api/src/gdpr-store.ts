@@ -1,5 +1,5 @@
 /**
- * APlat GDPR/LOPD — Checklist de cumplimiento.
+ * Guru — Checklist de cumplimiento: EU (GDPR/LOPD), Latinoamérica, Venezuela, INAC.
  * Persistencia en JSON (APLAT_DATA_PATH).
  */
 import fs from "fs";
@@ -23,19 +23,17 @@ export type GdprChecklistItem = {
 let items: GdprChecklistItem[] = [];
 
 const DEFAULT_ITEMS: Omit<GdprChecklistItem, "id" | "updatedAt">[] = [
-  // Brecha (art. 33, 34, LOPD)
-  { category: "breach", title: "Procedimiento de brecha", description: "Notificación a autoridad en 72h si procede", status: "pending" },
+  // ——— EU: GDPR / LOPD (España) ———
+  { category: "breach", title: "Procedimiento de brecha", description: "Notificación a autoridad en 72h si procede (RGPD art. 33, 34)", status: "pending" },
   { category: "breach", title: "Registro de brechas e incidencias", description: "Libro de incidencias de seguridad (art. 33.5)", status: "pending" },
   { category: "breach", title: "Comunicación al interesado", description: "Informar a los afectados cuando la brecha suponga alto riesgo", status: "pending" },
-  // Legal / Transparencia
-  { category: "legal", title: "Registro de actividades de tratamiento", description: "Documentar tratamientos de datos personales (art. 30)", status: "pending" },
+  { category: "legal", title: "Registro de actividades de tratamiento", description: "Documentar tratamientos de datos personales (RGPD art. 30)", status: "pending" },
   { category: "legal", title: "Base legal y finalidad", description: "Definir base legal y finalidad por tratamiento", status: "pending" },
   { category: "legal", title: "Información al interesado", description: "Art. 13/14: qué datos, para qué, base legal, plazo, derechos, reclamación AEPD", status: "pending" },
   { category: "legal", title: "Consentimiento y registro", description: "Registro de consentimientos y procedimiento de retirada cuando sea base legal", status: "pending" },
   { category: "legal", title: "Contratos con encargados (art. 28)", description: "DPA con procesadores que traten datos por cuenta del responsable", status: "pending" },
   { category: "legal", title: "Evaluación de impacto (EIPD)", description: "Art. 35: cuando el tratamiento suponga alto riesgo para derechos", status: "pending" },
   { category: "legal", title: "Delegado de Protección de Datos (DPO)", description: "Designación y contacto cuando sea obligatorio (art. 37)", status: "pending" },
-  // Derechos (cap. III RGPD)
   { category: "rights", title: "Derecho de acceso", description: "Procedimiento para ejercer derecho de acceso (art. 15)", status: "pending" },
   { category: "rights", title: "Derecho de rectificación", description: "Procedimiento de rectificación de datos (art. 16)", status: "pending" },
   { category: "rights", title: "Derecho de supresión", description: "Procedimiento de derecho al olvido (art. 17)", status: "pending" },
@@ -43,12 +41,29 @@ const DEFAULT_ITEMS: Omit<GdprChecklistItem, "id" | "updatedAt">[] = [
   { category: "rights", title: "Derecho de oposición", description: "Art. 21: oponerse al tratamiento en determinados casos", status: "pending" },
   { category: "rights", title: "Derecho de limitación", description: "Art. 18: limitar el tratamiento cuando lo solicite el interesado", status: "pending" },
   { category: "rights", title: "Canal de ejercicio de derechos", description: "Medios para que los interesados ejerzan sus derechos (plazo 1 mes)", status: "pending" },
-  // Seguridad (art. 32, LOPD)
   { category: "security", title: "Cifrado de datos sensibles", description: "Cifrado en reposo y en tránsito", status: "pending" },
   { category: "security", title: "Control de acceso", description: "Política de permisos y MFA", status: "pending" },
   { category: "security", title: "Auditorías periódicas", description: "Revisiones de cumplimiento y seguridad", status: "pending" },
   { category: "security", title: "Pseudonimización y minimización", description: "Minimizar datos y pseudonimizar cuando reduzca riesgos", status: "pending" },
   { category: "security", title: "Deber de secreto", description: "Confidencialidad (LOPD): solo acceso autorizado a datos personales", status: "pending" },
+  // ——— Latinoamérica (OEA, principios LAC) ———
+  { category: "latam", title: "Principios OEA privacidad y datos", description: "Principios Actualizados OEA: legitimidad, finalidad, necesidad, consentimiento", status: "pending" },
+  { category: "latam", title: "Registro de tratamientos (LAC)", description: "Inventario de tratamientos conforme a leyes locales (Argentina, Brasil LGPD, Chile, Colombia, México, Perú)", status: "pending" },
+  { category: "latam", title: "Transferencias internacionales", description: "Garantías para transferencias fuera del país (cláusulas, certificaciones)", status: "pending" },
+  { category: "latam", title: "Autoridad de protección de datos", description: "Identificar autoridad competente por país y canal de reclamación", status: "pending" },
+  { category: "latam", title: "Notificación de brechas (LAC)", description: "Procedimiento de notificación según requisitos de cada jurisdicción", status: "pending" },
+  // ——— Venezuela ———
+  { category: "venezuela", title: "Ley de Protección de Datos Personales", description: "Cumplimiento Ley aprobada 2025: tratamiento, almacenamiento, derechos", status: "pending" },
+  { category: "venezuela", title: "Derecho constitucional (art. 60)", description: "Honor, vida privada, intimidad, confidencialidad, reputación (CRBV)", status: "pending" },
+  { category: "venezuela", title: "VenCERT – Incidentes telemáticos", description: "Registro y reporte de incidentes al Sistema Nacional de Gestión (VenCERT/SUSCERTE)", status: "pending" },
+  { category: "venezuela", title: "Ley de Infogobierno", description: "Cumplimiento en tratamientos de datos del sector público", status: "pending" },
+  { category: "venezuela", title: "Consentimiento y bases legales", description: "Documentar consentimiento y bases legales según normativa venezolana", status: "pending" },
+  // ——— INAC (aviación civil Venezuela) ———
+  { category: "inac", title: "RAV 05 – Sistema de Gestión de Seguridad Operacional", description: "SMS conforme a Regulación Aeronáutica Venezolana (estándares OACI)", status: "pending" },
+  { category: "inac", title: "RAV 108 – Seguridad de aeronaves", description: "Requisitos de seguridad aplicables a operaciones aeronáuticas", status: "pending" },
+  { category: "inac", title: "Programa de Ciberseguridad (P-CS / OACI)", description: "Cumplimiento manual MG-P-CS, ciberseguridad aviación civil", status: "pending" },
+  { category: "inac", title: "Protección de datos en aviación", description: "Datos de pasajeros, tripulación y operaciones conforme a INAC y OACI", status: "pending" },
+  { category: "inac", title: "Respuesta a incidentes de ciberseguridad", description: "Procedimientos ante incidentes que afecten sistemas aeronáuticos", status: "pending" },
 ];
 
 function load(): GdprChecklistItem[] {

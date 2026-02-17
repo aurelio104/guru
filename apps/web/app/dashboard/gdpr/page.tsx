@@ -31,12 +31,15 @@ const STATUS_OPTIONS = [
   { value: "na", label: "N/A" },
 ];
 
-const CATEGORY_ORDER = ["breach", "legal", "rights", "security"] as const;
+const CATEGORY_ORDER = ["breach", "legal", "rights", "security", "latam", "venezuela", "inac"] as const;
 const CATEGORY_LABEL: Record<string, string> = {
-  breach: "Brecha",
-  legal: "Legal",
-  rights: "Derechos",
-  security: "Seguridad",
+  breach: "Brecha (EU)",
+  legal: "Legal / Transparencia (EU)",
+  rights: "Derechos (EU)",
+  security: "Seguridad (EU)",
+  latam: "Latinoamérica",
+  venezuela: "Venezuela",
+  inac: "INAC (Aviación Venezuela)",
 };
 
 export default function DashboardGdprPage() {
@@ -134,8 +137,8 @@ export default function DashboardGdprPage() {
             <FileCheck className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-aplat-text">GDPR / LOPD</h1>
-            <p className="text-aplat-muted text-sm">Checklist de cumplimiento RGPD y LOPD</p>
+            <h1 className="text-2xl font-bold text-aplat-text">Cumplimiento normativo</h1>
+            <p className="text-aplat-muted text-sm">EU (GDPR/LOPD) · Latinoamérica · Venezuela · INAC</p>
           </div>
         </div>
         <div className="flex items-center gap-2">

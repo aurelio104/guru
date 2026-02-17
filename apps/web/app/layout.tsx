@@ -9,6 +9,12 @@ export const metadata: Metadata = {
   title: "GURU Platform · Servicios digitales de última generación",
   description:
     "Plataforma inteligente: análisis, contexto, aprendizaje. Desarrollamos soluciones digitales con tecnología de vanguardia.",
+  metadataBase: new URL("https://aplat.vercel.app"),
+  openGraph: {
+    title: "GURU Platform",
+    description: "Plataforma inteligente: análisis, contexto, aprendizaje.",
+    siteName: "GURU",
+  },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,

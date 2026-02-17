@@ -23,7 +23,7 @@ let catalog: CatalogService[] = [];
 
 const DEFAULT_SERVICES: CatalogService[] = [
   { id: "1", name: "Guru Presence", slug: "presence", description: "Check-in BLE/NFC, zonas, portal, ocupación, alertas WhatsApp, export", priceOneTime: 0, priceMonthly: 99, active: true, order: 1 },
-  { id: "2", name: "Guru Ciberseguridad", slug: "ciberseguridad", description: "Guru Security, GDPR/LOPD, incidentes, verificación firma, Jcloud", priceOneTime: 150, priceMonthly: 79, active: true, order: 2 },
+  { id: "2", name: "Guru Ciberseguridad", slug: "ciberseguridad", description: "Guru Security, GDPR/LOPD, EU, Latinoamérica, Venezuela, INAC, incidentes, verificación firma, Jcloud", priceOneTime: 150, priceMonthly: 79, active: true, order: 2 },
   { id: "3", name: "Guru Reportes", slug: "reportes", description: "Subida Excel, análisis, gráficos, dashboard reportes", priceOneTime: 0, priceMonthly: 49, active: true, order: 3 },
   { id: "4", name: "Guru Commerce", slug: "commerce", description: "Catálogo, pedidos, bot WhatsApp opcional", priceOneTime: 100, priceMonthly: 89, active: true, order: 4 },
   { id: "5", name: "Guru Slots", slug: "slots", description: "Reserva de recursos y slots, disponibilidad", priceOneTime: 0, priceMonthly: 39, active: true, order: 5 },
