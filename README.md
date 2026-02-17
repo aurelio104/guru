@@ -79,6 +79,6 @@ cd apps/api && pnpm test:persist
 
 ## Repositorio y producción
 
-- **GitHub:** [github.com/aurelio104/GURU](https://github.com/aurelio104/GURU)
+- **GitHub:** [github.com/aurelio104/Guru](https://github.com/aurelio104/Guru)
 - **Frontend (Vercel):** [guru.vercel.app](https://guru.vercel.app)
 - **API (Koyeb):** https://guru-aurelio104-9ad05a6a.koyeb.app
