@@ -175,9 +175,11 @@ else
 fi
 
 # Verificar auditoría (requiere admin)
+ADMIN_EMAIL="${ADMIN_EMAIL:-gurumaster@guru.local}"
+ADMIN_PASSWORD="${ADMIN_PASSWORD:-Maracay.1}"
 ADMIN_TOKEN=$(curl -s -X POST "$API_URL/api/auth/login" \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@guru.local","password":"GURU2025!"}' | jq -r '.token')
+  -d "{\"email\":\"$ADMIN_EMAIL\",\"password\":\"$ADMIN_PASSWORD\"}" | jq -r '.token')
 
 if [ "$ADMIN_TOKEN" != "null" ] && [ "$ADMIN_TOKEN" != "" ]; then
   AUDIT_COUNT=$(curl -s "$API_URL/api/admin/audit-logs?limit=10" \

@@ -37,7 +37,9 @@ check "visit 200" "200" "$code"
 echo ""
 
 echo "3. POST /api/auth/login"
-r=$(curl -s -X POST "$API/api/auth/login" -H "Content-Type: application/json" -d '{"email":"admin@guru.local","password":"GURU2025!"}')
+ADMIN_EMAIL="${ADMIN_EMAIL:-gurumaster@guru.local}"
+ADMIN_PASSWORD="${ADMIN_PASSWORD:-Maracay.1}"
+r=$(curl -s -X POST "$API/api/auth/login" -H "Content-Type: application/json" -d "{\"email\":\"$ADMIN_EMAIL\",\"password\":\"$ADMIN_PASSWORD\"}")
 check "login ok" '"ok":true' "$r"
 token=$(echo "$r" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
 if [[ -z "$token" ]]; then echo "  FAIL login no token"; FAIL=1; else echo "  OK login + token"; fi
