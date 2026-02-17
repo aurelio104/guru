@@ -14,8 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { getWebAuthnRpId, decodeBase64UrlToUint8Array } from "@/lib/webauthn";
-
-const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
+import { getApiUrl } from "@/lib/api-url";
 
 function getAuthHeaders(): Record<string, string> {
   const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
@@ -48,6 +47,7 @@ function LoginForm() {
   }, []);
 
   async function handlePasskeyLogin() {
+    const API_URL = getApiUrl();
     if (!API_URL) {
       setMessage({ type: "error", text: "API no configurada." });
       return;
@@ -123,6 +123,7 @@ function LoginForm() {
   }
 
   async function registerPasskeyFromLogin() {
+    const API_URL = getApiUrl();
     if (!API_URL) {
       setMessage({ type: "error", text: "API no configurada." });
       return;
@@ -204,6 +205,7 @@ function LoginForm() {
     e.preventDefault();
     setMessage(null);
     if (authMethod !== "traditional" || !email.trim() || !password.trim()) return;
+    const API_URL = getApiUrl();
     if (!API_URL) {
       setMessage({ type: "error", text: "API no configurada." });
       return;

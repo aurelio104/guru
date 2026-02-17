@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { getApiUrl } from "@/lib/api-url";
 
 export type DashboardUser = {
   email?: string;
@@ -15,12 +16,11 @@ const DashboardUserContext = createContext<{
   refetch: () => Promise<boolean>;
 }>({ user: null, setUser: () => {}, refetch: () => Promise.resolve(false) });
 
-const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
-
 export function DashboardUserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<DashboardUser>(null);
 
   const refetch = useCallback(async (): Promise<boolean> => {
+    const API_URL = getApiUrl();
     const token = typeof window !== "undefined" ? localStorage.getItem("guru_token") : null;
     if (!token || !API_URL) return false;
     try {

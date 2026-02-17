@@ -21,8 +21,7 @@ import {
 } from "lucide-react";
 import { DashboardUserProvider, useDashboardUser } from "@/contexts/DashboardUserContext";
 import { ChangePasswordForm } from "@/components/dashboard/ChangePasswordForm";
-
-const API_URL = process.env.NEXT_PUBLIC_GURU_API_URL ?? "";
+import { getApiUrl } from "@/lib/api-url";
 
 function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -40,6 +39,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       router.replace("/login?redirect=/dashboard");
       return;
     }
+    const API_URL = getApiUrl();
     if (!API_URL) {
       setUser({ email: "admin", role: "master" });
       return;
