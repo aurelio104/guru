@@ -111,7 +111,7 @@ Con el repo **GURU** ya en GitHub y **koyeb** en el PATH (`/usr/local/bin` o `br
 koyeb login
 
 # Crear app + servicio API con Dockerfile (recomendado)
-koyeb apps init aplat \
+koyeb apps init guru \
   --git github.com/aurelio104/GURU \
   --git-branch main \
   --git-workdir apps/api \
@@ -125,7 +125,7 @@ koyeb apps init aplat \
   --region fra
 ```
 
-Sustituye `aurelio104/GURU` por tu usuario/repo y `https://tu-dominio.vercel.app` por la URL del front en Vercel. Tras el deploy, la API quedará en un subdominio tipo `https://aplat-aurelio104-xxx.koyeb.app`. Para añadir CORS una vez creado el servicio: en Koyeb Console → tu servicio → Variables → `CORS_ORIGIN` = URL de tu front en Vercel.
+Sustituye `aurelio104/GURU` por tu usuario/repo y `https://tu-dominio.vercel.app` por la URL del front en Vercel. Tras el deploy, la API quedará en un subdominio tipo `https://guru-aurelio104-xxx.koyeb.app`. Para añadir CORS una vez creado el servicio: en Koyeb Console → tu servicio → Variables → `CORS_ORIGIN` = URL de tu front en Vercel.
 
 ### Alternativa: despliegue con Dockerfile
 

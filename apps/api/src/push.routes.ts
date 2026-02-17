@@ -18,7 +18,7 @@ const VAPID_PRIVATE = process.env.GURU_VAPID_PRIVATE_KEY ?? "";
 
 if (VAPID_PUBLIC && VAPID_PRIVATE) {
   webpush.setVapidDetails(
-    "mailto:aplat@example.com",
+    "mailto:guru@example.com",
     VAPID_PUBLIC,
     VAPID_PRIVATE
   );

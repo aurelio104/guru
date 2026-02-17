@@ -177,7 +177,7 @@ fi
 # Verificar auditoría (requiere admin)
 ADMIN_TOKEN=$(curl -s -X POST "$API_URL/api/auth/login" \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@aplat.local","password":"GURU2025!"}' | jq -r '.token')
+  -d '{"email":"admin@guru.local","password":"GURU2025!"}' | jq -r '.token')
 
 if [ "$ADMIN_TOKEN" != "null" ] && [ "$ADMIN_TOKEN" != "" ]; then
   AUDIT_COUNT=$(curl -s "$API_URL/api/admin/audit-logs?limit=10" \

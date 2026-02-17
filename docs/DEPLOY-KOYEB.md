@@ -51,7 +51,7 @@ Tras ejecutarlo, Koyeb redesplegará el servicio y la API debería arrancar.
 - Cuenta en [Koyeb](https://www.koyeb.com)
 - Repositorio GitHub del monorepo GURU (aurelio104/GURU)
 
-## Configuración actual (servicio `aplat`)
+## Configuración actual (servicio `guru`)
 
 - **Build**: Dockerfile en raíz → `Dockerfile.api` (o imagen preconstruida desde GitHub Actions, ver más abajo)
 - **Puerto**: `3001`
@@ -68,7 +68,7 @@ Koyeb a veces no puede arrancar Docker en su entorno de build. En ese caso usa l
 - **Región**: `was` (Washington D.C.; necesaria para volúmenes)
 - **Volúmenes** (dos):
   - **guru-api-data** → `/data`: datos generales (WebAuthn/Passkey, logs, etc.)
-  - **auth-bot1-aplat** → `/whatsapp-auth`: sesión de WhatsApp (Baileys) para que el bot no pierda el inicio de sesión
+  - **auth-bot1-guru** → `/whatsapp-auth`: sesión de WhatsApp (Baileys) para que el bot no pierda el inicio de sesión
 
 ### Variables de entorno en Koyeb
 
@@ -80,12 +80,12 @@ Configuradas en el servicio (Settings → Environment variables):
 | `NODE_ENV` | `production` | Entorno |
 | `CORS_ORIGIN` | `https://tu-dominio.vercel.app` | **Exactamente** la URL del front (sin barra final). Si no coincide, verás "Preflight 404" en el navegador. |
 | `GURU_JWT_SECRET` | (secreto) | Clave JWT; generar con `openssl rand -hex 32` |
-| `GURU_ADMIN_EMAIL` | `admin@aplat.local` | Email de login |
+| `GURU_ADMIN_EMAIL` | `admin@guru.local` | Email de login |
 | `GURU_ADMIN_PASSWORD` | (secreto) | Contraseña de login |
 | `GURU_DATA_PATH` | `/data` | Directorio de datos: aquí se crea la base SQLite `guru.db` (clientes, perfiles, suscripciones). **Debe** ser la ruta de un **volumen persistente** montado; si no, tras cada reinicio o redeploy los datos se pierden (todo quedará vacío). |
 | `GURU_WEBAUTHN_STORE_PATH` | `/data/webauthn-store.json` | Persistencia Passkey (volumen `guru-api-data`) |
 | `GURU_WEBAUTHN_RP_ID` | `guru.vercel.app` | **Requerido para Passkey:** debe ser el hostname del front (donde el usuario registra la llave). Si no, verás "The requested RPID did not match the origin". |
-| `GURU_WHATSAPP_AUTH_PATH` | `/whatsapp-auth` | Directorio auth de WhatsApp (volumen **auth-bot1-aplat**) |
+| `GURU_WHATSAPP_AUTH_PATH` | `/whatsapp-auth` | Directorio auth de WhatsApp (volumen auth-bot1-guru) |
 | `GURU_CRON_SECRET` | (secreto) | Para ejecutar cortes automáticos cada día a las 23:59. Ver más abajo. |
 
 ### Cortes automáticos (cada día a las 23:59)
@@ -116,7 +116,7 @@ Para que visitas, login, Passkey, WhatsApp y dashboard funcionen, el frontend de
 1. En Vercel → proyecto GURU → **Settings** → **Environment Variables**
 2. Añade:
    - **Name**: `NEXT_PUBLIC_GURU_API_URL`
-   - **Value**: `https://guru-api-aurelio104-5877962a.koyeb.app` (o la URL actual del servicio en Koyeb, **sin** barra final)
+   - **Value**: `https://guru-aurelio104-9ad05a6a.koyeb.app` (o la URL actual del servicio en Koyeb, **sin** barra final)
 3. Redespliega el frontend.
 
 Si esta variable no está definida o apunta a otra URL, verás **404** en `/api/analytics/visit`, `/api/auth/login`, etc.
@@ -128,7 +128,7 @@ Se usan **dos volúmenes** para guardar toda la información y la sesión de Wha
 | Volumen Koyeb | Montaje en el contenedor | Uso |
 |---------------|--------------------------|-----|
 | **guru-api-data-v2** (o nuevo) | `/data` | WebAuthn (Passkey), y cualquier otro dato persistente de la API |
-| **auth-bot1-aplat** | `/whatsapp-auth` | Sesión de inicio de sesión de WhatsApp (Baileys); evita tener que escanear QR cada vez |
+| **auth-bot1-guru** | `/whatsapp-auth` | Sesión de inicio de sesión de WhatsApp (Baileys); evita tener que escanear QR cada vez |
 
 **Nota:** En Koyeb, un volumen que ya fue adjuntado a un servicio no puede reasignarse a otro. Si `guru-api-data` dio error "was previously attached to another service", crea uno nuevo (ej. `guru-api-data-v2`) y úsalo para `/data`.
 
@@ -136,11 +136,11 @@ Se usan **dos volúmenes** para guardar toda la información y la sesión de Wha
 
 1. En [Koyeb Console](https://app.koyeb.com) → **Volumes** → crear o usar los que ya tienes:
    - **guru-api-data** (1 GB), región Washington D.C.
-   - **auth-bot1-aplat** (1 GB), región Washington D.C.
-2. Ir al **servicio** de la API (ej. `aplat`) → **Settings** → **Volumes**.
+   - **auth-bot1-guru** (1 GB), región Washington D.C.
+2. Ir al **servicio** de la API (ej. `guru`) → **Settings** → **Volumes**.
 3. **Attach volume** dos veces:
    - Volumen `guru-api-data` → **Mount path**: `/data`
-   - Volumen `auth-bot1-aplat` → **Mount path**: `/whatsapp-auth`
+   - Volumen `auth-bot1-guru` → **Mount path**: `/whatsapp-auth`
 4. Asegurar que las variables de entorno incluyen:
    - `GURU_DATA_PATH=/data` (base SQLite: clientes, suscripciones; se crea `guru.db` ahí)
    - `GURU_WEBAUTHN_STORE_PATH=/data/webauthn-store.json`
@@ -166,7 +166,7 @@ Se usan **dos volúmenes** para guardar toda la información y la sesión de Wha
 
    ```bash
    koyeb volume create guru-api-data-v2 --region was --size 1
-   koyeb volume create auth-bot1-aplat --region was --size 1
+   koyeb volume create auth-bot1-guru --region was --size 1
    ```
 
 4. **Actualizar el servicio** (dos volúmenes + variables). Servicio actual: `guru-api/api`:
@@ -175,7 +175,7 @@ Se usan **dos volúmenes** para guardar toda la información y la sesión de Wha
    koyeb service update guru-api/api \
      --region was \
      --volumes guru-api-data-v2:/data \
-     --volumes auth-bot1-aplat:/whatsapp-auth \
+     --volumes auth-bot1-guru:/whatsapp-auth \
      --env "GURU_WEBAUTHN_STORE_PATH=/data/webauthn-store.json" \
      --env "GURU_WHATSAPP_AUTH_PATH=/whatsapp-auth"
    ```
@@ -185,7 +185,7 @@ Se usan **dos volúmenes** para guardar toda la información y la sesión de Wha
 5. **Redeploy** (usa el último commit de `main`):
 
    ```bash
-   koyeb services update aplat/aplat --git-sha ""
+   koyeb services update guru/guru --git-sha ""
    ```
 
 ## Build desde raíz (monorepo)
@@ -202,7 +202,7 @@ Así el Dockerfile puede hacer `COPY apps/api/...` correctamente. La imagen usa 
 ## Health check
 
 ```bash
-curl https://guru-api-aurelio104-5877962a.koyeb.app/api/health
+curl https://guru-aurelio104-9ad05a6a.koyeb.app/api/health
 ```
 
 Respuesta esperada: `{"ok":true,"service":"guru-api"}`.

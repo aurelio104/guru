@@ -1,5 +1,5 @@
 /**
- * APlat Presence — Escáner BLE multi-formato
+ * GURU Presence — Escáner BLE multi-formato
  * iBeacon (Apple), Eddystone-UID (Google), RSSI y multi-beacon
  */
 export type BleBeaconDetected = {

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * APlat Presence — Dashboard de presencia e inteligencia
+ * GURU Presence — Dashboard de presencia e inteligencia
  * Métricas, eventos en tiempo real, insights, QR por zona y recomendaciones.
  */
 import { useEffect, useState, useCallback } from "react";

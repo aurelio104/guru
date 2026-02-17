@@ -21,11 +21,11 @@ Copia completa de la configuración del servicio GURU en Koyeb.
 | Variable | Valor |
 |----------|-------|
 | GURU_JWT_SECRET | (secreto 64 chars hex) |
-| GURU_ADMIN_PASSWORD | APlat2025! |
-| GURU_WEBAUTHN_RP_ID | aplat.vercel.app |
+| GURU_ADMIN_PASSWORD | (tu contraseña) |
+| GURU_WEBAUTHN_RP_ID | guru.vercel.app |
 | GURU_WEBAUTHN_STORE_PATH | /data/webauthn-store.json |
 | GURU_WHATSAPP_AUTH_PATH | /whatsapp-auth |
-| CORS_ORIGIN | https://aplat.vercel.app |
+| CORS_ORIGIN | https://guru.vercel.app |
 | NODE_ENV | production |
 | PORT | 3001 |
 
@@ -61,10 +61,10 @@ koyeb apps init guru \
   --checks 3001:tcp \
   --env "GURU_JWT_SECRET=<tu-secret>" \
   --env "GURU_ADMIN_PASSWORD=<tu-password>" \
-  --env "GURU_WEBAUTHN_RP_ID=aplat.vercel.app" \
+  --env "GURU_WEBAUTHN_RP_ID=guru.vercel.app" \
   --env "GURU_WEBAUTHN_STORE_PATH=/data/webauthn-store.json" \
   --env "GURU_WHATSAPP_AUTH_PATH=/whatsapp-auth" \
-  --env "CORS_ORIGIN=https://aplat.vercel.app" \
+  --env "CORS_ORIGIN=https://guru.vercel.app" \
   --env "NODE_ENV=production" \
   --env "PORT=3001" \
   --volumes guru-api-data:/data \

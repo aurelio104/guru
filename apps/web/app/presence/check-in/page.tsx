@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * APlat Presence — Check-in multi-canal
+ * GURU Presence — Check-in multi-canal
  * Geolocalización, QR, BLE, NFC. Cola offline para reintentos automáticos.
  */
 import { useState, useEffect, useCallback } from "react";
@@ -78,7 +78,7 @@ export default function CheckInPage() {
   }, []);
 
   useEffect(() => {
-    const seen = typeof window !== "undefined" && localStorage.getItem("aplat_presence_onboarding") === "1";
+    const seen = typeof window !== "undefined" && localStorage.getItem("guru_presence_onboarding") === "1";
     setOnboardingSeen(!!seen);
   }, []);
 
@@ -131,7 +131,7 @@ export default function CheckInPage() {
       return;
     }
     if (!onboardingSeen) setOnboardingSeen(true);
-    if (typeof window !== "undefined") localStorage.setItem("aplat_presence_onboarding", "1");
+    if (typeof window !== "undefined") localStorage.setItem("guru_presence_onboarding", "1");
     setStatus("locating");
     setMessage("");
     navigator.geolocation.getCurrentPosition(

@@ -1,6 +1,6 @@
 # ESP32 como Beacon iBeacon
 
-Firmware para convertir un ESP32 en beacon BLE compatible con APlat Presence.
+Firmware para convertir un ESP32 en beacon BLE compatible con GURU Presence.
 
 ## Requisitos
 
@@ -10,7 +10,7 @@ Firmware para convertir un ESP32 en beacon BLE compatible con APlat Presence.
 
 ## UUID, Major y Minor
 
-Antes de flashear, defina estos valores (los usará al registrar el beacon en APlat):
+Antes de flashear, defina estos valores (los usará al registrar el beacon en GURU):
 
 - **UUID**: Ej. `E2C56DB5-DFFB-48D2-B060-D0F5A71096E0`
 - **Major**: 0-65535 (ej. 1 para Recepción, 2 para Sala 1)
@@ -34,7 +34,7 @@ pio run -t upload
 
 ## Uso
 
-Tras flashear, el ESP32 emitirá anuncios iBeacon continuamente. Colóquelo en la zona deseada (recepción, sala, etc.) y regístrelo en APlat Dashboard → Presence → Beacons BLE con el mismo UUID, Major y Minor.
+Tras flashear, el ESP32 emitirá anuncios iBeacon continuamente. Colóquelo en la zona deseada (recepción, sala, etc.) y regístrelo en GURU Dashboard → Presence → Beacons BLE con el mismo UUID, Major y Minor.
 
 Los visitantes podrán hacer check-in al detectar el beacon con la PWA (Chrome Android) o una app que escanee BLE.
 

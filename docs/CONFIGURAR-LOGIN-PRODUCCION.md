@@ -81,7 +81,7 @@ vercel env add NEXT_PUBLIC_GURU_API_URL preview --cwd apps/web
 
 **Opción B — Dashboard**
 
-1. Ve a [vercel.com](https://vercel.com) → tu proyecto **guru** (o aplat)
+1. Ve a [vercel.com](https://vercel.com) → tu proyecto **guru**
 2. **Settings** → **Environment Variables**
 3. Añade:
    - **Name:** `NEXT_PUBLIC_GURU_API_URL`
@@ -103,7 +103,7 @@ O haz push a `main` si tienes Git Integration.
 
 La API en Koyeb debe permitir el origen de tu frontend. En el servicio Koyeb:
 
-- `CORS_ORIGIN` = URL de tu frontend, ej: `https://guru.vercel.app` o `https://aplat.vercel.app`
+- `CORS_ORIGIN` = URL de tu frontend, ej: `https://guru.vercel.app` o `https://guru.vercel.app`
 
 Sin barra final, con `https://`.
 

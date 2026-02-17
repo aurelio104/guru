@@ -5,7 +5,7 @@ Copia de la configuración para crear el proyecto **GURU** en Vercel desde cero.
 ## Requisitos
 
 - Cuenta Vercel
-- Repo: `github.com/aurelio104/APlat` (o `aurelio104/GURU` si renombraste)
+- Repo: `github.com/aurelio104/Guru`
 - **Autenticación:** `vercel login` **o** token en `VERCEL_TOKEN`
 
 ### Conexión con token (sin login interactivo)
@@ -52,7 +52,7 @@ En **Settings → Environment Variables**:
 vercel login
 
 # 2. Desde la raíz del repo
-cd /ruta/a/APlat   # o GURU
+cd /ruta/a/Guru
 
 # 3. Crear proyecto nuevo (primera vez)
 npx vercel link --cwd apps/web --yes
@@ -72,7 +72,7 @@ npx vercel --cwd apps/web --prod
 ## Crear proyecto desde Dashboard
 
 1. **Vercel Dashboard** → **Add New** → **Project**
-2. **Import** → selecciona el repo `aurelio104/APlat` (o GURU)
+2. **Import** → selecciona el repo `aurelio104/Guru`
 3. **Configure Project:**
    - **Project Name:** guru
    - **Root Directory:** `apps/web` (editar y poner `apps/web`)
@@ -95,7 +95,7 @@ Puedes añadir un dominio propio en **Settings → Domains**.
 
 ## Después de crear GURU
 
-1. **Eliminar aplat** (opcional): en Vercel Dashboard, proyecto aplat → Settings → Delete Project
+1. **Proyecto legacy** (opcional): si tenías un proyecto anterior, puedes eliminarlo en Vercel Dashboard → Settings → Delete Project
 2. **Actualizar Koyeb:** si el frontend queda en `guru.vercel.app`, actualiza en el servicio guru:
    - `GURU_WEBAUTHN_RP_ID=guru.vercel.app`
    - `CORS_ORIGIN=https://guru.vercel.app`

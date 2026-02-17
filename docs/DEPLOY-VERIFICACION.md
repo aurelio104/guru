@@ -142,7 +142,7 @@ Resultado: ✅ Perfil intacto con todos los datos
     "entity": "auth",
     "entity_id": "1",
     "user_id": "1",
-    "user_email": "admin@aplat.local",
+    "user_email": "admin@guru.local",
     "ip": "190.153.121.119",
     "timestamp": "2026-02-12T13:44:54.518Z"
   }

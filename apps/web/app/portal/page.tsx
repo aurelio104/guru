@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * APlat Presence — Captive Portal
+ * GURU Presence — Captive Portal
  * Página pública para check-in cuando el usuario se conecta al WiFi.
  * Redirigir aquí desde el router (CUDY AP1200, UniFi, etc.):
  *   /portal?site_id=ID_SEDE&ssid=NOMBRE_RED_WIFI

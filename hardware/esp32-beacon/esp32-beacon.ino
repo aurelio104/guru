@@ -1,5 +1,5 @@
 /*
- * APlat Presence — ESP32 como Beacon iBeacon
+ * GURU Presence — ESP32 como Beacon iBeacon
  * Emite anuncios BLE en formato iBeacon para check-in por proximidad.
  *
  * Requiere: Arduino ESP32 core
@@ -10,7 +10,7 @@
 #include <BLEUtils.h>
 #include <BLEServer.h>
 
-// Configurar estos valores igual que en APlat Dashboard
+// Configurar estos valores igual que en GURU Dashboard
 #define BEACON_UUID "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0"
 #define BEACON_MAJOR 1
 #define BEACON_MINOR 1
@@ -19,7 +19,7 @@ BLEAdvertising *pAdvertising;
 
 void setup() {
   Serial.begin(115200);
-  BLEDevice::init("APlatBeacon");
+  BLEDevice::init("GuruBeacon");
 
   BLEServer *pServer = BLEDevice::createServer();
   pAdvertising = BLEDevice::getAdvertising();

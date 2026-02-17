@@ -10,7 +10,7 @@
  *
  * Requiere: vercel CLI instalado y sesión iniciada (vercel login).
  * Cuando en Vercel cambies un dominio (p. ej. custom), vuelve a ejecutar
- * y APlat mostrará el nuevo enlace.
+ * y GURU mostrará el nuevo enlace.
  */
 
 import { execSync } from "child_process";
@@ -24,7 +24,7 @@ const DATA_PATH = path.join(ROOT, "apps/web/data/portfolio-production-urls.json"
 
 /** Mapeo nombre proyecto Vercel → slug en Portfolio (getProductionUrl usa el slug). */
 const VERCEL_TO_SLUG = {
-  aplat: "APlat",
+  guru: "GURU",
   web: "Omac",
   "j-cavalier": "JCavalier",
   "control-acceso-albatros": "control-acceso-albatros",

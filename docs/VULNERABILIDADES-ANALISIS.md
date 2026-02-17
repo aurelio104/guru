@@ -166,7 +166,7 @@ dbRun("INSERT INTO clients (id, email, password_hash, ...) VALUES (?, ?, ?, ...)
 ```typescript
 // Línea 83, index.ts
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.GURU_JWT_SECRET || "dev-aplat-secret-cambiar-en-produccion"
+  process.env.GURU_JWT_SECRET || "dev-guru-secret-cambiar-en-produccion"
 );
 ```
 **Impacto:** BAJO (solo desarrollo)  
@@ -383,7 +383,7 @@ $ grep -r "exec(" apps/api/src/  # 0 resultados
 **Código actual:**
 ```typescript
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.GURU_JWT_SECRET || "dev-aplat-secret-cambiar-en-produccion"
+  process.env.GURU_JWT_SECRET || "dev-guru-secret-cambiar-en-produccion"
 );
 ```
 
@@ -394,7 +394,7 @@ const JWT_SECRET = (() => {
   if (!secret && process.env.NODE_ENV === "production") {
     throw new Error("GURU_JWT_SECRET es obligatorio en producción");
   }
-  return new TextEncoder().encode(secret || "dev-aplat-secret-SOLO-DESARROLLO");
+  return new TextEncoder().encode(secret || "dev-guru-secret-SOLO-DESARROLLO");
 })();
 ```
 

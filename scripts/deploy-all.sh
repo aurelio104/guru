@@ -18,10 +18,10 @@ cd "$(dirname "$0")/.."
 
 echo ""
 echo "=== 3. API en Koyeb (ya desplegada vía Git) ==="
-echo "   Redeploy si necesitas forzar: koyeb service redeploy aplat-api/api"
-koyeb services list | grep -E "aplat-api|guru-api" || true
+echo "   Redeploy si necesitas forzar: koyeb service redeploy guru/guru"
+koyeb services list | grep -E "guru" || true
 
 echo ""
 echo "=== 4. Verificación ==="
-echo "   Frontend: https://aplat.vercel.app (o guru.vercel.app si renombraste)"
-echo "   API:      https://aplat-api-aurelio104-5877962a.koyeb.app/api/health"
+echo "   Frontend: https://guru.vercel.app"
+echo "   API:      https://guru-aurelio104-9ad05a6a.koyeb.app/api/health"
