@@ -1,3 +1,15 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { loadEnvFile } from "node:process";
+
+// Cargar .env si existe (para credenciales master, etc.)
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+try {
+  loadEnvFile(path.join(__dirname, "..", ".env"));
+} catch {
+  // .env opcional; las variables pueden venir del entorno (Koyeb, etc.)
+}
+
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";

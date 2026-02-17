@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Configura GURU_JWT_SECRET y GURU_ADMIN_PASSWORD en el servicio guru-api/api vía Koyeb CLI.
+# Configura GURU_JWT_SECRET y GURU_ADMIN_PASSWORD en el servicio guru/guru vía Koyeb CLI.
 # Uso: ./scripts/koyeb-set-required-env.sh
 #      o: GURU_ADMIN_PASSWORD='tu-contraseña' ./scripts/koyeb-set-required-env.sh
 # Requiere: koyeb CLI instalado y logueado (koyeb login).
 set -e
-SERVICE="${KOYEB_SERVICE:-guru-api/api}"
+SERVICE="${KOYEB_SERVICE:-guru/guru}"
 
 if ! command -v koyeb >/dev/null 2>&1; then
   echo "❌ koyeb CLI no encontrado. Instala: brew install koyeb/tap/koyeb"
@@ -33,4 +33,4 @@ koyeb service update "$SERVICE" \
 echo ""
 echo "✅ Variables configuradas. Koyeb redesplegará el servicio."
 echo "   Si no usaste GURU_ADMIN_PASSWORD de entorno, la contraseña de admin es la mostrada arriba."
-echo "   Health: curl https://guru-api-aurelio104-5877962a.koyeb.app/api/health"
+echo "   Health: curl https://guru-aurelio104-9ad05a6a.koyeb.app/api/health"

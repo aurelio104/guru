@@ -1,6 +1,6 @@
 # Despliegue en producción: Vercel (front) + Koyeb (back)
 
-**API en Koyeb (desplegada por CLI):** `https://guru-api-aurelio104-5877962a.koyeb.app`  
+**API en Koyeb (desplegada por CLI):** `https://guru-aurelio104-9ad05a6a.koyeb.app`  
 Añade en el servicio la variable `CORS_ORIGIN` = URL de tu front en Vercel cuando la tengas.
 
 ## Resumen

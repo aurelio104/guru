@@ -31,3 +31,4 @@ apps/web/.env.local
 *.log
 .vercel
 .env*.local
+.env.vercel

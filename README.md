@@ -81,4 +81,4 @@ cd apps/api && pnpm test:persist
 
 - **GitHub:** [github.com/aurelio104/GURU](https://github.com/aurelio104/GURU)
 - **Frontend (Vercel):** [guru.vercel.app](https://guru.vercel.app)
-- **API (Koyeb):** https://guru-api-aurelio104-5877962a.koyeb.app
+- **API (Koyeb):** https://guru-aurelio104-9ad05a6a.koyeb.app
