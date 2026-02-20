@@ -1,0 +1,29 @@
+---
+description: Contexto del proyecto GURU (servicios digitales, API + web, monorepo)
+alwaysApply: true
+---
+
+# Proyecto GURU
+
+- **Nombre:** GURU · Servicios digitales de última generación
+- **Repo:** https://github.com/aurelio104/guru
+- **Monorepo:** pnpm workspace con `apps/api` (guru-api) y `apps/web` (guru-web).
+
+## Estructura
+
+- `apps/api`: API Fastify (Node 24+), SQLite, Passkey, WhatsApp (Baileys), auditoría.
+- `apps/web`: Next.js 15 (Node 20+), dashboard, login, presencia, PWA (Serwist).
+
+## Comandos
+
+- `pnpm dev` — frontend en http://localhost:3000
+- `pnpm dev:api` — API en http://localhost:3001
+- `pnpm build` / `pnpm build:api` — builds
+- `pnpm start` / `pnpm start:api` — producción
+
+## Configuración local
+
+- API: `apps/api/.env` (PORT, CORS_ORIGIN, GURU_JWT_SECRET, GURU_ADMIN_EMAIL/PASSWORD).
+- Web: `apps/web/.env.local` con `NEXT_PUBLIC_GURU_API_URL=http://localhost:3001`.
+
+Producción: ver `docs/VERCEL-GURU-CONFIG.md` (front) y `docs/KOYEB-GURU-CONFIG.md` (API).

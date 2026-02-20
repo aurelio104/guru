@@ -119,14 +119,14 @@ export function CybersecurityPillars() {
           {PILLARS.map((pillar, i) => (
             <motion.article
               key={pillar.id}
-              className={`rounded-2xl sm:rounded-3xl border p-5 sm:p-6 md:p-8 lg:p-10 transition-all duration-300 min-w-0 ${colorMap[pillar.color]}`}
+              className={`rounded-2xl sm:rounded-3xl border p-5 sm:p-6 md:p-8 transition-all duration-300 min-w-0 overflow-hidden ${colorMap[pillar.color]}`}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.6, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
             >
-              <div className="flex flex-col h-full">
-                <div className="flex items-start gap-4 sm:gap-6 mb-4 sm:mb-6">
+              <div className="flex flex-col h-full items-center">
+                <div className="flex flex-col items-center text-center gap-4 mb-4 sm:mb-6">
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex-shrink-0 overflow-hidden flex items-center justify-center">
                     {pillar.logo ? (
                       <Image
@@ -140,19 +140,19 @@ export function CybersecurityPillars() {
                       <pillar.icon className="w-10 h-10 text-guru-emerald/80" />
                     )}
                   </div>
-                  <div>
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-guru-text mb-1">
+                  <div className="min-w-0 w-full">
+                    <h3 className="text-xl sm:text-2xl font-bold text-guru-text mb-1 break-words">
                       {pillar.name}
                     </h3>
-                    <p className="text-guru-cyan/90 text-sm font-medium uppercase tracking-wider">
+                    <p className="text-guru-cyan/90 text-xs sm:text-sm font-medium uppercase tracking-wider">
                       {pillar.tagline}
                     </p>
                   </div>
                 </div>
-                <p className="text-guru-muted leading-relaxed mb-6 flex-1">
+                <p className="text-guru-muted leading-relaxed mb-6 flex-1 text-center text-sm sm:text-base">
                   {pillar.description}
                 </p>
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-mono text-guru-muted">
                     <pillar.icon className="w-3.5 h-3.5 text-guru-cyan/80" />
                     {pillar.stack}
